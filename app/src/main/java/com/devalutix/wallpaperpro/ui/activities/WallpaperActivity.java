@@ -2,22 +2,25 @@ package com.devalutix.wallpaperpro.ui.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 import butterknife.ButterKnife;
+
 import android.os.Bundle;
+
 import com.devalutix.wallpaperpro.R;
 import com.devalutix.wallpaperpro.base.BaseApplication;
 import com.devalutix.wallpaperpro.contracts.MainContract;
+import com.devalutix.wallpaperpro.contracts.WallpaperContract;
 import com.devalutix.wallpaperpro.di.components.ApplicationComponent;
-import com.devalutix.wallpaperpro.presenters.MainPresenter;
+import com.devalutix.wallpaperpro.presenters.WallpaperPresenter;
 
 import javax.inject.Inject;
 
-public class MainActivity extends AppCompatActivity implements MainContract.View {
-    private static String TAG = "MainActivity";
+public class WallpaperActivity extends AppCompatActivity implements WallpaperContract.View {
+    private static String TAG = "WallpaperActivity";
 
     //Declarations
     protected ApplicationComponent mComponent;
     @Inject
-    MainPresenter mPresenter;
+    WallpaperPresenter mPresenter;
 
     //View Declarations
 
@@ -27,7 +30,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_wallpaper);
 
         //Set ButterKnife
         ButterKnife.bind(this);
