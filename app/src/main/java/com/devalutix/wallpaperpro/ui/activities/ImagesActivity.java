@@ -7,19 +7,22 @@ import android.os.Bundle;
 
 import com.devalutix.wallpaperpro.R;
 import com.devalutix.wallpaperpro.base.BaseApplication;
-import com.devalutix.wallpaperpro.contracts.MainContract;
+import com.devalutix.wallpaperpro.contracts.ImagesContract;
 import com.devalutix.wallpaperpro.di.components.ApplicationComponent;
+import com.devalutix.wallpaperpro.pojo.Image;
+import com.devalutix.wallpaperpro.presenters.ImagesPresenter;
 import com.devalutix.wallpaperpro.presenters.MainPresenter;
+
+import java.util.ArrayList;
 
 import javax.inject.Inject;
 
-public class MainActivity extends AppCompatActivity implements MainContract.View {
-    private static String TAG = "MainActivity";
+public class ImagesActivity extends AppCompatActivity implements ImagesContract.View {
+    private static String TAG = "ImagesActivity";
 
     //Declarations
-    protected ApplicationComponent mComponent;
     @Inject
-    MainPresenter mPresenter;
+    ImagesPresenter mPresenter;
 
     //View Declarations
 
@@ -29,7 +32,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_images);
 
         //Set ButterKnife
         ButterKnife.bind(this);
@@ -43,27 +46,22 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
 
     //Methods
     @Override
-    public void initAdBanner() {
+    public void setPageName(String name) {
 
     }
 
     @Override
-    public void showSearchBar() {
+    public void initRecyclerView(ArrayList<Image> images) {
 
     }
 
     @Override
-    public void showAddCollection() {
+    public void updateRecyclerView(ArrayList<Image> images) {
 
     }
 
     @Override
-    public void initViewPager() {
-
-    }
-
-    @Override
-    public void initTabLayout() {
+    public void goToWallpaperActivity(int position, ArrayList<Image> images) {
 
     }
 }

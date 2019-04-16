@@ -15,7 +15,10 @@ import com.devalutix.wallpaperpro.R;
 import com.devalutix.wallpaperpro.base.BaseApplication;
 import com.devalutix.wallpaperpro.contracts.ExploreContract;
 import com.devalutix.wallpaperpro.di.components.ApplicationComponent;
+import com.devalutix.wallpaperpro.pojo.Image;
 import com.devalutix.wallpaperpro.presenters.ExplorePresenter;
+
+import java.util.ArrayList;
 
 import javax.inject.Inject;
 
@@ -58,7 +61,7 @@ public class ExploreFragment extends Fragment implements ExploreContract.View {
         View view = inflater.inflate(R.layout.fragment_explore, container, false);
 
         //Init ButterKnife
-        ButterKnife.bind(this,view);
+        ButterKnife.bind(this, view);
 
         //Inject Component (Dependency Injection)
         ((BaseApplication) getActivity().getApplication()).getComponent().inject(this);
@@ -70,4 +73,28 @@ public class ExploreFragment extends Fragment implements ExploreContract.View {
     }
 
     //Methods
+    @Override
+    public void initRecyclerView(ArrayList<Image> images) {
+
+    }
+
+    @Override
+    public void updateRecyclerView(ArrayList<Image> images) {
+
+    }
+
+    @Override
+    public void showNoNetwork() {
+
+    }
+
+    @Override
+    public void showPicturesList() {
+
+    }
+
+    @Override
+    public void goToWallpaperActivity(int position, ArrayList<Image> images) {
+
+    }
 }

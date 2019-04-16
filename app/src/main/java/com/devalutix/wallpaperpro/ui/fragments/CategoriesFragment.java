@@ -15,7 +15,10 @@ import com.devalutix.wallpaperpro.R;
 import com.devalutix.wallpaperpro.base.BaseApplication;
 import com.devalutix.wallpaperpro.contracts.CategoriesContract;
 import com.devalutix.wallpaperpro.di.components.ApplicationComponent;
+import com.devalutix.wallpaperpro.pojo.Category;
 import com.devalutix.wallpaperpro.presenters.CategoriesPresenter;
+
+import java.util.ArrayList;
 
 import javax.inject.Inject;
 
@@ -58,7 +61,7 @@ public class CategoriesFragment extends Fragment implements CategoriesContract.V
         View view = inflater.inflate(R.layout.fragment_category, container, false);
 
         //Init ButterKnife
-        ButterKnife.bind(this,view);
+        ButterKnife.bind(this, view);
 
         //Inject Component (Dependency Injection)
         ((BaseApplication) getActivity().getApplication()).getComponent().inject(this);
@@ -70,4 +73,29 @@ public class CategoriesFragment extends Fragment implements CategoriesContract.V
     }
 
     //Methods
+    @Override
+    public void initRecyclerView(ArrayList<Category> categories) {
+
+    }
+
+    @Override
+    public void updateRecyclerView(ArrayList<Category> categories) {
+
+    }
+
+    @Override
+    public void showNoNetwork() {
+
+    }
+
+    @Override
+    public void showCategoriesList() {
+
+    }
+
+    @Override
+    public void goToImages(String categoryName) {
+
+    }
+
 }

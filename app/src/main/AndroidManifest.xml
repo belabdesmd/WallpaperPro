@@ -9,7 +9,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.activities.WallpaperActivity"></activity>
+        <activity android:name=".ui.activities.ImagesActivity"></activity>
+        <activity android:name=".ui.activities.WallpaperActivity" />
         <activity
             android:name=".ui.activities.SettingsActivity"
             android:label="@string/title_activity_settings" />

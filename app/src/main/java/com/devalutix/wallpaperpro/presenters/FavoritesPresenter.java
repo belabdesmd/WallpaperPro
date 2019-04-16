@@ -2,7 +2,10 @@ package com.devalutix.wallpaperpro.presenters;
 
 import com.devalutix.wallpaperpro.contracts.CategoriesContract;
 import com.devalutix.wallpaperpro.contracts.FavoritesContract;
+import com.devalutix.wallpaperpro.pojo.Collection;
 import com.devalutix.wallpaperpro.ui.fragments.FavoritesFragment;
+
+import java.util.ArrayList;
 
 import javax.inject.Inject;
 
@@ -34,4 +37,18 @@ public class FavoritesPresenter implements FavoritesContract.Presenter {
     }
 
     //Methods
+    @Override
+    public void initRecyclerView() {
+
+    }
+
+    @Override
+    public void addCollection(Collection collection) {
+
+    }
+
+    @Override
+    public ArrayList<Collection> getCollectionsList() {
+        return null;
+    }
 }

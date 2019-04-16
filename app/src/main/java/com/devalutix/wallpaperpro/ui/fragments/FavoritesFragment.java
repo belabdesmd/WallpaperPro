@@ -15,8 +15,11 @@ import com.devalutix.wallpaperpro.R;
 import com.devalutix.wallpaperpro.base.BaseApplication;
 import com.devalutix.wallpaperpro.contracts.FavoritesContract;
 import com.devalutix.wallpaperpro.di.components.ApplicationComponent;
+import com.devalutix.wallpaperpro.pojo.Collection;
 import com.devalutix.wallpaperpro.presenters.ExplorePresenter;
 import com.devalutix.wallpaperpro.presenters.FavoritesPresenter;
+
+import java.util.ArrayList;
 
 import javax.inject.Inject;
 
@@ -59,7 +62,7 @@ public class FavoritesFragment extends Fragment implements FavoritesContract.Vie
         View view = inflater.inflate(R.layout.fragment_favorite, container, false);
 
         //Init ButterKnife
-        ButterKnife.bind(this,view);
+        ButterKnife.bind(this, view);
 
         //Inject Component (Dependency Injection)
         ((BaseApplication) getActivity().getApplication()).getComponent().inject(this);
@@ -71,4 +74,33 @@ public class FavoritesFragment extends Fragment implements FavoritesContract.Vie
     }
 
     //Methods
+    @Override
+    public void initPopUpWindow() {
+
+    }
+
+    @Override
+    public void initRecyclerView(ArrayList<Collection> collections) {
+
+    }
+
+    @Override
+    public void updateRecyclerView(ArrayList<Collection> collections) {
+
+    }
+
+    @Override
+    public void showPopUpWindow() {
+
+    }
+
+    @Override
+    public void hidePopUpWindow() {
+
+    }
+
+    @Override
+    public void goToImages(String collectionName) {
+
+    }
 }

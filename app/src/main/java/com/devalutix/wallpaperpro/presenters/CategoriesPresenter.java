@@ -1,7 +1,10 @@
 package com.devalutix.wallpaperpro.presenters;
 
 import com.devalutix.wallpaperpro.contracts.CategoriesContract;
+import com.devalutix.wallpaperpro.pojo.Category;
 import com.devalutix.wallpaperpro.ui.fragments.CategoriesFragment;
+
+import java.util.ArrayList;
 
 import javax.inject.Inject;
 
@@ -33,4 +36,23 @@ public class CategoriesPresenter implements CategoriesContract.Presenter {
     }
 
     //Methods
+    @Override
+    public void checkNetwork() {
+
+    }
+
+    @Override
+    public void initRecyclerView() {
+
+    }
+
+    @Override
+    public void updateRecyclerView(String mode) {
+
+    }
+
+    @Override
+    public ArrayList<Category> getCategories() {
+        return null;
+    }
 }

@@ -2,6 +2,7 @@ package com.devalutix.wallpaperpro.presenters;
 
 import com.devalutix.wallpaperpro.contracts.CategoriesContract;
 import com.devalutix.wallpaperpro.contracts.WallpaperContract;
+import com.devalutix.wallpaperpro.pojo.Image;
 import com.devalutix.wallpaperpro.ui.activities.MainActivity;
 import com.devalutix.wallpaperpro.ui.activities.WallpaperActivity;
 
@@ -35,4 +36,23 @@ public class WallpaperPresenter implements WallpaperContract.Presenter {
     }
 
     //Methods
+    @Override
+    public void savePicture(String url) {
+
+    }
+
+    @Override
+    public void addToFavorites() {
+
+    }
+
+    @Override
+    public void addRating(Image image) {
+
+    }
+
+    @Override
+    public void sharePicture() {
+
+    }
 }

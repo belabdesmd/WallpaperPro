@@ -10,8 +10,10 @@ import com.devalutix.wallpaperpro.di.modules.ApplicationModule;
 import com.devalutix.wallpaperpro.presenters.CategoriesPresenter;
 import com.devalutix.wallpaperpro.presenters.ExplorePresenter;
 import com.devalutix.wallpaperpro.presenters.FavoritesPresenter;
+import com.devalutix.wallpaperpro.presenters.ImagesPresenter;
 import com.devalutix.wallpaperpro.presenters.MainPresenter;
 import com.devalutix.wallpaperpro.presenters.WallpaperPresenter;
+import com.devalutix.wallpaperpro.ui.activities.ImagesActivity;
 import com.devalutix.wallpaperpro.ui.activities.MainActivity;
 import com.devalutix.wallpaperpro.ui.activities.WallpaperActivity;
 import com.devalutix.wallpaperpro.ui.fragments.CategoriesFragment;
@@ -36,6 +38,7 @@ public interface ApplicationComponent {
     //Inject in Activities
     void inject(MainActivity mainActivity);
     void inject(WallpaperActivity wallpaperActivity);
+    void inject(ImagesActivity imagesActivity);
 
     //Inject in Fragments
     void inject(FavoritesFragment favorites);
@@ -58,6 +61,7 @@ public interface ApplicationComponent {
     CategoriesPresenter getCategoriesPresenter();
     FavoritesPresenter getFavoritesPresenter();
     WallpaperPresenter getWallpaperPresenter();
+    ImagesPresenter getImagesPresenter();
 
     //Utils
 }

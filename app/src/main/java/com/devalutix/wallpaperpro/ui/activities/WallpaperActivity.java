@@ -43,4 +43,63 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
     }
 
     //Methods
+    @Override
+    public void initViewPager() {
+
+    }
+
+    @Override
+    public void initPopUpInfos() {
+
+    }
+
+    @Override
+    public void initPopUpRate() {
+
+    }
+
+    @Override
+    public void initPopUpFavorite() {
+
+    }
+
+    @Override
+    public void initInterstitialAd() {
+
+    }
+
+    @Override
+    public void showInfos() {
+
+    }
+
+    @Override
+    public void hideInfos() {
+
+    }
+
+    @Override
+    public void showRate() {
+
+    }
+
+    @Override
+    public void hideRate() {
+
+    }
+
+    @Override
+    public void showFavorite() {
+
+    }
+
+    @Override
+    public void hideFavorite() {
+
+    }
+
+    @Override
+    public void showInterstitialAd() {
+
+    }
 }

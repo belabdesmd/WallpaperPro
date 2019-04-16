@@ -1,6 +1,5 @@
 package com.devalutix.wallpaperpro.presenters;
 
-import com.devalutix.wallpaperpro.contracts.CategoriesContract;
 import com.devalutix.wallpaperpro.contracts.MainContract;
 import com.devalutix.wallpaperpro.ui.activities.MainActivity;
 
@@ -34,4 +33,13 @@ public class MainPresenter implements MainContract.Presenter {
     }
 
     //Methods
+    @Override
+    public void requestPermission() {
+
+    }
+
+    @Override
+    public void initGDPR() {
+
+    }
 }
