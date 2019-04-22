@@ -54,16 +54,16 @@ Mockups-Low Fidelity : [Check Mockup](./20190416_081423.jpg)
         - [ ] Share App
         - [ ] Social Media (Facebook/Instagram...)
   - [ ] Search Bar
-  - [ ] View Pager:
-    - [ ] Explore:
+  - [x] View Pager:
+    - [x] Explore:
       - [ ] Filter Options:
         - [ ] Recent
         - [ ] Popular
         - [ ] Featured
       - [ ] Pictures (Grid RecyclerView)
-    - [ ] Categories:
+    - [x] Categories:
       - [ ] Categories (List RecyclerView)
-    - [ ] Favorites:
+    - [x] Favorites:
       - [ ] Add Collection (Button)
       - [ ] Collections (Cards) -> Click
         + [ ] MyFavorites Card (By Default)
