@@ -87,72 +87,27 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         //Init Tabs
         initTabLayout();
 
-        //View Pager Listener
-        final MainActivity thisActivity = this;
-        mViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                switch (position) {
-                    case 0: {
-                        title.setText(Config.tabTitles[0]);
-                        showSearchBar();
-
-                        //thisActivity.enableTabAt(0);
-                    }
-                    break;
-                    case 1: {
-                        title.setText(Config.tabTitles[1]);
-                        hideAll();
-
-                        //thisActivity.enableTabAt(1);
-                    }
-                    break;
-                    case 2: {
-                        title.setText(Config.tabTitles[2]);
-                        showAddCollection();
-
-                        //thisActivity.enableTabAt(2);
-                    }
-                    break;
-                }
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-                switch (position) {
-                    case 0: {
-                        title.setText(Config.tabTitles[0]);
-                        showSearchBar();
-
-                        //thisActivity.enableTabAt(0);
-                    }
-                    break;
-                    case 1: {
-                        title.setText(Config.tabTitles[1]);
-                        hideAll();
-
-                        //thisActivity.enableTabAt(1);
-                    }
-                    break;
-                    case 2: {
-                        title.setText(Config.tabTitles[2]);
-                        showAddCollection();
-
-                        //thisActivity.enableTabAt(2);
-                    }
-                    break;
-                }
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-                //Nothing
-            }
-        });
-
+        //TabLayout Listener
         mTab.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
+                switch (tab.getPosition()) {
+                    case 0: {
+                        title.setText(Config.tabTitles[0]);
+                        showSearchBar();
+                    }
+                    break;
+                    case 1: {
+                        title.setText(Config.tabTitles[1]);
+                        hideAll();
+                    }
+                    break;
+                    case 2: {
+                        title.setText(Config.tabTitles[2]);
+                        showAddCollection();
+                    }
+                    break;
+                }
                 ((ImageView) tab.getCustomView().findViewById(R.id.tab_icon))
                         .setImageResource(Config.tabIconsEnabled[tab.getPosition()]);
                 tab.getCustomView().findViewById(R.id.tab_title).setVisibility(View.VISIBLE);
