@@ -3,6 +3,8 @@ Wallpaper App (for CodeCanyon)
 
 Competition: [Walper - Wallpaper Android Application 1.1](https://codecanyon.net/item/walper-wallpaper-android-application-10/23448932?s_rank=2)
 
+Mockups-Low Fidelity : [Check Mockup](./20190416_081423.jpg)
+
 <h2>Features:</h2>
 
 - Admin Panel:
