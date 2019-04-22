@@ -15,7 +15,6 @@ public class CategoriesPresenter implements CategoriesContract.Presenter {
     CategoriesFragment mView;
 
     //Constructor
-    @Inject
     public CategoriesPresenter() {
     }
 

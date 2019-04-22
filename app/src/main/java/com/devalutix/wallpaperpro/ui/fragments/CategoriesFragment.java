@@ -1,7 +1,5 @@
 package com.devalutix.wallpaperpro.ui.fragments;
 
-import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -14,7 +12,10 @@ import android.view.ViewGroup;
 import com.devalutix.wallpaperpro.R;
 import com.devalutix.wallpaperpro.base.BaseApplication;
 import com.devalutix.wallpaperpro.contracts.CategoriesContract;
-import com.devalutix.wallpaperpro.di.components.ApplicationComponent;
+import com.devalutix.wallpaperpro.di.components.DaggerMVPComponent;
+import com.devalutix.wallpaperpro.di.components.MVPComponent;
+import com.devalutix.wallpaperpro.di.modules.ApplicationModule;
+import com.devalutix.wallpaperpro.di.modules.MVPModule;
 import com.devalutix.wallpaperpro.pojo.Category;
 import com.devalutix.wallpaperpro.presenters.CategoriesPresenter;
 
@@ -26,7 +27,7 @@ public class CategoriesFragment extends Fragment implements CategoriesContract.V
     private static String TAG = "CategoriesFragment";
 
     //Declarations
-    protected ApplicationComponent mComponent;
+    MVPComponent mvpComponent;
     @Inject
     CategoriesPresenter mPresenter;
 
@@ -63,13 +64,27 @@ public class CategoriesFragment extends Fragment implements CategoriesContract.V
         //Init ButterKnife
         ButterKnife.bind(this, view);
 
-        //Inject Component (Dependency Injection)
-        ((BaseApplication) getActivity().getApplication()).getComponent().inject(this);
+        //Initialize Dagger For Application
+        mvpComponent = getComponent();
+
+        //Inject the Component Here
+        mvpComponent.inject(this);
 
         //Attach View To Presenter
         mPresenter.attach(this);
 
         return view;
+    }
+
+    public MVPComponent getComponent() {
+        if (mvpComponent == null) {
+            mvpComponent = DaggerMVPComponent
+                    .builder()
+                    .applicationModule(new ApplicationModule(getActivity().getApplication()))
+                    .mVPModule(new MVPModule(getActivity()))
+                    .build();
+        }
+        return mvpComponent;
     }
 
     //Methods

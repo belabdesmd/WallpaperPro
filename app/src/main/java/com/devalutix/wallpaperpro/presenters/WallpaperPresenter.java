@@ -15,7 +15,6 @@ public class WallpaperPresenter implements WallpaperContract.Presenter {
     WallpaperActivity mView;
 
     //Constructor
-    @Inject
     public WallpaperPresenter() {
     }
 

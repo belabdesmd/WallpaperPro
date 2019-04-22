@@ -46,13 +46,14 @@ dependencies {
     annotationProcessor "com.jakewharton:butterknife-compiler:$ButterKnifeVersion"
 
     //Dagger
-    implementation "com.google.dagger:dagger-android:$DaggerVersion"
-    implementation "com.google.dagger:dagger-android-support:$DaggerVersion"
-    annotationProcessor "com.google.dagger:dagger-android-processor:$DaggerVersion"
-    annotationProcessor "com.google.dagger:dagger-compiler:$DaggerVersion"
+    implementation 'com.google.dagger:dagger:2.21'
+    annotationProcessor 'com.google.dagger:dagger-compiler:2.21'
 
     //Picasso
     implementation 'com.squareup.picasso:picasso:2.71828'
+
+    //Gson
+    implementation 'com.google.code.gson:gson:2.8.5'
 
     //Firebase
 //    implementation "com.google.firebase:firebase-core:16.0.8"

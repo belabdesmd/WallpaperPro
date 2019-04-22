@@ -16,7 +16,6 @@ public class ExplorePresenter implements ExploreContract.Presenter {
     ExploreFragment mView;
 
     //Constructor
-    @Inject
     public ExplorePresenter() {
     }
 

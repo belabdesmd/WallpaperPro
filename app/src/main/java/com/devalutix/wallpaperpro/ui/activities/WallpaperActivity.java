@@ -7,9 +7,11 @@ import android.os.Bundle;
 
 import com.devalutix.wallpaperpro.R;
 import com.devalutix.wallpaperpro.base.BaseApplication;
-import com.devalutix.wallpaperpro.contracts.MainContract;
 import com.devalutix.wallpaperpro.contracts.WallpaperContract;
-import com.devalutix.wallpaperpro.di.components.ApplicationComponent;
+import com.devalutix.wallpaperpro.di.components.DaggerMVPComponent;
+import com.devalutix.wallpaperpro.di.components.MVPComponent;
+import com.devalutix.wallpaperpro.di.modules.ApplicationModule;
+import com.devalutix.wallpaperpro.di.modules.MVPModule;
 import com.devalutix.wallpaperpro.presenters.WallpaperPresenter;
 
 import javax.inject.Inject;
@@ -18,7 +20,7 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
     private static String TAG = "WallpaperActivity";
 
     //Declarations
-    protected ApplicationComponent mComponent;
+    MVPComponent mvpComponent;
     @Inject
     WallpaperPresenter mPresenter;
 
@@ -35,11 +37,25 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
         //Set ButterKnife
         ButterKnife.bind(this);
 
-        //Inject Component (Dependency Injection)
-        ((BaseApplication) getApplication()).getComponent().inject(this);
+        //Initialize Dagger For Application
+        mvpComponent = getComponent();
+
+        //Inject the Component Here
+        mvpComponent.inject(this);
 
         //Attach View To Presenter
         mPresenter.attach(this);
+    }
+
+    public MVPComponent getComponent() {
+        if (mvpComponent == null) {
+            mvpComponent = DaggerMVPComponent
+                    .builder()
+                    .applicationModule(new ApplicationModule(getApplication()))
+                    .mVPModule(new MVPModule(this))
+                    .build();
+        }
+        return mvpComponent;
     }
 
     //Methods

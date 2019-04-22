@@ -16,7 +16,6 @@ public class FavoritesPresenter implements FavoritesContract.Presenter {
     FavoritesFragment mView;
 
     //Constructor
-    @Inject
     public FavoritesPresenter() {
     }
 

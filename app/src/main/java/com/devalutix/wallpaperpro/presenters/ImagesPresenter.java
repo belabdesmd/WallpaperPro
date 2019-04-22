@@ -15,7 +15,6 @@ public class ImagesPresenter implements ImagesContract.Presenter {
     ImagesActivity mView;
 
     //Constructor
-    @Inject
     public ImagesPresenter() {
     }
 
