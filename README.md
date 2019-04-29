@@ -37,6 +37,7 @@ Mockups-Low Fidelity : [Check Mockup](./20190416_081423.jpg)
     - Search Picture (by Tags)
     
 <h2>Steps (App UI Structure):</h2>
+
 - [ ] Splash Screen
   + [ ] App Logo
 - [ ] Main Activity:
