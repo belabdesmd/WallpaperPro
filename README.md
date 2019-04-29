@@ -36,68 +36,65 @@ Mockups-Low Fidelity : [Check Mockup](./20190416_081423.jpg)
       - Popular
     - Search Picture (by Tags)
     
-<h2>Steps (App UI):</h2>
-    
-- [ ] Splash Screen:
+<h2>Steps (App UI Structure):</h2>
+- [ ] Splash Screen
   + [ ] App Logo
 - [ ] Main Activity:
-  - [ ] DrawerMenu:
-    - [ ] Index (Swipe Right To Show Drawer Menu)
-    - [ ] Navigation Menu:
-      - [ ] Favorites (Go To Favorites)
-      - [ ] Settings (Go To Settings)
-      - ...
-      - [ ] Categories (Go To Category)
-      - [ ] Others:
-        - [ ] FAQ
-        - [ ] Rate App
-        - [ ] Share App
-        - [ ] Social Media (Facebook/Instagram...)
-  - [ ] Search Bar
-  - [x] View Pager:
-    - [x] Explore:
-      - [ ] Filter Options:
+  - [ ] View Pager:
+    - [ ] Explore Fragment
+      - [ ] Filters:
+        - [ ] Featured
         - [ ] Recent
         - [ ] Popular
-        - [ ] Featured
-      - [ ] Pictures (Grid RecyclerView)
-    - [x] Categories:
-      - [ ] Categories (List RecyclerView)
-    - [x] Favorites:
-      - [ ] Add Collection (Button)
-      - [ ] Collections (Cards) -> Click
-        + [ ] MyFavorites Card (By Default)
-        + ->
-          - [ ] Edit Collection Name
-          - [ ] Pictures
+      - [ ] Images (Recycler View)
+    - [ ] Categories Fragment:
+      - [ ] Categories (Recycler View)
+    - [ ] Favorites Fragment:
+      - [ ] Collections (Recycler View)
+  - [ ] Drawer Menu:
+    - [ ] Categroies (Dynamique Drawer Menu)
+    - [ ] Others:
+      - [ ] Settings
+      - [ ] FAQ
+      - [ ] ...
+- [ ] Wallpaper Activity:
+  - [ ] View Pager (Images)
+  - [ ] Toolbar + Favorites Button
+  - [ ] Actions PopUpMenu
+    - [ ] Index
+    - [ ] Content:
+      - [ ] Title
+      - [ ] Actions:
+        - [ ] Rate
+        - [ ] Download
+        - [ ] Share
+      - [ ] Donwloads Info
+      - [ ] Rating Info
+      - [ ] Categories
+      - [ ] Tags
+      - [ ] Set Wallpaper Button
+    + [ ] Rating PopUp:
+      - [ ] Dismiss Button
+      - [ ] RatingBar
+      - [ ] Rating Button
+    + [ ] Favorite PopUp
+      - [ ] Dismiss Button
+      - [ ] Picture is saved Message
+      - [ ] Collections List + Add Collection Button
+- [ ] ImagesActivity:
+  - [ ] Toolbar (Category/Collection Name)
+  - [ ] Collection Infos:
+    - [ ] Items Info
+    - [ ] Edit Button
+    - [ ] Remove Button
+  - [ ] Recycler View (Images)
 - [ ] Settings Activity:
-  - [ ] Dark Mode (Checkebox to enable)
-  - [ ] GDPR Option (Link)
-  - [ ] Notifications (Checkbox to enable)
-- [ ] Picture (Wallpaper) Activity:
-  - [ ] Set As Wallpaper (On Top)
-  - [ ] Floating Button:
-    - Share
-    - Download
-    - Download As
-    - Add To Favorite
-    - Rate
-  - [ ] PopUp Window (Swipe To Show)
-    - Name
-    - Views
-    - Rating
-    - Downloads
+  - ...
+
+<h2>Steps (App UI Events):</h2>
+
+<h2>Steps (App Logic):</h2>
 
 <h2>Steps (Admin Panel):</h2>
 
-...
-
-<h2>Steps (Link App With Admin Panel):</h2>
-
-- [ ] Additional:
-  - [ ] Permission Request
-  - [ ] Ads Init
-  - [ ] GDPR Init
-  - [ ] Dark Mode
-  - [ ] Blocking Notifications
-  - [ ] Firebase
+<h2>Steps (Link App with Admin Panel):</h2>
