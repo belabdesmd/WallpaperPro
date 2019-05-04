@@ -3,6 +3,7 @@ package com.devalutix.wallpaperpro.ui.activities;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -87,6 +88,9 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         //Init Tabs
         initTabLayout();
 
+        //Set First Page Name
+        title.setText(Config.tabTitles[0]);
+
         //TabLayout Listener
         mTab.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
@@ -108,9 +112,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
                     }
                     break;
                 }
-                ((ImageView) tab.getCustomView().findViewById(R.id.tab_icon))
-                        .setImageResource(Config.tabIconsEnabled[tab.getPosition()]);
-                tab.getCustomView().findViewById(R.id.tab_title).setVisibility(View.VISIBLE);
+                enableTabAt(tab.getPosition());
             }
 
             @Override
@@ -127,6 +129,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         });
     }
 
+    @Override
     public MVPComponent getComponent() {
         if (mvpComponent == null) {
             mvpComponent = DaggerMVPComponent

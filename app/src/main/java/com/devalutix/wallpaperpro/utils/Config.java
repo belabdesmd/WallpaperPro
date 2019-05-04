@@ -53,6 +53,8 @@ public class Config {
 
     public static final int DOWNLOADS_BEFORE_LOADING_AD = 3;
 
+    public static final String MY_FAVORITES_COLLECTION_NAME = "My Favorites";
+
 
     public static String[] tabTitles = {"Explore", "Categories", "Favorites"};
 

@@ -47,6 +47,7 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
         mPresenter.attach(this);
     }
 
+    @Override
     public MVPComponent getComponent() {
         if (mvpComponent == null) {
             mvpComponent = DaggerMVPComponent

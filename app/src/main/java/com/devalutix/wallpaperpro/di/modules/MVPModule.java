@@ -1,7 +1,6 @@
 package com.devalutix.wallpaperpro.di.modules;
 
 import android.app.Activity;
-import android.app.Application;
 import android.content.Context;
 
 import com.devalutix.wallpaperpro.di.annotations.ActivityContext;
@@ -15,6 +14,7 @@ import com.devalutix.wallpaperpro.presenters.MainPresenter;
 import com.devalutix.wallpaperpro.presenters.WallpaperPresenter;
 import com.devalutix.wallpaperpro.utils.GDPR;
 import com.devalutix.wallpaperpro.utils.PermissionUtil;
+import com.google.gson.Gson;
 
 import javax.inject.Singleton;
 
@@ -66,14 +66,14 @@ public class MVPModule {
 
     @Provides
     @Singleton
-    ExplorePresenter providesExplorePresenter(){
-        return new ExplorePresenter();
+    ExplorePresenter providesExplorePresenter(@ApplicationContext Context context, Gson gson){
+        return new ExplorePresenter(context, gson);
     }
 
     @Provides
     @Singleton
     CategoriesPresenter providesCategoriesPresenter(){
-        return new CategoriesPresenter();
+        return new CategoriesPresenter(mContext, mSharedPrefsHelper);
     }
 
     @Provides

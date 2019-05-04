@@ -1,40 +1,32 @@
 package com.devalutix.wallpaperpro.pojo;
 
 import java.util.ArrayList;
-
-import lombok.Getter;
-import lombok.Setter;
+import java.util.Date;
 
 public class Image {
 
-    @Getter
     private String imageID;
 
-    @Getter
     private String imageTitle;
 
-    @Getter
     private String imageUrl;
 
-    @Getter
     private float imageRating;
 
-    @Getter @Setter
     private int imageViews;
 
-    @Getter @Setter
     private int imageDownloads;
 
-    @Getter
     private ArrayList<String> imageCategories;
 
-    @Getter
     private ArrayList<String> imageTags;
+
+    private Date imageDateAdded;
 
     //Constructor
     public Image(String imageID, String imageTitle, String imageUrl, float imageRating,
                  int imageViews, int imageDownloads, ArrayList<String> imageCategories,
-                 ArrayList<String> imageTags) {
+                 ArrayList<String> imageTags, Date imageDateAdded) {
         this.imageID = imageID;
         this.imageTitle = imageTitle;
         this.imageUrl = imageUrl;
@@ -43,5 +35,42 @@ public class Image {
         this.imageDownloads = imageDownloads;
         this.imageCategories = imageCategories;
         this.imageTags = imageTags;
+        this.imageDateAdded = imageDateAdded;
+    }
+
+    public String getImageID() {
+        return imageID;
+    }
+
+    public String getImageTitle() {
+        return imageTitle;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public float getImageRating() {
+        return imageRating;
+    }
+
+    public int getImageViews() {
+        return imageViews;
+    }
+
+    public int getImageDownloads() {
+        return imageDownloads;
+    }
+
+    public ArrayList<String> getImageCategories() {
+        return imageCategories;
+    }
+
+    public ArrayList<String> getImageTags() {
+        return imageTags;
+    }
+
+    public Date getImageDateAdded() {
+        return imageDateAdded;
     }
 }

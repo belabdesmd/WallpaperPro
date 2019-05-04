@@ -6,15 +6,25 @@ import lombok.Setter;
 
 public class Collection {
 
-    @Getter @Setter
     private String collectioName;
 
-    @Getter
     private ArrayList<Image> collectionPictures;
 
     //Constructor
     public Collection(String collectioName, ArrayList<Image> collectionPictures) {
         this.collectioName = collectioName;
         this.collectionPictures = collectionPictures;
+    }
+
+    public String getCollectioName() {
+        return collectioName;
+    }
+
+    public ArrayList<Image> getCollectionPictures() {
+        return collectionPictures;
+    }
+
+    public void setCollectioName(String collectioName) {
+        this.collectioName = collectioName;
     }
 }

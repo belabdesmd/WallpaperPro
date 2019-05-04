@@ -10,11 +10,11 @@ public interface CategoriesContract {
 
     interface Presenter extends BasePresenter<View> {
 
-        void checkNetwork();
+        boolean checkNetwork();
 
         void initRecyclerView();
 
-        void updateRecyclerView(String mode);
+        void updateRecyclerView();
 
         ArrayList<Category> getCategories();
     }

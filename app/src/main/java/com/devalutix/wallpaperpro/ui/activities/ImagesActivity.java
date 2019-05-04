@@ -50,6 +50,7 @@ public class ImagesActivity extends AppCompatActivity implements ImagesContract.
         mPresenter.attach(this);
     }
 
+    @Override
     public MVPComponent getComponent() {
         if (mvpComponent == null) {
             mvpComponent = DaggerMVPComponent

@@ -77,4 +77,7 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="ADMOB_AD_BANNER_ID">test</string>
+    <string name="popular">Popular</string>
+    <string name="recent">Recent</string>
+    <string name="featured">Featured</string>
 </resources>

@@ -10,7 +10,7 @@ public interface ExploreContract {
 
     interface Presenter extends BasePresenter<ExploreContract.View> {
 
-        void checkNetwork();
+        boolean checkNetwork();
 
         void initRecyclerView();
 
@@ -21,6 +21,8 @@ public interface ExploreContract {
         ArrayList<Image> getPopular();
 
         ArrayList<Image> getFeatured();
+
+        String listToString(ArrayList<Image> images);
     }
 
     interface View extends BaseView {

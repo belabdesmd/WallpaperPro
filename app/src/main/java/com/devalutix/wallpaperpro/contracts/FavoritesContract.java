@@ -19,15 +19,9 @@ public interface FavoritesContract {
 
     interface View extends BaseView {
 
-        void initPopUpWindow();
-
         void initRecyclerView(ArrayList<Collection> collections);
 
         void updateRecyclerView(ArrayList<Collection> collections);
-
-        void showPopUpWindow();
-
-        void hidePopUpWindow();
 
         void goToImages(String collectionName);
 
