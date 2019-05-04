@@ -54,14 +54,14 @@ public class MVPModule {
 
     @Provides
     @Singleton
-    ImagesPresenter providesImagesPresenter(){
-        return new ImagesPresenter();
+    ImagesPresenter providesImagesPresenter(Gson gson, @ApplicationContext Context mContext, SharedPreferencesHelper mSharedPrefsHelper){
+        return new ImagesPresenter(gson, mContext, mSharedPrefsHelper);
     }
 
     @Provides
     @Singleton
-    WallpaperPresenter providesWallpaperPresenter(){
-        return new WallpaperPresenter();
+    WallpaperPresenter providesWallpaperPresenter(Gson gson){
+        return new WallpaperPresenter(gson);
     }
 
     @Provides
@@ -72,13 +72,13 @@ public class MVPModule {
 
     @Provides
     @Singleton
-    CategoriesPresenter providesCategoriesPresenter(){
+    CategoriesPresenter providesCategoriesPresenter(@ApplicationContext Context mContext, SharedPreferencesHelper mSharedPrefsHelper){
         return new CategoriesPresenter(mContext, mSharedPrefsHelper);
     }
 
     @Provides
     @Singleton
-    FavoritesPresenter providesFavoritesPresenter(){
-        return new FavoritesPresenter();
+    FavoritesPresenter providesFavoritesPresenter(SharedPreferencesHelper sharedPreferencesHelper){
+        return new FavoritesPresenter(sharedPreferencesHelper);
     }
 }

@@ -9,14 +9,22 @@ public interface ImagesContract {
 
     interface Presenter extends BasePresenter<ImagesContract.View> {
 
-        void initRecyclerView(String mode);
+        boolean checkNetwork();
 
-        ArrayList<Image> getImagesFromCollection();
+        void initRecyclerView(String mode,String name);
 
-        ArrayList<Image> getImageFromCategory();
+        void updateRecyclerView(String name);
+
+        ArrayList<Image> getImagesFromCollection(String name);
+
+        ArrayList<Image> getImageFromCategory(String name);
+
+        String listToString(ArrayList<Image> images);
     }
 
     interface View extends BaseView {
+
+        void setToolbar();
 
         void setPageName(String name);
 
@@ -26,5 +34,12 @@ public interface ImagesContract {
 
         void goToWallpaperActivity(int position,ArrayList<Image> images);
 
+        void showNoNetwork();
+
+        void showPicturesList();
+
+        void showCollectionActions();
+
+        void hideCollectionActions();
     }
 }

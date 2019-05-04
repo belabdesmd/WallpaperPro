@@ -12,6 +12,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -138,6 +139,7 @@ public class ExploreFragment extends Fragment implements ExploreContract.View {
     }
 
     //Methods
+
     @Override
     public void initRecyclerView(ArrayList<Image> images) {
 
@@ -146,7 +148,7 @@ public class ExploreFragment extends Fragment implements ExploreContract.View {
 
         //Declarations
         StaggeredGridLayoutManager mLayoutManager = new StaggeredGridLayoutManager(COL_NUM, StaggeredGridLayoutManager.VERTICAL);
-        mAdapter = new ImagesAdapter(mPresenter, images, this);
+        mAdapter = new ImagesAdapter(images, this);
 
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(mAdapter);

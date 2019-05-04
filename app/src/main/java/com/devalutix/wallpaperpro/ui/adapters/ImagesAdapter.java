@@ -14,22 +14,27 @@ import com.bumptech.glide.Glide;
 import com.devalutix.wallpaperpro.R;
 import com.devalutix.wallpaperpro.pojo.Image;
 import com.devalutix.wallpaperpro.presenters.ExplorePresenter;
+import com.devalutix.wallpaperpro.ui.activities.ImagesActivity;
 import com.devalutix.wallpaperpro.ui.fragments.ExploreFragment;
 
 import java.util.ArrayList;
 
-public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ViewHolder>{
+public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ViewHolder> {
     private static final String TAG = "ImagesAdapter";
 
     //Declarations
-    private ExplorePresenter mPresenter;
     private ArrayList<Image> mImages;
-    private ExploreFragment mView;
+    private ExploreFragment mView = null;
+    private ImagesActivity mView1 = null;
 
-    public ImagesAdapter(ExplorePresenter mPresenter, ArrayList<Image> mImages, ExploreFragment mView) {
-        this.mPresenter = mPresenter;
+    public ImagesAdapter(ArrayList<Image> mImages, ExploreFragment mView) {
         this.mImages = mImages;
         this.mView = mView;
+    }
+
+    public ImagesAdapter(ArrayList<Image> mImages, ImagesActivity mView1) {
+        this.mImages = mImages;
+        this.mView1 = mView1;
     }
 
     @NonNull
@@ -48,18 +53,29 @@ public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ViewHolder
         Log.d(TAG, "onBindViewHolder: Setting Views.");
 
         //Loading the Image
-        Glide.with(mView)
-                .load(mImages.get(position).getImageUrl())
-                .fitCenter()
-                //.placeholder(R.drawable.loading_spinner)
-                .into(holder.image);
+        if (mView == null)
+            Glide.with(mView1)
+                    .load(mImages.get(position).getImageUrl())
+                    .fitCenter()
+                    //.placeholder(R.drawable.loading_spinner)
+                    .into(holder.image);
+        else if (mView1 == null)
+            Glide.with(mView)
+                    .load(mImages.get(position).getImageUrl())
+                    .fitCenter()
+                    //.placeholder(R.drawable.loading_spinner)
+                    .into(holder.image);
 
         //Click Listener
         final int finalPosition = position;
         holder.container.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mView.goToWallpaperActivity(finalPosition,mImages);
+
+                if (mView == null)
+                    mView1.goToWallpaperActivity(finalPosition, mImages);
+                else if (mView1 == null)
+                    mView.goToWallpaperActivity(finalPosition, mImages);
             }
         });
     }

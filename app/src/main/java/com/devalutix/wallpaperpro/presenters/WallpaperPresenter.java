@@ -5,6 +5,10 @@ import com.devalutix.wallpaperpro.contracts.WallpaperContract;
 import com.devalutix.wallpaperpro.pojo.Image;
 import com.devalutix.wallpaperpro.ui.activities.MainActivity;
 import com.devalutix.wallpaperpro.ui.activities.WallpaperActivity;
+import com.google.gson.Gson;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import javax.inject.Inject;
 
@@ -12,10 +16,12 @@ public class WallpaperPresenter implements WallpaperContract.Presenter {
     private static String TAG = "WallpaperPresenter";
 
     //Declarations
-    WallpaperActivity mView;
+    private WallpaperActivity mView;
+    private Gson gson;
 
     //Constructor
-    public WallpaperPresenter() {
+    public WallpaperPresenter(Gson gson) {
+        this.gson = gson;
     }
 
     //Essential Methods
@@ -53,5 +59,11 @@ public class WallpaperPresenter implements WallpaperContract.Presenter {
     @Override
     public void sharePicture() {
 
+    }
+
+    @Override
+    public ArrayList<Image> getImages(String images) {
+        Image[] imageUrlsArray = gson.fromJson(images, Image[].class);
+        return new ArrayList<Image>(Arrays.asList(imageUrlsArray));
     }
 }

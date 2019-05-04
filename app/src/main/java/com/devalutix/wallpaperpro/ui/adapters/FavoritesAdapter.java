@@ -67,7 +67,7 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.View
         holder.container.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mView.goToImages(mCollections.get(finalPosition));
+                mView.goToImages(mCollections.get(finalPosition).getCollectioName());
             }
         });
     }

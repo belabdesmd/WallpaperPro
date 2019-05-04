@@ -6,4 +6,16 @@
     android:layout_height="match_parent"
     tools:context=".ui.activities.WallpaperActivity">
 
+    <include
+        android:id="@+id/wallpaper_toolbar"
+        layout="@layout/toolbar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/wallpaper_viewpager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
