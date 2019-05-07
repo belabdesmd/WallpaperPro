@@ -49,7 +49,7 @@ public class SharedPreferencesHelper {
         String jsonToString = gson.toJson(collections);
         SharedPreferences.Editor editor;
         editor = sharedPref.edit();
-        editor.putString(CATEGORIES, jsonToString).apply();
+        editor.putString(COLLECTIONS, jsonToString).apply();
     }
 
     public ArrayList<Collection> getCollections() {

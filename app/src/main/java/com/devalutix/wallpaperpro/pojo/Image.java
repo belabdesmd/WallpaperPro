@@ -17,25 +17,33 @@ public class Image {
 
     private int imageDownloads;
 
-    private ArrayList<String> imageCategories;
+    private ArrayList<Category> imageCategories;
 
     private ArrayList<String> imageTags;
 
     private Date imageDateAdded;
 
+    private int imageLikes;
+
+    private int imageDislikes;
+
+    private String imageOwner;
+
     //Constructor
-    public Image(String imageID, String imageTitle, String imageUrl, float imageRating,
-                 int imageViews, int imageDownloads, ArrayList<String> imageCategories,
-                 ArrayList<String> imageTags, Date imageDateAdded) {
+    public Image(String imageID, String imageTitle, String imageUrl,
+                 int imageViews, int imageDownloads, ArrayList<Category> imageCategories,
+                 ArrayList<String> imageTags, Date imageDateAdded, int imageLikes, int imageDislikes, String imageOwner) {
         this.imageID = imageID;
         this.imageTitle = imageTitle;
         this.imageUrl = imageUrl;
-        this.imageRating = imageRating;
         this.imageViews = imageViews;
         this.imageDownloads = imageDownloads;
         this.imageCategories = imageCategories;
         this.imageTags = imageTags;
         this.imageDateAdded = imageDateAdded;
+        this.imageLikes = imageLikes;
+        this.imageDislikes = imageDislikes;
+        this.imageOwner = imageOwner;
     }
 
     public String getImageID() {
@@ -62,7 +70,7 @@ public class Image {
         return imageDownloads;
     }
 
-    public ArrayList<String> getImageCategories() {
+    public ArrayList<Category> getImageCategories() {
         return imageCategories;
     }
 
@@ -72,5 +80,17 @@ public class Image {
 
     public Date getImageDateAdded() {
         return imageDateAdded;
+    }
+
+    public int getImageLikes() {
+        return imageLikes;
+    }
+
+    public int getImageDislikes() {
+        return imageDislikes;
+    }
+
+    public String getImageOwner() {
+        return imageOwner;
     }
 }

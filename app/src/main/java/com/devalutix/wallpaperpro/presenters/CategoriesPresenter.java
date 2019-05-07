@@ -74,12 +74,22 @@ public class CategoriesPresenter implements CategoriesContract.Presenter {
 
     @Override
     public ArrayList<Category> getCategories() {
-        ArrayList<Category> categories = null;
+
+        //TODO: Remove Dummy Data
+        ArrayList<Category> imageCategories = new ArrayList<>();
+        imageCategories.add(new Category("Nature","https://images.pexels.com/photos/1054289/pexels-photo-1054289.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"));
+        imageCategories.add(new Category("Sea","https://images.pexels.com/photos/1054289/pexels-photo-1054289.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"));
+        imageCategories.add(new Category("Sky","https://images.pexels.com/photos/1054289/pexels-photo-1054289.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"));
+        imageCategories.add(new Category("Mountains","https://images.pexels.com/photos/1054289/pexels-photo-1054289.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"));
+
+
+        ArrayList<Category> categories = imageCategories;
 
         if (!checkNetwork() || categories == null) categories = mSharedPrefsHelper.getCategories();
         else{
             mSharedPrefsHelper.saveCategories(categories);
         }
+
         return categories;
     }
 }

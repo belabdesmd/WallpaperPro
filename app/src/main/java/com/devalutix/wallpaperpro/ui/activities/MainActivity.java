@@ -1,33 +1,50 @@
 package com.devalutix.wallpaperpro.ui.activities;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 import android.Manifest;
+import android.os.Build;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.devalutix.wallpaperpro.R;
-import com.devalutix.wallpaperpro.base.BaseApplication;
 import com.devalutix.wallpaperpro.contracts.MainContract;
 import com.devalutix.wallpaperpro.di.components.DaggerMVPComponent;
 import com.devalutix.wallpaperpro.di.components.MVPComponent;
 import com.devalutix.wallpaperpro.di.modules.ApplicationModule;
 import com.devalutix.wallpaperpro.di.modules.MVPModule;
+import com.devalutix.wallpaperpro.pojo.Category;
+import com.devalutix.wallpaperpro.pojo.Collection;
+import com.devalutix.wallpaperpro.presenters.FavoritesPresenter;
 import com.devalutix.wallpaperpro.presenters.MainPresenter;
 import com.devalutix.wallpaperpro.ui.adapters.MainPagerAdapter;
+import com.devalutix.wallpaperpro.ui.custom.CustomPopUpWindow;
 import com.devalutix.wallpaperpro.ui.fragments.CategoriesFragment;
 import com.devalutix.wallpaperpro.ui.fragments.ExploreFragment;
 import com.devalutix.wallpaperpro.ui.fragments.FavoritesFragment;
 import com.devalutix.wallpaperpro.utils.Config;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
@@ -35,6 +52,7 @@ import java.util.ArrayList;
 import javax.inject.Inject;
 
 import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
 
 public class MainActivity extends AppCompatActivity implements MainContract.View {
     private static final int REQUEST_WRITE_STORAGE = 1;
@@ -45,18 +63,33 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     @Inject
     MainPresenter mPresenter;
     private MainPagerAdapter mAdapter;
+    private FavoritesFragment favorites;
+    private ExploreFragment explore;
+    private CategoriesFragment categories;
 
     //View Declarations
+    @BindView(R.id.drawer_layout)
+    DrawerLayout mDrawerLayout;
+    @BindView(R.id.nav_view)
+    NavigationView mNavigationView;
     @BindView(R.id.view_pager_main)
     ViewPager mViewPager;
     @BindView(R.id.tab_layout_main)
     TabLayout mTab;
     @BindView(R.id.page_title)
     TextView title;
+    @BindView(R.id.add_collection)
+    ImageView add_collection;
+    @BindView(R.id.search)
+    SearchView search;
     @BindView(R.id.adView_main)
     AdView ad;
 
     //ClickListeners
+    @OnClick(R.id.add_collection)
+    public void showAddCollectionPopUp(){
+        favorites.showAddCollectionPopUp();
+    }
 
     //Essentials Methods
     @Override
@@ -127,6 +160,37 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
                 onTabSelected(tab);
             }
         });
+
+        //Navigation Menu OnClickListener
+        ArrayList<Category> categories = mPresenter.getCategories();
+
+        if (categories == null) {
+            mNavigationView.getMenu().add(R.id.categories, Menu.FIRST, Menu.NONE, "None");
+        } else {
+            int i = 0;
+            for (Category category :
+                    categories) {
+                mNavigationView.getMenu().add(R.id.categories, Menu.FIRST + i, Menu.NONE, category.getCategoryName());
+                i++;
+            }
+        }
+
+
+        mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                item.setChecked(false);
+                switch (item.getItemId()) {
+                    //
+                }
+                // close drawer when item is tapped
+                mDrawerLayout.closeDrawers();
+                return true;
+            }
+        });
+
+        if (getIntent().getBooleanExtra("ToFavorites", false))
+            mViewPager.setCurrentItem(2);
     }
 
     @Override
@@ -203,16 +267,19 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     @Override
     public void showSearchBar() {
         hideAll();
+        search.setVisibility(VISIBLE);
     }
 
     @Override
     public void showAddCollection() {
         hideAll();
+        add_collection.setVisibility(VISIBLE);
     }
 
     @Override
     public void hideAll() {
-
+        search.setVisibility(GONE);
+        add_collection.setVisibility(GONE);
     }
 
     @Override
@@ -223,7 +290,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
             if (i == x) {
                 ((ImageView) tab.getCustomView().findViewById(R.id.tab_icon))
                         .setImageResource(Config.tabIconsEnabled[i]);
-                tab.getCustomView().findViewById(R.id.tab_title).setVisibility(View.VISIBLE);
+                tab.getCustomView().findViewById(R.id.tab_title).setVisibility(VISIBLE);
 
             } else {
                 TabLayout.Tab tab1 = mTab.getTabAt(i);
@@ -238,9 +305,13 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     public void initViewPager() {
         ArrayList<Fragment> fragments = new ArrayList<>();
 
-        fragments.add(new ExploreFragment());
-        fragments.add(new CategoriesFragment());
-        fragments.add(new FavoritesFragment());
+        explore = new ExploreFragment();
+        categories = new CategoriesFragment();
+        favorites = new FavoritesFragment();
+
+        fragments.add(explore);
+        fragments.add(categories);
+        fragments.add(favorites);
 
         mAdapter = new MainPagerAdapter(getSupportFragmentManager(), fragments, MainActivity.this);
         mViewPager.setAdapter(mAdapter);

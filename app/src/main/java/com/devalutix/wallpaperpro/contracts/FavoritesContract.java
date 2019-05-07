@@ -21,9 +21,15 @@ public interface FavoritesContract {
 
         void initRecyclerView(ArrayList<Collection> collections);
 
+        void initAddCollectionPopUp();
+
         void updateRecyclerView(ArrayList<Collection> collections);
 
         void goToImages(String collectionName);
+
+        void showAddCollectionPopUp();
+
+        void hideAddCollectionPopUp();
 
     }
 

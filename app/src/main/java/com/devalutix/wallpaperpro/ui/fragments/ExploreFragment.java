@@ -42,6 +42,7 @@ public class ExploreFragment extends Fragment implements ExploreContract.View {
     private MVPComponent mvpComponent;
     private ImagesAdapter mAdapter;
     private ArrayList<Image> images;
+    private String mode = null;
     @Inject
     ExplorePresenter mPresenter;
 
@@ -57,18 +58,21 @@ public class ExploreFragment extends Fragment implements ExploreContract.View {
     @OnClick(R.id.popular_filter)
     void popularFilter(){
         mRefresh.setRefreshing(true);
+        mode = "popular";
         mPresenter.updateRecyclerView("popular");
     }
 
     @OnClick(R.id.recent_filter)
     void recentFilter(){
         mRefresh.setRefreshing(true);
+        mode = "recent";
         mPresenter.updateRecyclerView("recent");
     }
 
     @OnClick(R.id.featured_filter)
     void featuredFilter(){
         mRefresh.setRefreshing(true);
+        mode = "featured";
         mPresenter.updateRecyclerView("featured");
     }
 
@@ -111,6 +115,7 @@ public class ExploreFragment extends Fragment implements ExploreContract.View {
         mPresenter.attach(this);
 
         //init RecyclerView
+        mode = "recent";
         mRefresh.setRefreshing(true);
         mPresenter.initRecyclerView();
 
@@ -118,7 +123,7 @@ public class ExploreFragment extends Fragment implements ExploreContract.View {
         mRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                mPresenter.updateRecyclerView("recent");
+                mPresenter.updateRecyclerView(mode);
             }
         });
 

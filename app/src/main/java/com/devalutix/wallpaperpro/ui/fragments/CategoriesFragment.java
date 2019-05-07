@@ -159,7 +159,8 @@ public class CategoriesFragment extends Fragment implements CategoriesContract.V
         Intent goToWallpaper = new Intent(getActivity(), ImagesActivity.class);
 
         //Putting the Extras
-        goToWallpaper.putExtra("category",categoryName);
+        goToWallpaper.putExtra("name",categoryName);
+        goToWallpaper.putExtra("mode","category");
         goToWallpaper.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(goToWallpaper);
     }

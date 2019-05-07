@@ -1,6 +1,5 @@
 package com.devalutix.wallpaperpro.presenters;
 
-import com.devalutix.wallpaperpro.contracts.CategoriesContract;
 import com.devalutix.wallpaperpro.contracts.FavoritesContract;
 import com.devalutix.wallpaperpro.models.SharedPreferencesHelper;
 import com.devalutix.wallpaperpro.pojo.Collection;
@@ -9,8 +8,6 @@ import com.devalutix.wallpaperpro.ui.fragments.FavoritesFragment;
 import com.devalutix.wallpaperpro.utils.Config;
 
 import java.util.ArrayList;
-
-import javax.inject.Inject;
 
 public class FavoritesPresenter implements FavoritesContract.Presenter {
     private static String TAG = "FavoritesPresenter";
@@ -21,6 +18,7 @@ public class FavoritesPresenter implements FavoritesContract.Presenter {
 
     //Constructor
     public FavoritesPresenter(SharedPreferencesHelper sharedPreferencesHelper) {
+        mSharedPrefsHelper = sharedPreferencesHelper;
     }
 
     //Essential Methods
@@ -45,18 +43,12 @@ public class FavoritesPresenter implements FavoritesContract.Presenter {
         ArrayList<Collection> collections = getCollectionsList();
 
         if (collections == null){
-            ArrayList<Image> favoriteImage = new ArrayList<>();
-            favoriteImage.add(new Image("0",Config.MY_FAVORITES_COLLECTION_NAME,"",
-                    0,
-                    0,
-                    0,
-                    null,
-                    null,
-                    null));
-
-            collections.add(new Collection(Config.MY_FAVORITES_COLLECTION_NAME,favoriteImage));
+            collections = new ArrayList<>();
+            collections.add(new Collection(Config.MY_FAVORITES_COLLECTION_NAME,null));
             mSharedPrefsHelper.saveCollections(collections);
         }
+
+        mView.initRecyclerView(collections);
     }
 
     @Override

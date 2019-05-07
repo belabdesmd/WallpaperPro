@@ -47,6 +47,16 @@ public class WallpaperPresenter implements WallpaperContract.Presenter {
     }
 
     @Override
+    public void likePicture() {
+
+    }
+
+    @Override
+    public void dislikePicture() {
+
+    }
+
+    @Override
     public void addToFavorites() {
 
     }

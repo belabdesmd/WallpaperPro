@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -52,15 +53,19 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.View
     public void onBindViewHolder(@NonNull FavoritesAdapter.ViewHolder holder, int position) {
         Log.d(TAG, "onBindViewHolder: Setting Views.");
 
+
         //Loading the Image
-        Glide.with(mView)
-                .load(mCollections.get(position).getCollectionPictures().get(0).getImageUrl())
-                .fitCenter()
-                //.placeholder(R.drawable.loading_spinner)
-                .into(holder.thumbnail);
+        if (mCollections.get(position).getCollectionPictures() != null)
+            Glide.with(mView)
+                    .load(mCollections.get(position).getCollectionPictures().get(0).getImageUrl())
+                    .fitCenter()
+                    //.placeholder(R.drawable.loading_spinner)
+                    .into(holder.thumbnail);
+
 
         //Set Category Name
         holder.name.setText(mCollections.get(position).getCollectioName());
+
 
         //Click Listener
         final int finalPosition = position;
@@ -100,7 +105,7 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.View
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder
     static class ViewHolder extends RecyclerView.ViewHolder {
-        CardView container;
+        ConstraintLayout container;
         ImageView thumbnail;
         TextView name;
 

@@ -12,6 +12,10 @@ public interface WallpaperContract {
 
         void savePicture(String url);
 
+        void likePicture();
+
+        void dislikePicture();
+
         void addToFavorites();
 
         void addRating(Image image);
@@ -29,7 +33,7 @@ public interface WallpaperContract {
 
         void initPopUpInfos();
 
-        void initPopUpRate();
+        void initInfos(int position);
 
         void initPopUpFavorite();
 
@@ -38,10 +42,6 @@ public interface WallpaperContract {
         void showInfos();
 
         void hideInfos();
-
-        void showRate();
-
-        void hideRate();
 
         void showFavorite();
 
