@@ -22,7 +22,7 @@
             android:layout_marginStart="32dp"
             android:layout_marginTop="32dp"
             android:textColor="#000000"
-            android:textSize="32sp"
+            android:textSize="42sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toTopOf="@id/view_pager_main"
             app:layout_constraintStart_toStartOf="parent"
@@ -31,20 +31,20 @@
 
         <ImageView
             android:id="@+id/add_collection"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_marginEnd="32dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@id/page_title"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/page_title"
-            app:srcCompat="@drawable/ic_info_black_24dp" />
+            app:srcCompat="@drawable/add" />
 
         <androidx.appcompat.widget.SearchView
             android:id="@+id/search"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="32dp"
+            android:layout_marginEnd="16dp"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@id/page_title"
             app:layout_constraintEnd_toEndOf="parent"
@@ -54,7 +54,7 @@
             android:id="@+id/view_pager_main"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="24dp"
             app:layout_constraintBottom_toTopOf="@id/tab_layout_main"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -75,7 +75,7 @@
             android:layout_width="match_parent"
             android:layout_height="64dp"
             android:background="@color/colorPrimary"
-            android:elevation="8dp"
+            android:elevation="16dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

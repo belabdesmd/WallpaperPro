@@ -10,11 +10,14 @@ import com.devalutix.wallpaperpro.pojo.Image;
 import com.devalutix.wallpaperpro.ui.fragments.ExploreFragment;
 import com.google.gson.Gson;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Array;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 
 public class ExplorePresenter implements ExploreContract.Presenter {
@@ -60,11 +63,9 @@ public class ExplorePresenter implements ExploreContract.Presenter {
     public void initRecyclerView() {
         ArrayList<Image> images = getRecent();
 
+        mView.initRecyclerView(images);
         if (!checkNetwork() || images == null) mView.showNoNetwork();
-        else{
-            mView.initRecyclerView(images);
-            mView.showPicturesList();
-        }
+        else mView.showPicturesList();
     }
 
     @Override
@@ -90,327 +91,8 @@ public class ExplorePresenter implements ExploreContract.Presenter {
 
     @Override
     public ArrayList<Image> getRecent() {
-        ArrayList<Image> recentImages = new ArrayList<>();
-
-        ArrayList<Category> imageCategories = new ArrayList<>();
-        imageCategories.add(new Category("Nature","https://images.pexels.com/photos/1054289/pexels-photo-1054289.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"));
-        imageCategories.add(new Category("Sea","https://images.pexels.com/photos/1054289/pexels-photo-1054289.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"));
-        imageCategories.add(new Category("Sky","https://images.pexels.com/photos/1054289/pexels-photo-1054289.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"));
-        imageCategories.add(new Category("Mountains","https://images.pexels.com/photos/1054289/pexels-photo-1054289.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"));
-
-        ArrayList<String> imageTags = new ArrayList<>();
-        imageTags.add("test1");
-        imageTags.add("test2");
-        imageTags.add("test3");
-        imageTags.add("test4");
-        imageTags.add("test5");
-
-        try {
-            recentImages.add(new Image("0",
-                    "Image 1",
-                    "https://images.pexels.com/photos/1054289/pexels-photo-1054289.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
-                    326,
-                    15,
-                    imageCategories,
-                    imageTags,
-                    new SimpleDateFormat("yyyy-MM-dd").parse( "2009-12-31" ),
-                    15,
-                    12,
-                    "Belfodil Abdessamed"
-            ));
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            recentImages.add(new Image("0",
-                    "Image 1",
-                    "https://images.pexels.com/photos/1037992/pexels-photo-1037992.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
-                    326,
-                    15,
-                    imageCategories,
-                    imageTags,
-                    new SimpleDateFormat("yyyy-MM-dd").parse( "2009-12-31" ),
-                    15,
-                    12,
-                    "Belfodil Abdessamed"
-            ));
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            recentImages.add(new Image("0",
-                    "Image 1",
-                    "https://images.pexels.com/photos/1308624/pexels-photo-1308624.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
-                    326,
-                    15,
-                    imageCategories,
-                    imageTags,
-                    new SimpleDateFormat("yyyy-MM-dd").parse( "2009-12-31" ),
-                    15,
-                    12,
-                    "Belfodil Abdessamed"
-            ));
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            recentImages.add(new Image("0",
-                    "Image 1",
-                    "https://images.pexels.com/photos/1261728/pexels-photo-1261728.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
-                    326,
-                    15,
-                    imageCategories,
-                    imageTags,
-                    new SimpleDateFormat("yyyy-MM-dd").parse( "2009-12-31" ),
-                    15,
-                    12,
-                    "Belfodil Abdessamed"
-            ));
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            recentImages.add(new Image("0",
-                    "Image 1",
-                    "https://images.pexels.com/photos/990826/pexels-photo-990826.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
-                    326,
-                    15,
-                    imageCategories,
-                    imageTags,
-                    new SimpleDateFormat("yyyy-MM-dd").parse( "2009-12-31" ),
-                    15,
-                    12,
-                    "Belfodil Abdessamed"
-            ));
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            recentImages.add(new Image("0",
-                    "Image 1",
-                    "https://images.pexels.com/photos/853199/pexels-photo-853199.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
-                    326,
-                    15,
-                    imageCategories,
-                    imageTags,
-                    new SimpleDateFormat("yyyy-MM-dd").parse( "2009-12-31" ),
-                    15,
-                    12,
-                    "Belfodil Abdessamed"
-            ));
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            recentImages.add(new Image("0",
-                    "Image 1",
-                    "https://images.pexels.com/photos/1054218/pexels-photo-1054218.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
-                    326,
-                    15,
-                    imageCategories,
-                    imageTags,
-                    new SimpleDateFormat("yyyy-MM-dd").parse( "2009-12-31" ),
-                    15,
-                    12,
-                    "Belfodil Abdessamed"
-            ));
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            recentImages.add(new Image("0",
-                    "Image 1",
-                    "https://images.pexels.com/photos/1418116/pexels-photo-1418116.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
-                    326,
-                    15,
-                    imageCategories,
-                    imageTags,
-                    new SimpleDateFormat("yyyy-MM-dd").parse( "2009-12-31" ),
-                    15,
-                    12,
-                    "Belfodil Abdessamed"
-            ));
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            recentImages.add(new Image("0",
-                    "Image 1",
-                    "https://images.pexels.com/photos/1307986/pexels-photo-1307986.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
-                    326,
-                    15,
-                    imageCategories,
-                    imageTags,
-                    new SimpleDateFormat("yyyy-MM-dd").parse( "2009-12-31" ),
-                    15,
-                    12,
-                    "Belfodil Abdessamed"
-            ));
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            recentImages.add(new Image("0",
-                    "Image 1",
-                    "https://images.pexels.com/photos/983200/pexels-photo-983200.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
-                    326,
-                    15,
-                    imageCategories,
-                    imageTags,
-                    new SimpleDateFormat("yyyy-MM-dd").parse( "2009-12-31" ),
-                    15,
-                    12,
-                    "Belfodil Abdessamed"
-            ));
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            recentImages.add(new Image("0",
-                    "Image 1",
-                    "https://images.pexels.com/photos/354939/pexels-photo-354939.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
-                    326,
-                    15,
-                    imageCategories,
-                    imageTags,
-                    new SimpleDateFormat("yyyy-MM-dd").parse( "2009-12-31" ),
-                    15,
-                    12,
-                    "Belfodil Abdessamed"
-            ));
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            recentImages.add(new Image("0",
-                    "Image 1",
-                    "https://images.pexels.com/photos/988873/pexels-photo-988873.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
-                    326,
-                    15,
-                    imageCategories,
-                    imageTags,
-                    new SimpleDateFormat("yyyy-MM-dd").parse( "2009-12-31" ),
-                    15,
-                    12,
-                    "Belfodil Abdessamed"
-            ));
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            recentImages.add(new Image("0",
-                    "Image 1",
-                    "https://images.pexels.com/photos/1429567/pexels-photo-1429567.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
-                    326,
-                    15,
-                    imageCategories,
-                    imageTags,
-                    new SimpleDateFormat("yyyy-MM-dd").parse( "2009-12-31" ),
-                    15,
-                    12,
-                    "Belfodil Abdessamed"
-            ));
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            recentImages.add(new Image("0",
-                    "Image 1",
-                    "https://images.pexels.com/photos/924824/pexels-photo-924824.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
-                    326,
-                    15,
-                    imageCategories,
-                    imageTags,
-                    new SimpleDateFormat("yyyy-MM-dd").parse( "2009-12-31" ),
-                    15,
-                    12,
-                    "Belfodil Abdessamed"
-            ));
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            recentImages.add(new Image("0",
-                    "Image 1",
-                    "https://images.pexels.com/photos/990824/pexels-photo-990824.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
-                    326,
-                    15,
-                    imageCategories,
-                    imageTags,
-                    new SimpleDateFormat("yyyy-MM-dd").parse( "2009-12-31" ),
-                    15,
-                    12,
-                    "Belfodil Abdessamed"
-            ));
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            recentImages.add(new Image("0",
-                    "Image 1",
-                    "https://images.pexels.com/photos/990824/pexels-photo-990824.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
-                    326,
-                    15,
-                    imageCategories,
-                    imageTags,
-                    new SimpleDateFormat("yyyy-MM-dd").parse( "2009-12-31" ),
-                    15,
-                    12,
-                    "Belfodil Abdessamed"
-            ));
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            recentImages.add(new Image("0",
-                    "Image 1",
-                    "https://images.pexels.com/photos/776656/pexels-photo-776656.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
-                    326,
-                    15,
-                    imageCategories,
-                    imageTags,
-                    new SimpleDateFormat("yyyy-MM-dd").parse( "2009-12-31" ),
-                    15,
-                    12,
-                    "Belfodil Abdessamed"
-            ));
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            recentImages.add(new Image("0",
-                    "Image 1",
-                    "https://images.pexels.com/photos/35857/amazing-beautiful-breathtaking-clouds.jpg?auto=compress&cs=tinysrgb&dpr=1&w=500",
-                    326,
-                    15,
-                    imageCategories,
-                    imageTags,
-                    new SimpleDateFormat("yyyy-MM-dd").parse( "2009-12-31" ),
-                    15,
-                    12,
-                    "Belfodil Abdessamed"
-            ));
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return recentImages;
+        Image[] collectionItem = gson.fromJson(readJSONFromAsset(), Image[].class);
+        return new ArrayList<Image>(Arrays.asList(collectionItem));
     }
 
     @Override
@@ -426,5 +108,21 @@ public class ExplorePresenter implements ExploreContract.Presenter {
     @Override
     public String listToString(ArrayList<Image> images) {
         return gson.toJson(images);
+    }
+
+    private String readJSONFromAsset() {
+        String json = null;
+        try {
+            InputStream is = mContext.getAssets().open("images.json");
+            int size = is.available();
+            byte[] buffer = new byte[size];
+            is.read(buffer);
+            is.close();
+            json = new String(buffer, "UTF-8");
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            return null;
+        }
+        return json;
     }
 }

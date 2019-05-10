@@ -50,7 +50,7 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Vi
 
         //Loading the Image
         Glide.with(mView)
-                .load(mCategories.get(position).getCategoryImageUrl())
+                .load(mCategories.get(position).getCategoryIconUrl())
                 .fitCenter()
                 //.placeholder(R.drawable.loading_spinner)
                 .into(holder.image);

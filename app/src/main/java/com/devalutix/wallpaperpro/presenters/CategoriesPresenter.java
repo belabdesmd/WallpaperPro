@@ -7,9 +7,14 @@ import android.net.NetworkInfo;
 import com.devalutix.wallpaperpro.contracts.CategoriesContract;
 import com.devalutix.wallpaperpro.models.SharedPreferencesHelper;
 import com.devalutix.wallpaperpro.pojo.Category;
+import com.devalutix.wallpaperpro.pojo.Image;
 import com.devalutix.wallpaperpro.ui.fragments.CategoriesFragment;
+import com.google.gson.Gson;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class CategoriesPresenter implements CategoriesContract.Presenter {
     private static String TAG = "CategoriesPresenter";
@@ -44,7 +49,7 @@ public class CategoriesPresenter implements CategoriesContract.Presenter {
     //Methods
     @Override
     public boolean checkNetwork() {
-        ConnectivityManager conMgr =  (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
+        ConnectivityManager conMgr = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo netInfo = conMgr.getActiveNetworkInfo();
 
         return netInfo != null && netInfo.isConnected();
@@ -76,20 +81,32 @@ public class CategoriesPresenter implements CategoriesContract.Presenter {
     public ArrayList<Category> getCategories() {
 
         //TODO: Remove Dummy Data
-        ArrayList<Category> imageCategories = new ArrayList<>();
-        imageCategories.add(new Category("Nature","https://images.pexels.com/photos/1054289/pexels-photo-1054289.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"));
-        imageCategories.add(new Category("Sea","https://images.pexels.com/photos/1054289/pexels-photo-1054289.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"));
-        imageCategories.add(new Category("Sky","https://images.pexels.com/photos/1054289/pexels-photo-1054289.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"));
-        imageCategories.add(new Category("Mountains","https://images.pexels.com/photos/1054289/pexels-photo-1054289.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"));
 
-
-        ArrayList<Category> categories = imageCategories;
+        Gson gson = new Gson();
+        Category[] categoryItem = gson.fromJson(readJSONFromAsset(), Category[].class);
+        ArrayList<Category> categories = new ArrayList<Category>(Arrays.asList(categoryItem));
 
         if (!checkNetwork() || categories == null) categories = mSharedPrefsHelper.getCategories();
-        else{
+        else {
             mSharedPrefsHelper.saveCategories(categories);
         }
 
         return categories;
+    }
+
+    private String readJSONFromAsset() {
+        String json = null;
+        try {
+            InputStream is = mContext.getAssets().open("categories.json");
+            int size = is.available();
+            byte[] buffer = new byte[size];
+            is.read(buffer);
+            is.close();
+            json = new String(buffer, "UTF-8");
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            return null;
+        }
+        return json;
     }
 }

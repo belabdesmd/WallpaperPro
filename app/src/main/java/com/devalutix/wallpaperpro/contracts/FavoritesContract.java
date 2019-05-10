@@ -3,6 +3,7 @@ package com.devalutix.wallpaperpro.contracts;
 import com.devalutix.wallpaperpro.base.BasePresenter;
 import com.devalutix.wallpaperpro.base.BaseView;
 import com.devalutix.wallpaperpro.pojo.Collection;
+import com.devalutix.wallpaperpro.pojo.Image;
 
 import java.util.ArrayList;
 
@@ -15,6 +16,8 @@ public interface FavoritesContract {
         void addCollection(Collection collection);
 
         ArrayList<Collection> getCollectionsList();
+
+        void addToCollection(String name, Image image);
     }
 
     interface View extends BaseView {
@@ -31,6 +34,9 @@ public interface FavoritesContract {
 
         void hideAddCollectionPopUp();
 
+        void enableDoneButton();
+
+        void disableDoneButton();
     }
 
 }

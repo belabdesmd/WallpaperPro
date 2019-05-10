@@ -2,33 +2,45 @@ package com.devalutix.wallpaperpro.ui.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.view.GravityCompat;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Rect;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.devalutix.wallpaperpro.R;
-import com.devalutix.wallpaperpro.base.BaseApplication;
 import com.devalutix.wallpaperpro.contracts.ImagesContract;
 import com.devalutix.wallpaperpro.di.components.DaggerMVPComponent;
 import com.devalutix.wallpaperpro.di.components.MVPComponent;
 import com.devalutix.wallpaperpro.di.modules.ApplicationModule;
 import com.devalutix.wallpaperpro.di.modules.MVPModule;
+import com.devalutix.wallpaperpro.pojo.Collection;
 import com.devalutix.wallpaperpro.pojo.Image;
 import com.devalutix.wallpaperpro.presenters.ImagesPresenter;
 import com.devalutix.wallpaperpro.ui.adapters.ImagesAdapter;
+import com.mancj.slideup.SlideUp;
+import com.mancj.slideup.SlideUpBuilder;
 
 import java.util.ArrayList;
 
@@ -42,18 +54,27 @@ public class ImagesActivity extends AppCompatActivity implements ImagesContract.
     private MVPComponent mvpComponent;
     private ImagesAdapter mAdapter;
     private ArrayList<Image> images;
+    private SlideUp slideUpEditCollection;
     @Inject
     ImagesPresenter mPresenter;
 
     //View Declarations
     @BindView(R.id.images_toolbar)
     Toolbar mToolbar;
+    @BindView(R.id.add_collection_popup)
+    CardView add_collection_popup;
+    @BindView(R.id.images_page_thumbnail)
+    ImageView images_page_thumbnail;
     @BindView(R.id.images_page_title)
     TextView title;
     @BindView(R.id.images_recyclerview)
     RecyclerView mRecyclerView;
     @BindView(R.id.swipe_to_refresh_images)
     SwipeRefreshLayout mRefresh;
+    @BindView(R.id.add_collection_name)
+    EditText get_collection_name;
+    @BindView(R.id.done_adding)
+    Button add_collection;
 
     @BindView(R.id.collection_tools)
     LinearLayout tools;
@@ -61,6 +82,33 @@ public class ImagesActivity extends AppCompatActivity implements ImagesContract.
     ImageView noNetworkLayout;
 
     //ClickListeners
+    @OnClick(R.id.edit)
+    public void editCollection() {
+        showAddCollectionPopUp();
+    }
+
+    @OnClick(R.id.remove)
+    public void removeCollection() {
+        mPresenter.removeCollection(title.getText().toString());
+
+        Intent goToFavorites = new Intent(ImagesActivity.this, MainActivity.class);
+        goToFavorites.putExtra("ToFavorites", true);
+        startActivity(goToFavorites);
+    }
+
+
+    @OnClick(R.id.done_adding)
+    public void add_collection() {
+        mPresenter.editCollection(title.getText().toString(), get_collection_name.getText().toString());
+        cancel();
+    }
+
+    @OnClick(R.id.cancel_adding)
+    public void cancel() {
+        hideAddCollectionPopUp();
+        get_collection_name.getText().clear();
+        hideKeyboard();
+    }
 
     //Essentials Methods
     @Override
@@ -83,6 +131,15 @@ public class ImagesActivity extends AppCompatActivity implements ImagesContract.
         //Set Toolbar
         setToolbar();
 
+        //Show Collection Actions
+        if (getIntent().getStringExtra("mode").equals("collection")) showCollectionActions();
+        else hideCollectionActions();
+
+        //Set Page Name
+        setPageName(getIntent().getStringExtra("name"));
+        setPageThumbnail(mPresenter.getThumbnail(getIntent().getStringExtra("mode"),
+                getIntent().getStringExtra("name")));
+
         //init RecyclerView
         mRefresh.setRefreshing(true);
         mPresenter.initRecyclerView(getIntent().getStringExtra("mode"),
@@ -92,9 +149,11 @@ public class ImagesActivity extends AppCompatActivity implements ImagesContract.
         mRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                mPresenter.updateRecyclerView("recent");
+                mPresenter.updateRecyclerView(getIntent().getStringExtra("name"));
             }
         });
+
+        initEditCollectionPopUp();
     }
 
     @Override
@@ -138,6 +197,16 @@ public class ImagesActivity extends AppCompatActivity implements ImagesContract.
     }
 
     @Override
+    public void setPageThumbnail(String thumbnail) {
+        if (thumbnail != null)
+            Glide.with(this)
+                    .load(thumbnail)
+                    .fitCenter()
+                    //.placeholder(R.drawable.loading_spinner)
+                    .into(images_page_thumbnail);
+    }
+
+    @Override
     public void initRecyclerView(ArrayList<Image> images) {
 
         //Set the List
@@ -148,6 +217,7 @@ public class ImagesActivity extends AppCompatActivity implements ImagesContract.
         mAdapter = new ImagesAdapter(images, this);
 
         mRecyclerView.setLayoutManager(mLayoutManager);
+        mRecyclerView.addItemDecoration(new ImagesActivity.MyItemDecoration());
         mRecyclerView.setAdapter(mAdapter);
     }
 
@@ -169,6 +239,46 @@ public class ImagesActivity extends AppCompatActivity implements ImagesContract.
     }
 
     @Override
+    public void initEditCollectionPopUp() {
+        slideUpEditCollection = new SlideUpBuilder(add_collection_popup)
+                .withStartState(SlideUp.State.HIDDEN)
+                .withStartGravity(Gravity.TOP)
+                .withLoggingEnabled(true)
+                .withListeners(new SlideUp.Listener.Events() {
+                    @Override
+                    public void onSlide(float percent) {
+                    }
+
+                    @Override
+                    public void onVisibilityChanged(int visibility) {
+
+                    }
+                })
+                .build();
+
+        disableDoneButton();
+
+        //Getting Text
+        get_collection_name.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.length() > 0) enableDoneButton();
+                else disableDoneButton();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+    }
+
+    @Override
     public void showNoNetwork() {
         mRefresh.setRefreshing(false);
 
@@ -186,6 +296,30 @@ public class ImagesActivity extends AppCompatActivity implements ImagesContract.
     }
 
     @Override
+    public void enableDoneButton() {
+        add_collection.setBackground(getResources().getDrawable(R.drawable.filter_on));
+        add_collection.setEnabled(true);
+    }
+
+    @Override
+    public void disableDoneButton() {
+        add_collection.setBackground(getResources().getDrawable(R.drawable.disabled_button));
+        add_collection.setEnabled(false);
+    }
+
+    @Override
+    public void showAddCollectionPopUp() {
+        add_collection_popup.setVisibility(View.VISIBLE);
+        slideUpEditCollection.show();
+    }
+
+    @Override
+    public void hideAddCollectionPopUp() {
+        slideUpEditCollection.hide();
+        add_collection_popup.setVisibility(View.GONE);
+    }
+
+    @Override
     public void showCollectionActions() {
         tools.setVisibility(View.VISIBLE);
     }
@@ -197,17 +331,39 @@ public class ImagesActivity extends AppCompatActivity implements ImagesContract.
 
     @Override
     public void goToWallpaperActivity(int position, ArrayList<Image> images) {
-        if (!mRefresh.isRefreshing()){
+        if (!mRefresh.isRefreshing()) {
             Intent goToWallpaper = new Intent(this, WallpaperActivity.class);
 
             //Transferring the List
             String jsonImages = mPresenter.listToString(images);
 
             //Putting the Extras
-            goToWallpaper.putExtra("current",position);
-            goToWallpaper.putExtra("images",jsonImages);
+            goToWallpaper.putExtra("current", position);
+            goToWallpaper.putExtra("images", jsonImages);
             goToWallpaper.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(goToWallpaper);
         }
+    }
+
+    public class MyItemDecoration extends RecyclerView.ItemDecoration {
+
+        @Override
+        public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+            // only for the last one
+            outRect.bottom = 16;
+            outRect.right = 16;
+            outRect.left = 16;
+        }
+    }
+
+    public void hideKeyboard() {
+        InputMethodManager imm = (InputMethodManager) this.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        //Find the currently focused view, so we can grab the correct window token from it.
+        View view = this.getCurrentFocus();
+        //If no view currently has focus, create a new one, just so we can grab a window token from it
+        if (view == null) {
+            view = new View(this);
+        }
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 }

@@ -1,6 +1,7 @@
 package com.devalutix.wallpaperpro.ui.fragments;
 
 import android.content.Intent;
+import android.graphics.Rect;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -16,6 +17,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 
 import com.devalutix.wallpaperpro.R;
@@ -54,24 +56,34 @@ public class ExploreFragment extends Fragment implements ExploreContract.View {
     @BindView(R.id.no_network_images)
     ImageView noNetworkLayout;
 
+    @BindView(R.id.recent_filter)
+    Button recent;
+    @BindView(R.id.popular_filter)
+    Button popular;
+    @BindView(R.id.featured_filter)
+    Button featured;
+
     //ClickListeners
     @OnClick(R.id.popular_filter)
-    void popularFilter(){
+    void popularFilter() {
         mRefresh.setRefreshing(true);
+        enableFilter(0);
         mode = "popular";
         mPresenter.updateRecyclerView("popular");
     }
 
     @OnClick(R.id.recent_filter)
-    void recentFilter(){
+    void recentFilter() {
         mRefresh.setRefreshing(true);
+        enableFilter(1);
         mode = "recent";
         mPresenter.updateRecyclerView("recent");
     }
 
     @OnClick(R.id.featured_filter)
-    void featuredFilter(){
+    void featuredFilter() {
         mRefresh.setRefreshing(true);
+        enableFilter(2);
         mode = "featured";
         mPresenter.updateRecyclerView("featured");
     }
@@ -82,20 +94,6 @@ public class ExploreFragment extends Fragment implements ExploreContract.View {
     }
 
     //Essentials Methods
-    public static ExploreFragment newInstance(String param1, String param2) {
-        ExploreFragment fragment = new ExploreFragment();
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-        }
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -115,18 +113,18 @@ public class ExploreFragment extends Fragment implements ExploreContract.View {
         mPresenter.attach(this);
 
         //init RecyclerView
+        enableFilter(0);
         mode = "recent";
         mRefresh.setRefreshing(true);
         mPresenter.initRecyclerView();
 
-        //Pull To Refresh Listener
+        //When Pulling To Refresh Listener
         mRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 mPresenter.updateRecyclerView(mode);
             }
         });
-
 
         return view;
     }
@@ -156,6 +154,7 @@ public class ExploreFragment extends Fragment implements ExploreContract.View {
         mAdapter = new ImagesAdapter(images, this);
 
         mRecyclerView.setLayoutManager(mLayoutManager);
+        mRecyclerView.addItemDecoration(new MyItemDecoration());
         mRecyclerView.setAdapter(mAdapter);
     }
 
@@ -194,18 +193,65 @@ public class ExploreFragment extends Fragment implements ExploreContract.View {
     }
 
     @Override
+    public void enableFilter(int position) {
+        disableAllFilters();
+        switch (position) {
+            case 0: {
+                popular.setBackground(getResources().getDrawable(R.drawable.filter_on));
+                popular.setTextColor(getResources().getColor(R.color.colorPrimary));
+            }
+            break;
+            case 1: {
+                recent.setBackground(getResources().getDrawable(R.drawable.filter_on));
+                recent.setTextColor(getResources().getColor(R.color.colorPrimary));
+            }
+            break;
+            case 2: {
+                featured.setBackground(getResources().getDrawable(R.drawable.filter_on));
+                featured.setTextColor(getResources().getColor(R.color.colorPrimary));
+            }
+            break;
+        }
+    }
+
+    @Override
+    public void disableAllFilters() {
+        recent.setBackground(getResources().getDrawable(R.drawable.filter_off));
+        recent.setTextColor(getResources().getColor(R.color.colorAccent));
+
+
+        popular.setBackground(getResources().getDrawable(R.drawable.filter_off));
+        popular.setTextColor(getResources().getColor(R.color.colorAccent));
+
+
+        featured.setBackground(getResources().getDrawable(R.drawable.filter_off));
+        featured.setTextColor(getResources().getColor(R.color.colorAccent));
+    }
+
+    @Override
     public void goToWallpaperActivity(int position, ArrayList<Image> images) {
-        if (!mRefresh.isRefreshing()){
+        if (!mRefresh.isRefreshing()) {
             Intent goToWallpaper = new Intent(getActivity(), WallpaperActivity.class);
 
             //Transferring the List
             String jsonImages = mPresenter.listToString(images);
 
             //Putting the Extras
-            goToWallpaper.putExtra("current",position);
-            goToWallpaper.putExtra("images",jsonImages);
+            goToWallpaper.putExtra("current", position);
+            goToWallpaper.putExtra("images", jsonImages);
             goToWallpaper.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(goToWallpaper);
+        }
+    }
+
+    public class MyItemDecoration extends RecyclerView.ItemDecoration {
+
+        @Override
+        public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+            // only for the last one
+            outRect.bottom = 16;
+            outRect.right = 16;
+            outRect.left = 16;
         }
     }
 }

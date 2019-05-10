@@ -26,9 +26,6 @@
         </activity>
         <activity android:name=".ui.activities.ImagesActivity" />
         <activity android:name=".ui.activities.WallpaperActivity" />
-        <activity
-            android:name=".ui.activities.SettingsActivity"
-            android:label="@string/title_activity_settings" />
     </application>
 
 </manifest>

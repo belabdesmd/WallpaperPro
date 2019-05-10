@@ -35,6 +35,10 @@ public interface ExploreContract {
 
         void showPicturesList();
 
+        void enableFilter(int position);
+
+        void disableAllFilters();
+
         void goToWallpaperActivity(int position,ArrayList<Image> images);
     }
 

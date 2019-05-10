@@ -4,6 +4,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -17,7 +18,10 @@ import com.bumptech.glide.Glide;
 import com.devalutix.wallpaperpro.R;
 import com.devalutix.wallpaperpro.pojo.Category;
 import com.devalutix.wallpaperpro.pojo.Collection;
+import com.devalutix.wallpaperpro.pojo.Image;
 import com.devalutix.wallpaperpro.presenters.FavoritesPresenter;
+import com.devalutix.wallpaperpro.ui.activities.WallpaperActivity;
+import com.devalutix.wallpaperpro.ui.custom.SquareCardView;
 import com.devalutix.wallpaperpro.ui.fragments.FavoritesFragment;
 
 import java.util.ArrayList;
@@ -28,13 +32,21 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.View
     //Declarations
     private FavoritesPresenter mPresenter;
     private ArrayList<Collection> mCollections;
-    private FavoritesFragment mView;
+    private FavoritesFragment mView = null;
+    private WallpaperActivity mView1 = null;
+    private int width;
 
     //Constructor
     public FavoritesAdapter(FavoritesPresenter mPresenter, ArrayList<Collection> mCollections, FavoritesFragment mView) {
         this.mPresenter = mPresenter;
         this.mCollections = mCollections;
         this.mView = mView;
+    }
+
+    public FavoritesAdapter(FavoritesPresenter mPresenter, ArrayList<Collection> mCollections, WallpaperActivity mView) {
+        this.mPresenter = mPresenter;
+        this.mCollections = mCollections;
+        this.mView1 = mView;
     }
 
     //Methods
@@ -46,6 +58,10 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.View
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.collection_recyclerview_item, parent, false);
 
+        width = parent.getMeasuredWidth() / 3;
+
+        itemView.setLayoutParams(new RecyclerView.LayoutParams(width, ViewGroup.LayoutParams.WRAP_CONTENT));
+
         return new FavoritesAdapter.ViewHolder(itemView);
     }
 
@@ -55,12 +71,31 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.View
 
 
         //Loading the Image
-        if (mCollections.get(position).getCollectionPictures() != null)
-            Glide.with(mView)
-                    .load(mCollections.get(position).getCollectionPictures().get(0).getImageUrl())
-                    .fitCenter()
-                    //.placeholder(R.drawable.loading_spinner)
-                    .into(holder.thumbnail);
+        holder.thumbnail.getLayoutParams().width = width;
+        holder.thumbnail.getLayoutParams().height = width;
+        holder.thumbnail.requestLayout();
+
+        if (mView != null) {
+            if (!mCollections.get(position).getCollectionPictures().isEmpty())
+                Glide.with(mView)
+                        .load(mCollections.get(position).getCollectionPictures().get(0).getImageUrl())
+                        .fitCenter()
+                        //.placeholder(R.drawable.loading_spinner)
+                        .into(holder.thumbnail);
+            else {
+                holder.thumbnail.setImageResource(R.color.colorAccent);
+            }
+        } else if (mView1 != null) {
+            if (!mCollections.get(position).getCollectionPictures().isEmpty())
+                Glide.with(mView1)
+                        .load(mCollections.get(position).getCollectionPictures().get(0).getImageUrl())
+                        .fitCenter()
+                        //.placeholder(R.drawable.loading_spinner)
+                        .into(holder.thumbnail);
+            else {
+                holder.thumbnail.setImageResource(R.color.colorAccent);
+            }
+        }
 
 
         //Set Category Name
@@ -72,7 +107,12 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.View
         holder.container.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mView.goToImages(mCollections.get(finalPosition).getCollectioName());
+                if (mView1 != null) {
+                    mPresenter.addToCollection(mCollections.get(finalPosition).getCollectioName(), mView1.getImage());
+                    Toast.makeText(mView1, "Wallpaper Added To " + mCollections.get(finalPosition).getCollectioName(), Toast.LENGTH_SHORT).show();
+                    mView1.hideFavorite();
+                } else if (mView != null)
+                    mView.goToImages(mCollections.get(finalPosition).getCollectioName());
             }
         });
     }

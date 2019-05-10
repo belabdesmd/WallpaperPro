@@ -6,34 +6,27 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <com.devalutix.wallpaperpro.ui.custom.SquareCardView
-        android:id="@+id/collection_thumbnail_container"
-        android:layout_width="250dp"
-        android:layout_height="wrap_content"
-        android:elevation="8dp"
-        app:cardCornerRadius="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
         <ImageView
             android:id="@+id/collection_thumbnail"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
-    </com.devalutix.wallpaperpro.ui.custom.SquareCardView>
+            android:layout_height="match_parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/favorite"
+            android:layout_gravity="center"/>
 
     <TextView
         android:id="@+id/collection_name"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="48dp"
         android:layout_marginTop="16dp"
-        android:text="Collection 1"
+        android:text="My Favorites"
         android:textSize="18sp"
         android:textColor="@color/colorPrimaryDark"
         android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="@id/collection_thumbnail_container"
-        app:layout_constraintEnd_toEndOf="@id/collection_thumbnail_container"
-        app:layout_constraintTop_toBottomOf="@id/collection_thumbnail_container" />
+        app:layout_constraintStart_toStartOf="@id/collection_thumbnail"
+        app:layout_constraintEnd_toEndOf="@id/collection_thumbnail"
+        app:layout_constraintTop_toBottomOf="@id/collection_thumbnail" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

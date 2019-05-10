@@ -4,6 +4,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import androidx.viewpager.widget.ViewPager;
 
 import butterknife.BindView;
@@ -11,10 +13,18 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.Rect;
 import android.os.Bundle;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.devalutix.wallpaperpro.R;
@@ -23,10 +33,12 @@ import com.devalutix.wallpaperpro.di.components.DaggerMVPComponent;
 import com.devalutix.wallpaperpro.di.components.MVPComponent;
 import com.devalutix.wallpaperpro.di.modules.ApplicationModule;
 import com.devalutix.wallpaperpro.di.modules.MVPModule;
-import com.devalutix.wallpaperpro.pojo.Category;
 import com.devalutix.wallpaperpro.pojo.Image;
+import com.devalutix.wallpaperpro.presenters.FavoritesPresenter;
 import com.devalutix.wallpaperpro.presenters.WallpaperPresenter;
+import com.devalutix.wallpaperpro.ui.adapters.FavoritesAdapter;
 import com.devalutix.wallpaperpro.ui.adapters.WallpaperPagerAdapter;
+import com.devalutix.wallpaperpro.ui.fragments.FavoritesFragment;
 import com.devalutix.wallpaperpro.ui.fragments.WallpaperFragment;
 import com.devalutix.wallpaperpro.utils.Config;
 import com.google.android.gms.ads.AdRequest;
@@ -40,16 +52,20 @@ import javax.inject.Inject;
 
 public class WallpaperActivity extends AppCompatActivity implements WallpaperContract.View {
     private static String TAG = "WallpaperActivity";
+    private static final int COL_NUM = 3;
 
     //Declarations
     private MVPComponent mvpComponent;
     private ArrayList<Image> images;
     private InterstitialAd mInterstitialAd;
+    private FavoritesAdapter mAdapter;
     private SlideUp slideUpInfo;
     private SlideUp slideUpFavorites;
 
     @Inject
     WallpaperPresenter mPresenter;
+    @Inject
+    FavoritesPresenter favoritePresenter;
 
     //View Declarations
     @BindView(R.id.wallpaper_toolbar)
@@ -63,23 +79,33 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
     CardView info_popup;
     @BindView(R.id.add_to_favorites_popup)
     CardView add_to_favorites_popup;
+    @BindView(R.id.collections_recyclerview)
+    RecyclerView mRecyclerView;
 
+    @BindView(R.id.image_title)
+    TextView titleTextView;
     @BindView(R.id.date_added)
-    TextView date_added;
+    TextView dateTextView;
     @BindView(R.id.views)
-    TextView views;
+    TextView viewsTextView;
+    @BindView(R.id.download_action)
+    ImageView download;
     @BindView(R.id.downloads)
-    TextView downloads;
+    TextView downloadsTextView;
+    @BindView(R.id.like_action)
+    ImageView like;
     @BindView(R.id.likes)
-    TextView likes;
+    TextView likesTextView;
+    @BindView(R.id.dislike_action)
+    ImageView dislike;
     @BindView(R.id.dislikes)
-    TextView dislikes;
+    TextView dislikesTextView;
     @BindView(R.id.categories)
-    TextView categories;
+    TextView categoriesTextView;
     @BindView(R.id.tags)
-    TextView tags;
+    TextView tagsTextView;
     @BindView(R.id.owner)
-    TextView owner;
+    TextView ownerTextView;
 
     //ClickListeners
     @OnClick(R.id.cancel_info)
@@ -89,22 +115,22 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
 
     @OnClick(R.id.like_action)
     public void like() {
-        mPresenter.likePicture();
+        mPresenter.likePicture(mViewPager.getCurrentItem());
     }
 
     @OnClick(R.id.dislike_action)
     public void dislike() {
-        mPresenter.dislikePicture();
+        mPresenter.dislikePicture(mViewPager.getCurrentItem());
     }
 
     @OnClick(R.id.share_action)
     public void share() {
-        mPresenter.sharePicture();
+        mPresenter.sharePicture(mViewPager.getCurrentItem());
     }
 
     @OnClick(R.id.download_action)
     public void download() {
-        mPresenter.savePicture(images.get(mViewPager.getCurrentItem()).getImageUrl());
+        mPresenter.savePicture(mViewPager.getCurrentItem());
     }
 
     @OnClick(R.id.popup_info_kicker)
@@ -178,13 +204,26 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.back);
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.wallpaper_menu, menu);
+        return true;
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         Log.d(TAG, "onOptionsItemSelected: User Clicks on Options Item.");
-        if (item.getItemId() == android.R.id.home) {
-            onBackPressed();
-            return true;
+        int id = item.getItemId();
+        switch (id) {
+            case android.R.id.home: {
+                onBackPressed();
+                return true;
+            }
+            case R.id.action_favorite: {
+                mPresenter.addToFavorites(images.get(mViewPager.getCurrentItem()));
+                return true;
+            }
         }
 
         // If we got here, the user's action was not recognized.
@@ -255,27 +294,101 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
 
     @Override
     public void initInfos(int position) {
-        date_added.setText(images.get(position).getImageDateAdded().toString());
-        views.setText("Views : "+images.get(position).getImageViews());
-        downloads.setText("Downloads : "+images.get(position).getImageDownloads());
-        likes.setText("Likes : "+images.get(position).getImageLikes());
-        dislikes.setText("Dislikes : "+images.get(position).getImageDislikes());
 
-        StringBuilder categories = new StringBuilder("Categories: ");
-        for (Category category :
-                images.get(position).getImageCategories()) {
-            categories.append(" ").append(category.getCategoryName());
+        //Declarations
+        String topic;
+        String topicInfo;
+        String topicText;
+
+        //Adding Date
+        topic = "Title: ";
+        topicInfo = images.get(position).getImageTitle();
+
+        topicText = topic + topicInfo;
+
+        Spannable spannable = new SpannableString(topicText);
+        spannable.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.colorAccent)), topic.length(), topic.length() + topicInfo.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        titleTextView.setText(spannable, TextView.BufferType.SPANNABLE);
+
+        //Adding Date
+        topic = "Date Added: ";
+        topicInfo = images.get(position).getImageDateAdded().toString();
+
+        topicText = topic + topicInfo;
+
+        Spannable spannable1 = new SpannableString(topicText);
+        spannable1.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.colorAccent)), topic.length(), topic.length() + topicInfo.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        dateTextView.setText(spannable1, TextView.BufferType.SPANNABLE);
+
+        //Adding Views
+        topic = "Views: ";
+        topicInfo = String.valueOf(images.get(position).getImageViews());
+
+        topicText = topic + topicInfo;
+
+        Spannable spannable2 = new SpannableString(topicText);
+        spannable2.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.colorAccent)), topic.length(), topic.length() + topicInfo.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        viewsTextView.setText(spannable2, TextView.BufferType.SPANNABLE);
+
+        //Adding Downloads
+        topicInfo = String.valueOf(images.get(position).getImageDownloads());
+        downloadsTextView.setText(topicInfo);
+
+        //Adding Likes
+        topicInfo = String.valueOf(images.get(position).getImageLikes());
+        likesTextView.setText(topicInfo);
+
+        //Adding Dislikes
+        topicInfo = String.valueOf(images.get(position).getImageDislikes());
+        dislikesTextView.setText(topicInfo);
+
+        //Adding Categories
+        topic = "Categories: ";
+        topicInfo = "";
+        for (int i = 0; i < images.get(position).getImageCategories().size(); i++) {
+            if (i != images.get(position).getImageCategories().size() - 1)
+                topicInfo = topicInfo + images.get(position).getImageCategories().get(i) + ", ";
+            else topicInfo = topicInfo + images.get(position).getImageCategories().get(i);
         }
-        this.categories.setText(categories);
 
-        StringBuilder tags = new StringBuilder("Tags: ");
-        for (String tag :
-                images.get(position).getImageTags()) {
-            categories.append(" ").append(tag);
+        topicText = topic + topicInfo;
+
+        Spannable spannable3 = new SpannableString(topicText);
+        spannable3.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.colorAccent)), topic.length(), topic.length() + topicInfo.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        categoriesTextView.setText(spannable3, TextView.BufferType.SPANNABLE);
+
+        //Adding Tags
+        topic = "Tags: ";
+        topicInfo = "";
+        for (int i = 0; i < images.get(position).getImageTags().size(); i++) {
+            if (i != images.get(position).getImageTags().size() - 1)
+                topicInfo = topicInfo + images.get(position).getImageTags().get(i) + ", ";
+            else topicInfo = topicInfo + images.get(position).getImageTags().get(i);
         }
-        this.tags.setText(tags);
 
-        owner.setText(images.get(position).getImageOwner());
+        topicText = topic + topicInfo;
+
+        Spannable spannable4 = new SpannableString(topicText);
+        spannable4.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.colorAccent)), topic.length(), topic.length() + topicInfo.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        tagsTextView.setText(spannable4, TextView.BufferType.SPANNABLE);
+
+        //Adding Tags
+        topic = "Owner: ";
+        topicInfo = images.get(position).getImageOwner();
+
+        topicText = topic + topicInfo;
+
+        Spannable spannable5 = new SpannableString(topicText);
+        spannable5.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.colorAccent)), topic.length(), topic.length() + topicInfo.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        ownerTextView.setText(spannable5, TextView.BufferType.SPANNABLE);
+
+
     }
 
     @Override
@@ -297,6 +410,14 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
                     }
                 })
                 .build();
+
+        //Declarations
+        StaggeredGridLayoutManager mLayoutManager = new StaggeredGridLayoutManager(COL_NUM, StaggeredGridLayoutManager.VERTICAL);
+        mAdapter = new FavoritesAdapter(favoritePresenter, mPresenter.getCollections(), this);
+
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        mRecyclerView.addItemDecoration(new WallpaperActivity.MyItemDecoration());
+        mRecyclerView.setAdapter(mAdapter);
     }
 
     @Override
@@ -325,6 +446,30 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
     }
 
     @Override
+    public void enableLikes() {
+        like.setImageResource(R.drawable.like_enabled);
+        likesTextView.setTextColor(getResources().getColor(R.color.colorAccent));
+    }
+
+    @Override
+    public void disableLikes() {
+        like.setImageResource(R.drawable.like);
+        likesTextView.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
+    }
+
+    @Override
+    public void enableDislikes() {
+        dislike.setImageResource(R.drawable.dislike_enabled);
+        dislikesTextView.setTextColor(getResources().getColor(R.color.colorAccent));
+    }
+
+    @Override
+    public void disableDislikes() {
+        dislike.setImageResource(R.drawable.dislike);
+        dislikesTextView.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
+    }
+
+    @Override
     public void showInterstitialAd() {
         /*
          * if  Interstitial Ad is enabled and GDPR is disabled then int Intesrtitial ad
@@ -339,4 +484,20 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
                     .build());
         }
     }
+
+    public Image getImage() {
+        return images.get(mViewPager.getCurrentItem());
+    }
+
+    public class MyItemDecoration extends RecyclerView.ItemDecoration {
+
+        @Override
+        public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+            // only for the last one
+            outRect.bottom = 48;
+            outRect.right = 32;
+            outRect.left = 32;
+        }
+    }
+
 }

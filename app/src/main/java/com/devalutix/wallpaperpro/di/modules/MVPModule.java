@@ -60,8 +60,8 @@ public class MVPModule {
 
     @Provides
     @Singleton
-    WallpaperPresenter providesWallpaperPresenter(Gson gson){
-        return new WallpaperPresenter(gson);
+    WallpaperPresenter providesWallpaperPresenter(Gson gson, SharedPreferencesHelper mSharedPrefsHelper){
+        return new WallpaperPresenter(gson, mSharedPrefsHelper);
     }
 
     @Provides

@@ -11,17 +11,15 @@ public class Image {
 
     private String imageUrl;
 
-    private float imageRating;
-
     private int imageViews;
 
     private int imageDownloads;
 
-    private ArrayList<Category> imageCategories;
+    private ArrayList<String> imageCategories;
 
     private ArrayList<String> imageTags;
 
-    private Date imageDateAdded;
+    private String imageDateAdded;
 
     private int imageLikes;
 
@@ -31,8 +29,8 @@ public class Image {
 
     //Constructor
     public Image(String imageID, String imageTitle, String imageUrl,
-                 int imageViews, int imageDownloads, ArrayList<Category> imageCategories,
-                 ArrayList<String> imageTags, Date imageDateAdded, int imageLikes, int imageDislikes, String imageOwner) {
+                 int imageViews, int imageDownloads, ArrayList<String> imageCategories,
+                 ArrayList<String> imageTags, String imageDateAdded, int imageLikes, int imageDislikes, String imageOwner) {
         this.imageID = imageID;
         this.imageTitle = imageTitle;
         this.imageUrl = imageUrl;
@@ -58,10 +56,6 @@ public class Image {
         return imageUrl;
     }
 
-    public float getImageRating() {
-        return imageRating;
-    }
-
     public int getImageViews() {
         return imageViews;
     }
@@ -70,7 +64,7 @@ public class Image {
         return imageDownloads;
     }
 
-    public ArrayList<Category> getImageCategories() {
+    public ArrayList<String> getImageCategories() {
         return imageCategories;
     }
 
@@ -78,7 +72,7 @@ public class Image {
         return imageTags;
     }
 
-    public Date getImageDateAdded() {
+    public String getImageDateAdded() {
         return imageDateAdded;
     }
 

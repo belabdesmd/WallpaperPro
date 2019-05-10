@@ -1,5 +1,6 @@
 package com.devalutix.wallpaperpro.pojo;
 import java.util.ArrayList;
+import java.util.Objects;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -26,5 +27,13 @@ public class Collection {
 
     public void setCollectioName(String collectioName) {
         this.collectioName = collectioName;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Collection that = (Collection) o;
+        return Objects.equals(collectioName, that.collectioName);
     }
 }

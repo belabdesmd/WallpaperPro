@@ -12,9 +12,13 @@ import com.devalutix.wallpaperpro.pojo.Image;
 import com.devalutix.wallpaperpro.ui.activities.ImagesActivity;
 import com.google.gson.Gson;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Objects;
 
 public class ImagesPresenter implements ImagesContract.Presenter {
     private static String TAG = "ImagesPresenter";
@@ -52,51 +56,47 @@ public class ImagesPresenter implements ImagesContract.Presenter {
     //Methods
     @Override
     public boolean checkNetwork() {
-        ConnectivityManager conMgr =  (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
+        ConnectivityManager conMgr = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo netInfo = conMgr.getActiveNetworkInfo();
 
         return netInfo != null && netInfo.isConnected();
     }
 
     @Override
-    public void initRecyclerView(String mode,String name) {
+    public void initRecyclerView(String mode, String name) {
         ArrayList<Image> images = null;
         this.mode = mode;
 
-        switch (mode){
-            case "collection":{
+        switch (mode) {
+            case "collection": {
                 images = getImagesFromCollection(name);
                 mView.showCollectionActions();
             }
-                break;
-            case "category":{
+            break;
+            case "category": {
                 images = getImageFromCategory(name);
                 mView.hideCollectionActions();
             }
-                break;
+            break;
         }
 
-        //Set Page Name
-        mView.setPageName(name);
+        mView.initRecyclerView(images);
 
         //Init Recycler View
         if (!checkNetwork() || images == null) mView.showNoNetwork();
-        else{
-            mView.initRecyclerView(images);
-            mView.showPicturesList();
-        }
+        else mView.showPicturesList();
     }
 
     @Override
     public void updateRecyclerView(String name) {
         ArrayList<Image> images = null;
-        switch (mode){
-            case "collection":{
+        switch (mode) {
+            case "collection": {
                 images = getImagesFromCollection(name);
                 mView.showCollectionActions();
             }
             break;
-            case "category":{
+            case "category": {
                 images = getImageFromCategory(name);
                 mView.hideCollectionActions();
             }
@@ -108,7 +108,7 @@ public class ImagesPresenter implements ImagesContract.Presenter {
 
         //Init Recycler View
         if (!checkNetwork() || images == null) mView.showNoNetwork();
-        else{
+        else {
             mView.updateRecyclerView(images);
             mView.showPicturesList();
         }
@@ -117,17 +117,17 @@ public class ImagesPresenter implements ImagesContract.Presenter {
     @Override
     public ArrayList<Image> getImagesFromCollection(String name) {
 
-        ArrayList<Collection> allCollections =  mSharedPrefsHelper.getCollections();
+        ArrayList<Collection> allCollections = mSharedPrefsHelper.getCollections();
         ArrayList<Image> images = new ArrayList<>();
 
         boolean found = false;
         int i = 0;
 
-        while(!found && i < allCollections.size()){
-            if (allCollections.get(i).getCollectioName().equals(name)){
+        while (!found && i < allCollections.size()) {
+            if (allCollections.get(i).getCollectioName().equals(name)) {
                 images = allCollections.get(i).getCollectionPictures();
                 found = true;
-            }else i++;
+            } else i++;
         }
 
         return images;
@@ -137,94 +137,82 @@ public class ImagesPresenter implements ImagesContract.Presenter {
     public ArrayList<Image> getImageFromCategory(String name) {
         //TODO: Delete Dummy Data
 
-        ArrayList<Image> recentImages = new ArrayList<>();
+        Image[] collectionItem = gson.fromJson(readJSONFromAsset(), Image[].class);
+        ArrayList<Image> recentImages = new ArrayList<Image>(Arrays.asList(collectionItem));
 
-        ArrayList<Category> imageCategories = new ArrayList<>();
-        imageCategories.add(new Category("Nature","https://images.pexels.com/photos/1054289/pexels-photo-1054289.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"));
-        imageCategories.add(new Category("Sea","https://images.pexels.com/photos/1054289/pexels-photo-1054289.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"));
-        imageCategories.add(new Category("Sky","https://images.pexels.com/photos/1054289/pexels-photo-1054289.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"));
-        imageCategories.add(new Category("Mountains","https://images.pexels.com/photos/1054289/pexels-photo-1054289.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"));
+        ArrayList<Image> images = new ArrayList<>();
 
-        ArrayList<String> imageTags = new ArrayList<>();
-        imageTags.add("test1");
-        imageTags.add("test2");
-        imageTags.add("test3");
-        imageTags.add("test4");
-        imageTags.add("test5");
-
-        try {
-            recentImages.add(new Image("0",
-                    "Image 1",
-                    "https://images.pexels.com/photos/1054289/pexels-photo-1054289.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
-                    326,
-                    15,
-                    imageCategories,
-                    imageTags,
-                    new SimpleDateFormat("yyyy-MM-dd").parse( "2009-12-31" ),
-                    15,
-                    12,
-                    "Belfodil Abdessamed"
-            ));
-        } catch (ParseException e) {
-            e.printStackTrace();
+        for (Image image :
+                recentImages) {
+            if (image.getImageCategories().contains(name))
+                images.add(image);
         }
 
-        try {
-            recentImages.add(new Image("0",
-                    "Image 1",
-                    "https://images.pexels.com/photos/1037992/pexels-photo-1037992.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
-                    326,
-                    15,
-                    imageCategories,
-                    imageTags,
-                    new SimpleDateFormat("yyyy-MM-dd").parse( "2009-12-31" ),
-                    15,
-                    12,
-                    "Belfodil Abdessamed"
-            ));
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            recentImages.add(new Image("0",
-                    "Image 1",
-                    "https://images.pexels.com/photos/1308624/pexels-photo-1308624.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
-                    326,
-                    15,
-                    imageCategories,
-                    imageTags,
-                    new SimpleDateFormat("yyyy-MM-dd").parse( "2009-12-31" ),
-                    15,
-                    12,
-                    "Belfodil Abdessamed"
-            ));
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            recentImages.add(new Image("0",
-                    "Image 1",
-                    "https://images.pexels.com/photos/1261728/pexels-photo-1261728.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
-                    326,
-                    15,
-                    imageCategories,
-                    imageTags,
-                    new SimpleDateFormat("yyyy-MM-dd").parse( "2009-12-31" ),
-                    15,
-                    12,
-                    "Belfodil Abdessamed"
-            ));
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        return recentImages;
+        return images;
     }
 
     @Override
     public String listToString(ArrayList<Image> images) {
         return gson.toJson(images);
+    }
+
+    @Override
+    public String getThumbnail(String mode, String name) {
+        switch (mode) {
+            case "collection":
+                if (!getImagesFromCollection(name).isEmpty())
+                    return getImagesFromCollection(name).get(0).getImageUrl();
+                break;
+            case "category":
+                return Objects.requireNonNull(getCategory(name)).getCategoryThumbnailUrl();
+        }
+
+        return null;
+    }
+
+    @Override
+    public void removeCollection(String name) {
+        ArrayList<Collection> allCollections = mSharedPrefsHelper.getCollections();
+        allCollections.remove(new Collection(name, null));
+
+        mSharedPrefsHelper.saveCollections(allCollections);
+    }
+
+    @Override
+    public void editCollection(String name, String newName) {
+        ArrayList<Collection> allCollections = mSharedPrefsHelper.getCollections();
+        for (Collection collection :
+                allCollections) {
+            if (collection.getCollectioName().equals(name)) collection.setCollectioName(newName);
+        }
+
+        mSharedPrefsHelper.saveCollections(allCollections);
+        mView.setPageName(newName);
+    }
+
+    private Category getCategory(String name) {
+        for (Category category :
+                mSharedPrefsHelper.getCategories()) {
+            if (category.getCategoryName().equals(name))
+                return category;
+        }
+
+        return null;
+    }
+
+    private String readJSONFromAsset() {
+        String json = null;
+        try {
+            InputStream is = mContext.getAssets().open("images.json");
+            int size = is.available();
+            byte[] buffer = new byte[size];
+            is.read(buffer);
+            is.close();
+            json = new String(buffer, "UTF-8");
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            return null;
+        }
+        return json;
     }
 }

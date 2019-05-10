@@ -2,6 +2,7 @@ package com.devalutix.wallpaperpro.contracts;
 
 import com.devalutix.wallpaperpro.base.BasePresenter;
 import com.devalutix.wallpaperpro.base.BaseView;
+import com.devalutix.wallpaperpro.pojo.Collection;
 import com.devalutix.wallpaperpro.pojo.Image;
 
 import java.util.ArrayList;
@@ -10,19 +11,21 @@ public interface WallpaperContract {
 
     interface Presenter extends BasePresenter<WallpaperContract.View> {
 
-        void savePicture(String url);
+        void savePicture(int position);
 
-        void likePicture();
+        void likePicture(int position);
 
-        void dislikePicture();
+        void dislikePicture(int position);
 
-        void addToFavorites();
+        void addToFavorites(Image image);
 
         void addRating(Image image);
 
-        void sharePicture();
+        void sharePicture(int position);
 
         ArrayList<Image> getImages(String images);
+
+        ArrayList<Collection> getCollections();
     }
 
     interface View extends BaseView {
@@ -46,6 +49,14 @@ public interface WallpaperContract {
         void showFavorite();
 
         void hideFavorite();
+
+        void enableLikes();
+
+        void disableLikes();
+
+        void enableDislikes();
+
+        void disableDislikes();
 
         void showInterstitialAd();
     }

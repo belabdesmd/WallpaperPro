@@ -45,6 +45,11 @@ public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ViewHolder
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.images_recyclerview_item, parent, false);
 
+        int width = parent.getMeasuredWidth() / 3;
+        int height = (int) Math.round(width * 1.5);
+
+        itemView.setLayoutParams(new RecyclerView.LayoutParams(width, height));
+
         return new ImagesAdapter.ViewHolder(itemView);
     }
 

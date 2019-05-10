@@ -15,8 +15,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginBottom="16dp"
+            android:layout_marginBottom="24dp"
             android:orientation="horizontal"
+            android:elevation="16dp"
             app:layout_constraintBottom_toTopOf="@id/swipe_to_refresh_explore"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -24,22 +25,25 @@
 
             <Button
                 android:id="@+id/popular_filter"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="80dp"
+                android:textSize="12sp"
+                android:layout_height="38dp"
                 android:layout_marginEnd="16dp"
                 android:text="@string/popular" />
 
             <Button
                 android:id="@+id/recent_filter"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="80dp"
+                android:textSize="12sp"
+                android:layout_height="38dp"
                 android:layout_marginEnd="16dp"
                 android:text="@string/recent" />
 
             <Button
                 android:id="@+id/featured_filter"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="80dp"
+                android:textSize="12sp"
+                android:layout_height="38dp"
                 android:text="@string/featured" />
 
         </LinearLayout>
@@ -49,12 +53,11 @@
             android:id="@+id/no_network_images"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:background="@color/colorPrimaryDark"
+            android:background="@drawable/ic_info_black_24dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.40"
             android:visibility="gone"/>
 
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -70,6 +73,7 @@
                 android:id="@+id/explore_recyclerview"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
+
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

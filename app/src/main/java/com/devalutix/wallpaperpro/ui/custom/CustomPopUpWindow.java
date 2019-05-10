@@ -9,9 +9,9 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 
 public class CustomPopUpWindow extends PopupWindow {
 
-    private ConstraintLayout activity_container;
+    private FrameLayout activity_container;
 
-    public CustomPopUpWindow(View contentView, int width, int height, boolean focusable, ConstraintLayout activity_container) {
+    public CustomPopUpWindow(View contentView, int width, int height, boolean focusable, FrameLayout activity_container) {
         super(contentView, width, height, focusable);
         this.activity_container = activity_container;
     }
@@ -19,7 +19,7 @@ public class CustomPopUpWindow extends PopupWindow {
     @Override
     public void dismiss() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            activity_container.getForeground().setAlpha(0);
+            //activity_container.getForeground().setAlpha(0);
         }
         super.dismiss();
     }

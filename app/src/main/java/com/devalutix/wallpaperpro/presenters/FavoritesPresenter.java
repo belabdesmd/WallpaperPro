@@ -42,9 +42,9 @@ public class FavoritesPresenter implements FavoritesContract.Presenter {
     public void initRecyclerView() {
         ArrayList<Collection> collections = getCollectionsList();
 
-        if (collections == null){
+        if (collections == null) {
             collections = new ArrayList<>();
-            collections.add(new Collection(Config.MY_FAVORITES_COLLECTION_NAME,null));
+            collections.add(new Collection(Config.MY_FAVORITES_COLLECTION_NAME, new ArrayList<Image>()));
             mSharedPrefsHelper.saveCollections(collections);
         }
 
@@ -62,5 +62,17 @@ public class FavoritesPresenter implements FavoritesContract.Presenter {
     @Override
     public ArrayList<Collection> getCollectionsList() {
         return mSharedPrefsHelper.getCollections();
+    }
+
+    @Override
+    public void addToCollection(String name, Image image) {
+        ArrayList<Collection> collections = getCollectionsList();
+        for (Collection collection :
+                collections) {
+            if (collection.getCollectioName().equals(name))
+                collection.getCollectionPictures().add(image);
+        }
+
+        mSharedPrefsHelper.saveCollections(collections);
     }
 }

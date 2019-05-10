@@ -20,6 +20,12 @@ public interface ImagesContract {
         ArrayList<Image> getImageFromCategory(String name);
 
         String listToString(ArrayList<Image> images);
+
+        String getThumbnail(String mode, String name);
+
+        void removeCollection(String text);
+
+        void editCollection(String toString, String toString1);
     }
 
     interface View extends BaseView {
@@ -27,6 +33,8 @@ public interface ImagesContract {
         void setToolbar();
 
         void setPageName(String name);
+
+        void setPageThumbnail(String thumbnail);
 
         void initRecyclerView(ArrayList<Image> images);
 
@@ -38,8 +46,18 @@ public interface ImagesContract {
 
         void showPicturesList();
 
+        void initEditCollectionPopUp();
+
         void showCollectionActions();
 
         void hideCollectionActions();
+
+        void showAddCollectionPopUp();
+
+        void hideAddCollectionPopUp();
+
+        void enableDoneButton();
+
+        void disableDoneButton();
     }
 }

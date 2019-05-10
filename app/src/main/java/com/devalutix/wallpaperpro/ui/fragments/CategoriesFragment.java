@@ -1,6 +1,7 @@
 package com.devalutix.wallpaperpro.ui.fragments;
 
 import android.content.Intent;
+import android.graphics.Rect;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -124,6 +125,7 @@ public class CategoriesFragment extends Fragment implements CategoriesContract.V
         mAdapter = new CategoriesAdapter(mPresenter, categories, this);
 
         mRecyclerView.setLayoutManager(mLayoutManager);
+        mRecyclerView.addItemDecoration(new CategoriesFragment.MyItemDecoration());
         mRecyclerView.setAdapter(mAdapter);
     }
 
@@ -165,4 +167,14 @@ public class CategoriesFragment extends Fragment implements CategoriesContract.V
         startActivity(goToWallpaper);
     }
 
+    public class MyItemDecoration extends RecyclerView.ItemDecoration {
+
+        @Override
+        public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+            // only for the last one
+            outRect.bottom = 32;
+            outRect.right = 16;
+            outRect.left = 16;
+        }
+    }
 }

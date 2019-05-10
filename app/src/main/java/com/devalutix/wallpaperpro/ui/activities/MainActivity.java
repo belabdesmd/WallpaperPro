@@ -3,6 +3,7 @@ package com.devalutix.wallpaperpro.ui.activities;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
@@ -12,19 +13,24 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 import android.Manifest;
+import android.app.Activity;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.devalutix.wallpaperpro.R;
 import com.devalutix.wallpaperpro.contracts.MainContract;
@@ -55,11 +61,11 @@ import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
 public class MainActivity extends AppCompatActivity implements MainContract.View {
-    private static final int REQUEST_WRITE_STORAGE = 1;
     private static String TAG = "MainActivity";
+    private static final int REQUEST_WRITE_STORAGE = 1;
 
     //Declarations
-    MVPComponent mvpComponent;
+    private MVPComponent mvpComponent;
     @Inject
     MainPresenter mPresenter;
     private MainPagerAdapter mAdapter;
@@ -72,12 +78,14 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     DrawerLayout mDrawerLayout;
     @BindView(R.id.nav_view)
     NavigationView mNavigationView;
+    @BindView(R.id.main_activity)
+    ConstraintLayout mainActivity;
+    @BindView(R.id.page_title)
+    TextView title;
     @BindView(R.id.view_pager_main)
     ViewPager mViewPager;
     @BindView(R.id.tab_layout_main)
     TabLayout mTab;
-    @BindView(R.id.page_title)
-    TextView title;
     @BindView(R.id.add_collection)
     ImageView add_collection;
     @BindView(R.id.search)
@@ -87,7 +95,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
 
     //ClickListeners
     @OnClick(R.id.add_collection)
-    public void showAddCollectionPopUp(){
+    public void showAddCollectionPopUp() {
         favorites.showAddCollectionPopUp();
     }
 
@@ -121,74 +129,38 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         //Init Tabs
         initTabLayout();
 
-        //Set First Page Name
+        //Set First Page Name/Show Search View
         title.setText(Config.tabTitles[0]);
+        showSearchBar();
 
-        //TabLayout Listener
-        mTab.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+        //Search Bar Event Open/Close
+        search.setOnSearchClickListener(new View.OnClickListener() {
             @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                switch (tab.getPosition()) {
-                    case 0: {
-                        title.setText(Config.tabTitles[0]);
-                        showSearchBar();
-                    }
-                    break;
-                    case 1: {
-                        title.setText(Config.tabTitles[1]);
-                        hideAll();
-                    }
-                    break;
-                    case 2: {
-                        title.setText(Config.tabTitles[2]);
-                        showAddCollection();
-                    }
-                    break;
-                }
-                enableTabAt(tab.getPosition());
+            public void onClick(View v) {
+                title.setVisibility(View.INVISIBLE);
             }
-
+        });
+        search.setOnCloseListener(new SearchView.OnCloseListener() {
             @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-                ((ImageView) tab.getCustomView().findViewById(R.id.tab_icon))
-                        .setImageResource(Config.tabIconsDisabled[tab.getPosition()]);
-                tab.getCustomView().findViewById(R.id.tab_title).setVisibility(GONE);
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-                onTabSelected(tab);
+            public boolean onClose() {
+                title.setVisibility(VISIBLE);
+                return false;
             }
         });
 
         //Navigation Menu OnClickListener
-        ArrayList<Category> categories = mPresenter.getCategories();
-
-        if (categories == null) {
-            mNavigationView.getMenu().add(R.id.categories, Menu.FIRST, Menu.NONE, "None");
-        } else {
-            int i = 0;
-            for (Category category :
-                    categories) {
-                mNavigationView.getMenu().add(R.id.categories, Menu.FIRST + i, Menu.NONE, category.getCategoryName());
-                i++;
-            }
-        }
-
-
         mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                item.setChecked(false);
-                switch (item.getItemId()) {
-                    //
-                }
+
+
                 // close drawer when item is tapped
                 mDrawerLayout.closeDrawers();
                 return true;
             }
         });
 
+        //Go To Favorites (After Saving a Picture)
         if (getIntent().getBooleanExtra("ToFavorites", false))
             mViewPager.setCurrentItem(2);
     }
@@ -326,5 +298,52 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
             tab.setCustomView(mAdapter.getTabView(i));
         }
         enableTabAt(0);
+
+        //TabLayout Listener
+        mTab.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                switch (tab.getPosition()) {
+                    case 0: {
+                        title.setText(Config.tabTitles[0]);
+                        showSearchBar();
+                    }
+                    break;
+                    case 1: {
+                        title.setText(Config.tabTitles[1]);
+                        hideAll();
+                    }
+                    break;
+                    case 2: {
+                        title.setText(Config.tabTitles[2]);
+                        showAddCollection();
+                    }
+                    break;
+                }
+                enableTabAt(tab.getPosition());
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+                ((ImageView) tab.getCustomView().findViewById(R.id.tab_icon))
+                        .setImageResource(Config.tabIconsDisabled[tab.getPosition()]);
+                tab.getCustomView().findViewById(R.id.tab_title).setVisibility(GONE);
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+                onTabSelected(tab);
+            }
+        });
+    }
+    public void hideKeyboard() {
+        InputMethodManager imm = (InputMethodManager) this.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        //Find the currently focused view, so we can grab the correct window token from it.
+        View view = this.getCurrentFocus();
+        //If no view currently has focus, create a new one, just so we can grab a window token from it
+        if (view == null) {
+            view = new View(this);
+        }
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 }
