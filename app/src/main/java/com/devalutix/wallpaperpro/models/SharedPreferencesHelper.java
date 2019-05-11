@@ -87,4 +87,14 @@ public class SharedPreferencesHelper {
     public boolean isDownloadEnable() {
         return sharedPref.getBoolean("Download", false);
     }
+
+    public void setDarkModeEnable(boolean isEnabled) {
+        SharedPreferences.Editor editor;
+        editor = sharedPref.edit();
+        editor.putBoolean("DARK_MODE", isEnabled).apply();
+    }
+
+    public boolean isDarkModeEnabled() {
+        return sharedPref.getBoolean("DARK_MODE", false);
+    }
 }

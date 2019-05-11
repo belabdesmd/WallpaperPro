@@ -1,6 +1,7 @@
 package com.devalutix.wallpaperpro.ui.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
@@ -30,6 +31,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.devalutix.wallpaperpro.R;
+import com.devalutix.wallpaperpro.base.BaseApplication;
 import com.devalutix.wallpaperpro.contracts.ImagesContract;
 import com.devalutix.wallpaperpro.di.components.DaggerMVPComponent;
 import com.devalutix.wallpaperpro.di.components.MVPComponent;
@@ -113,6 +115,9 @@ public class ImagesActivity extends AppCompatActivity implements ImagesContract.
     //Essentials Methods
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES)
+            setTheme(R.style.AppDarkTheme);
+        else setTheme(R.style.AppLightTheme);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_images);
 

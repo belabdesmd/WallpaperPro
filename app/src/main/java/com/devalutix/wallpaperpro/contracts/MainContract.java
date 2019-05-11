@@ -14,6 +14,10 @@ public interface MainContract {
         void initGDPR(AdView ad);
 
         GDPR getGDPR();
+
+        void enableDarkMode(boolean isChecked);
+
+        boolean isDarkModeEnabled();
     }
 
     interface View extends BaseView {

@@ -12,7 +12,7 @@
         android:id="@+id/main_activity"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/colorPrimary"
+        android:background="?attr/backgroundColor"
         tools:context=".ui.activities.MainActivity">
 
         <TextView
@@ -21,7 +21,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="32dp"
             android:layout_marginTop="32dp"
-            android:textColor="#000000"
+            android:textColor="?attr/primaryTextColor"
             android:textSize="42sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toTopOf="@id/view_pager_main"
@@ -46,6 +46,10 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
             android:visibility="gone"
+            app:searchHintIcon="@drawable/search"
+            app:searchIcon="@drawable/search"
+            app:closeIcon="@drawable/close_search"
+            app:backgroundTint="?attr/primaryTextColor"
             app:layout_constraintBottom_toBottomOf="@id/page_title"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/page_title" />
@@ -74,7 +78,7 @@
             android:id="@+id/tab_layout_main"
             android:layout_width="match_parent"
             android:layout_height="64dp"
-            android:background="@color/colorPrimary"
+            android:background="?attr/backgroundColor"
             android:elevation="16dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -92,6 +96,8 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
+        android:background="?attr/backgroundColor"
+        app:itemTextColor="?attr/primaryTextColor"
         app:headerLayout="@layout/nav_header"
         app:menu="@menu/navigation_menu" />
 

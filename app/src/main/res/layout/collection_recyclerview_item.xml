@@ -23,7 +23,7 @@
         android:layout_marginTop="16dp"
         android:text="My Favorites"
         android:textSize="18sp"
-        android:textColor="@color/colorPrimaryDark"
+        android:textColor="?attr/primaryTextColor"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="@id/collection_thumbnail"
         app:layout_constraintEnd_toEndOf="@id/collection_thumbnail"

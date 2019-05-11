@@ -3,6 +3,7 @@ package com.devalutix.wallpaperpro.presenters;
 import android.content.DialogInterface;
 import android.util.Log;
 
+import com.devalutix.wallpaperpro.base.BaseApplication;
 import com.devalutix.wallpaperpro.contracts.MainContract;
 import com.devalutix.wallpaperpro.models.SharedPreferencesHelper;
 import com.devalutix.wallpaperpro.pojo.Category;
@@ -133,6 +134,16 @@ public class MainPresenter implements MainContract.Presenter {
     @Override
     public GDPR getGDPR() {
         return gdpr;
+    }
+
+    @Override
+    public void enableDarkMode(boolean isChecked) {
+        sharedPreferencesHelper.setDarkModeEnable(isChecked);
+    }
+
+    @Override
+    public boolean isDarkModeEnabled() {
+        return sharedPreferencesHelper.isDarkModeEnabled();
     }
 
 

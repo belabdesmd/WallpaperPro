@@ -2,8 +2,10 @@ package com.devalutix.wallpaperpro.ui.activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.SearchView;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.view.MenuItemCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
@@ -14,6 +16,7 @@ import butterknife.OnClick;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
@@ -27,12 +30,15 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.devalutix.wallpaperpro.R;
+import com.devalutix.wallpaperpro.base.BaseApplication;
 import com.devalutix.wallpaperpro.contracts.MainContract;
 import com.devalutix.wallpaperpro.di.components.DaggerMVPComponent;
 import com.devalutix.wallpaperpro.di.components.MVPComponent;
@@ -102,17 +108,24 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     //Essentials Methods
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        //Initialize Dagger For Application
+        mvpComponent = getComponent();
+        //Inject the Component Here
+        mvpComponent.inject(this);
+
+        if (mPresenter.isDarkModeEnabled())
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+
+        //Set Dark Mode
+        if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES)
+            setTheme(R.style.AppDarkTheme);
+        else setTheme(R.style.AppLightTheme);
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         //Set ButterKnife
         ButterKnife.bind(this);
-
-        //Initialize Dagger For Application
-        mvpComponent = getComponent();
-
-        //Inject the Component Here
-        mvpComponent.inject(this);
 
         //Attach View To Presenter
         mPresenter.attach(this);
@@ -163,6 +176,30 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         //Go To Favorites (After Saving a Picture)
         if (getIntent().getBooleanExtra("ToFavorites", false))
             mViewPager.setCurrentItem(2);
+
+        //Dark Mode
+        MenuItem dark_mode_item = mNavigationView.getMenu().findItem(R.id.dark_mode);
+        Switch dark_mode = (Switch) MenuItemCompat.getActionView(dark_mode_item);
+        dark_mode.setChecked(mPresenter.isDarkModeEnabled());
+        dark_mode.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked){
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                    mPresenter.enableDarkMode(true);
+                    restartApp();
+                }else{
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                    mPresenter.enableDarkMode(false);
+                    restartApp();
+                }
+            }
+        });
+    }
+
+    private void restartApp() {
+        startActivity(new Intent(getApplicationContext(), MainActivity.class));
+        finish();
     }
 
     @Override
@@ -336,6 +373,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
             }
         });
     }
+
     public void hideKeyboard() {
         InputMethodManager imm = (InputMethodManager) this.getSystemService(Activity.INPUT_METHOD_SERVICE);
         //Find the currently focused view, so we can grab the correct window token from it.
