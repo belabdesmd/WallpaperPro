@@ -3,11 +3,12 @@ package com.devalutix.wallpaperpro.presenters;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.util.Log;
 
 import com.devalutix.wallpaperpro.contracts.CategoriesContract;
+import com.devalutix.wallpaperpro.di.annotations.ApplicationContext;
 import com.devalutix.wallpaperpro.models.SharedPreferencesHelper;
 import com.devalutix.wallpaperpro.pojo.Category;
-import com.devalutix.wallpaperpro.pojo.Image;
 import com.devalutix.wallpaperpro.ui.fragments.CategoriesFragment;
 import com.google.gson.Gson;
 
@@ -25,7 +26,7 @@ public class CategoriesPresenter implements CategoriesContract.Presenter {
     private SharedPreferencesHelper mSharedPrefsHelper;
 
     //Constructor
-    public CategoriesPresenter(Context mContext, SharedPreferencesHelper mSharedPrefsHelper) {
+    public CategoriesPresenter(@ApplicationContext Context mContext, SharedPreferencesHelper mSharedPrefsHelper) {
         this.mContext = mContext;
         this.mSharedPrefsHelper = mSharedPrefsHelper;
     }
@@ -48,7 +49,7 @@ public class CategoriesPresenter implements CategoriesContract.Presenter {
 
     //Methods
     @Override
-    public boolean checkNetwork() {
+    public boolean hasInternetConnection() {
         ConnectivityManager conMgr = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo netInfo = conMgr.getActiveNetworkInfo();
 
@@ -57,39 +58,44 @@ public class CategoriesPresenter implements CategoriesContract.Presenter {
 
     @Override
     public void initRecyclerView() {
+        Log.d(TAG, "initRecyclerView: Initialising Recycler View");
+
         ArrayList<Category> categories = getCategories();
 
-        if (!checkNetwork() || categories == null) mView.showNoNetwork();
-        else {
-            mView.initRecyclerView(categories);
+        //Init Recycler View
+        mView.initRecyclerView(categories);
+
+        //If There is no connection or there is a problem with the server: Show no Network
+        if (!hasInternetConnection() || categories == null)
+            mView.showNoNetwork();
+        else
             mView.showCategoriesList();
-        }
     }
 
     @Override
     public void updateRecyclerView() {
+        Log.d(TAG, "updateRecyclerView: Updating Recycler View");
+
         ArrayList<Category> categories = getCategories();
 
-        if (!checkNetwork() || categories == null) mView.showNoNetwork();
-        else {
-            mView.updateRecyclerView(categories);
+        //Update Recycler View
+        mView.updateRecyclerView(categories);
+
+        //If There is no connection or there is a problem with the server: Show no Network
+        if (!hasInternetConnection() || categories == null)
+            mView.showNoNetwork();
+        else
             mView.showCategoriesList();
-        }
     }
 
     @Override
     public ArrayList<Category> getCategories() {
 
-        //TODO: Remove Dummy Data
+        //TODO: Get Categories From Server
 
         Gson gson = new Gson();
         Category[] categoryItem = gson.fromJson(readJSONFromAsset(), Category[].class);
         ArrayList<Category> categories = new ArrayList<Category>(Arrays.asList(categoryItem));
-
-        if (!checkNetwork() || categories == null) categories = mSharedPrefsHelper.getCategories();
-        else {
-            mSharedPrefsHelper.saveCategories(categories);
-        }
 
         return categories;
     }

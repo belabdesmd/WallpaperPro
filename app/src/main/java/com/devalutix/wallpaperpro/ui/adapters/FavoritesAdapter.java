@@ -4,24 +4,19 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.devalutix.wallpaperpro.R;
-import com.devalutix.wallpaperpro.pojo.Category;
 import com.devalutix.wallpaperpro.pojo.Collection;
-import com.devalutix.wallpaperpro.pojo.Image;
 import com.devalutix.wallpaperpro.presenters.FavoritesPresenter;
 import com.devalutix.wallpaperpro.ui.activities.WallpaperActivity;
-import com.devalutix.wallpaperpro.ui.custom.SquareCardView;
 import com.devalutix.wallpaperpro.ui.fragments.FavoritesFragment;
 
 import java.util.ArrayList;
@@ -99,7 +94,7 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.View
 
 
         //Set Category Name
-        holder.name.setText(mCollections.get(position).getCollectioName());
+        holder.name.setText(mCollections.get(position).getCollectionName());
 
 
         //Click Listener
@@ -108,11 +103,11 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.View
             @Override
             public void onClick(View v) {
                 if (mView1 != null) {
-                    mPresenter.addToCollection(mCollections.get(finalPosition).getCollectioName(), mView1.getImage());
-                    Toast.makeText(mView1, "Wallpaper Added To " + mCollections.get(finalPosition).getCollectioName(), Toast.LENGTH_SHORT).show();
+                    mPresenter.addImageToCollection(mCollections.get(finalPosition).getCollectionName(), mView1.getImage());
+                    Toast.makeText(mView1, "Wallpaper Added To " + mCollections.get(finalPosition).getCollectionName(), Toast.LENGTH_SHORT).show();
                     mView1.hideFavorite();
                 } else if (mView != null)
-                    mView.goToImages(mCollections.get(finalPosition).getCollectioName());
+                    mView.goToImages(mCollections.get(finalPosition).getCollectionName());
             }
         });
     }

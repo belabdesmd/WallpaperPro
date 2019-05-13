@@ -4,7 +4,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.SearchView;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.view.MenuItemCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
@@ -17,39 +16,24 @@ import butterknife.OnClick;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.CompoundButton;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.devalutix.wallpaperpro.R;
-import com.devalutix.wallpaperpro.base.BaseApplication;
 import com.devalutix.wallpaperpro.contracts.MainContract;
 import com.devalutix.wallpaperpro.di.components.DaggerMVPComponent;
 import com.devalutix.wallpaperpro.di.components.MVPComponent;
 import com.devalutix.wallpaperpro.di.modules.ApplicationModule;
 import com.devalutix.wallpaperpro.di.modules.MVPModule;
-import com.devalutix.wallpaperpro.pojo.Category;
-import com.devalutix.wallpaperpro.pojo.Collection;
-import com.devalutix.wallpaperpro.presenters.FavoritesPresenter;
 import com.devalutix.wallpaperpro.presenters.MainPresenter;
 import com.devalutix.wallpaperpro.ui.adapters.MainPagerAdapter;
-import com.devalutix.wallpaperpro.ui.custom.CustomPopUpWindow;
 import com.devalutix.wallpaperpro.ui.fragments.CategoriesFragment;
 import com.devalutix.wallpaperpro.ui.fragments.ExploreFragment;
 import com.devalutix.wallpaperpro.ui.fragments.FavoritesFragment;
@@ -84,8 +68,6 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     DrawerLayout mDrawerLayout;
     @BindView(R.id.nav_view)
     NavigationView mNavigationView;
-    @BindView(R.id.main_activity)
-    ConstraintLayout mainActivity;
     @BindView(R.id.page_title)
     TextView title;
     @BindView(R.id.view_pager_main)
@@ -108,11 +90,14 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     //Essentials Methods
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d(TAG, "onCreate: Creating Views");
+
         //Initialize Dagger For Application
         mvpComponent = getComponent();
         //Inject the Component Here
         mvpComponent.inject(this);
 
+        //Enable/Disable Dark Mode
         if (mPresenter.isDarkModeEnabled())
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
 
@@ -147,25 +132,17 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         showSearchBar();
 
         //Search Bar Event Open/Close
-        search.setOnSearchClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                title.setVisibility(View.INVISIBLE);
-            }
-        });
-        search.setOnCloseListener(new SearchView.OnCloseListener() {
-            @Override
-            public boolean onClose() {
-                title.setVisibility(VISIBLE);
-                return false;
-            }
-        });
+        initSearchBar();
+
+        //Init Dark Mode
+        darkModeListener();
 
         //Navigation Menu OnClickListener
         mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
+                //TODO: Add Drawer Menu Actions
 
                 // close drawer when item is tapped
                 mDrawerLayout.closeDrawers();
@@ -177,29 +154,6 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         if (getIntent().getBooleanExtra("ToFavorites", false))
             mViewPager.setCurrentItem(2);
 
-        //Dark Mode
-        MenuItem dark_mode_item = mNavigationView.getMenu().findItem(R.id.dark_mode);
-        Switch dark_mode = (Switch) MenuItemCompat.getActionView(dark_mode_item);
-        dark_mode.setChecked(mPresenter.isDarkModeEnabled());
-        dark_mode.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked){
-                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-                    mPresenter.enableDarkMode(true);
-                    restartApp();
-                }else{
-                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-                    mPresenter.enableDarkMode(false);
-                    restartApp();
-                }
-            }
-        });
-    }
-
-    private void restartApp() {
-        startActivity(new Intent(getApplicationContext(), MainActivity.class));
-        finish();
     }
 
     @Override
@@ -271,6 +225,48 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         } else {
             ad.setVisibility(GONE);
         }
+    }
+
+    @Override
+    public void initSearchBar() {
+        Log.d(TAG, "initSearchBar: Init Search Bar");
+
+        search.setOnSearchClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                title.setVisibility(View.INVISIBLE);
+            }
+        });
+
+        search.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                title.setVisibility(VISIBLE);
+                return false;
+            }
+        });
+    }
+
+    @Override
+    public void darkModeListener() {
+        //Dark Mode
+        MenuItem dark_mode_item = mNavigationView.getMenu().findItem(R.id.dark_mode);
+        Switch dark_mode = (Switch) MenuItemCompat.getActionView(dark_mode_item);
+        dark_mode.setChecked(mPresenter.isDarkModeEnabled());
+        dark_mode.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                    mPresenter.enableDarkMode(true);
+                    restartApp();
+                } else {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                    mPresenter.enableDarkMode(false);
+                    restartApp();
+                }
+            }
+        });
     }
 
     @Override
@@ -374,6 +370,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         });
     }
 
+    @Override
     public void hideKeyboard() {
         InputMethodManager imm = (InputMethodManager) this.getSystemService(Activity.INPUT_METHOD_SERVICE);
         //Find the currently focused view, so we can grab the correct window token from it.
@@ -383,5 +380,11 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
             view = new View(this);
         }
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
+    @Override
+    public void restartApp() {
+        startActivity(new Intent(getApplicationContext(), MainActivity.class));
+        finish();
     }
 }

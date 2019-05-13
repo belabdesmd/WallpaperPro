@@ -1,5 +1,7 @@
 package com.devalutix.wallpaperpro.presenters;
 
+import android.util.Log;
+
 import com.devalutix.wallpaperpro.contracts.FavoritesContract;
 import com.devalutix.wallpaperpro.models.SharedPreferencesHelper;
 import com.devalutix.wallpaperpro.pojo.Collection;
@@ -40,8 +42,10 @@ public class FavoritesPresenter implements FavoritesContract.Presenter {
     //Methods
     @Override
     public void initRecyclerView() {
+        Log.d(TAG, "initRecyclerView: Init Collections List");
         ArrayList<Collection> collections = getCollectionsList();
 
+        //IF There is No Collection (First Time), Create The My Favorites Collection
         if (collections == null) {
             collections = new ArrayList<>();
             collections.add(new Collection(Config.MY_FAVORITES_COLLECTION_NAME, new ArrayList<Image>()));
@@ -53,9 +57,13 @@ public class FavoritesPresenter implements FavoritesContract.Presenter {
 
     @Override
     public void addCollection(Collection collection) {
+        Log.d(TAG, "addCollection: Adding Collection");
+
         ArrayList<Collection> collections = getCollectionsList();
         collections.add(collection);
         mSharedPrefsHelper.saveCollections(collections);
+
+        //Update Recycler View
         mView.updateRecyclerView(collections);
     }
 
@@ -65,12 +73,20 @@ public class FavoritesPresenter implements FavoritesContract.Presenter {
     }
 
     @Override
-    public void addToCollection(String name, Image image) {
+    public void addImageToCollection(String collectionName, Image image) {
+        Log.d(TAG, "addImageToCollection: Addign Image To Collection");
+
+        //Get All Collections
         ArrayList<Collection> collections = getCollectionsList();
-        for (Collection collection :
-                collections) {
-            if (collection.getCollectioName().equals(name))
-                collection.getCollectionPictures().add(image);
+
+        boolean found = false;
+        int i = 0;
+
+        while (i < collections.size() && !found) {
+            if (collections.get(i).getCollectionName().equals(collectionName)) {
+                collections.get(i).getCollectionPictures().add(image);
+                found = true;
+            } else i++;
         }
 
         mSharedPrefsHelper.saveCollections(collections);

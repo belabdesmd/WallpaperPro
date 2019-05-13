@@ -17,7 +17,7 @@ public interface FavoritesContract {
 
         ArrayList<Collection> getCollectionsList();
 
-        void addToCollection(String name, Image image);
+        void addImageToCollection(String name, Image image);
     }
 
     interface View extends BaseView {

@@ -9,7 +9,7 @@ public interface ImagesContract {
 
     interface Presenter extends BasePresenter<ImagesContract.View> {
 
-        boolean checkNetwork();
+        boolean hasInternetNetwork();
 
         void initRecyclerView(String mode,String name);
 

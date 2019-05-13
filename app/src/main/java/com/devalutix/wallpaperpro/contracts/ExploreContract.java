@@ -10,7 +10,7 @@ public interface ExploreContract {
 
     interface Presenter extends BasePresenter<ExploreContract.View> {
 
-        boolean checkNetwork();
+        boolean hasInternetAccess();
 
         void initRecyclerView();
 

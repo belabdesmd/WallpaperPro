@@ -3,22 +3,18 @@ package com.devalutix.wallpaperpro.presenters;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.util.Log;
 
 import com.devalutix.wallpaperpro.contracts.ExploreContract;
-import com.devalutix.wallpaperpro.pojo.Category;
+import com.devalutix.wallpaperpro.di.annotations.ApplicationContext;
 import com.devalutix.wallpaperpro.pojo.Image;
 import com.devalutix.wallpaperpro.ui.fragments.ExploreFragment;
 import com.google.gson.Gson;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Array;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 
 public class ExplorePresenter implements ExploreContract.Presenter {
     private static String TAG = "ExplorePresenter";
@@ -29,7 +25,7 @@ public class ExplorePresenter implements ExploreContract.Presenter {
     private Context mContext;
 
     //Constructor
-    public ExplorePresenter(Context mContext, Gson gson) {
+    public ExplorePresenter(@ApplicationContext Context mContext, Gson gson) {
         this.mContext = mContext;
         this.gson = gson;
     }
@@ -52,8 +48,8 @@ public class ExplorePresenter implements ExploreContract.Presenter {
 
     //Methods
     @Override
-    public boolean checkNetwork() {
-        ConnectivityManager conMgr =  (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
+    public boolean hasInternetAccess() {
+        ConnectivityManager conMgr = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo netInfo = conMgr.getActiveNetworkInfo();
 
         return netInfo != null && netInfo.isConnected();
@@ -61,17 +57,24 @@ public class ExplorePresenter implements ExploreContract.Presenter {
 
     @Override
     public void initRecyclerView() {
+        Log.d(TAG, "initRecyclerView: Initialising Recycler View");
+
         ArrayList<Image> images = getRecent();
 
+        //Init Recycler View
         mView.initRecyclerView(images);
-        if (!checkNetwork() || images == null) mView.showNoNetwork();
+
+        //If There is no connection or there is a problem with the server: Show no Network
+        if (!hasInternetAccess() || images == null) mView.showNoNetwork();
         else mView.showPicturesList();
     }
 
     @Override
     public void updateRecyclerView(String mode) {
+        Log.d(TAG, "updateRecyclerView: Updating Recycler View");
+
         ArrayList<Image> images = null;
-        switch (mode){
+        switch (mode) {
             case "popular":
                 images = getPopular();
                 break;
@@ -83,25 +86,32 @@ public class ExplorePresenter implements ExploreContract.Presenter {
                 break;
         }
 
+        //Update Recycler View
         mView.updateRecyclerView(images);
 
-        if (!checkNetwork() || images == null) mView.showNoNetwork();
-        else mView.showPicturesList();
+        //If There is no connection or there is a problem with the server: Show no Network
+        if (!hasInternetAccess() || images == null)
+            mView.showNoNetwork();
+        else
+            mView.showPicturesList();
     }
 
     @Override
     public ArrayList<Image> getRecent() {
+        //TODO: Get Recent Images From Server
         Image[] collectionItem = gson.fromJson(readJSONFromAsset(), Image[].class);
         return new ArrayList<Image>(Arrays.asList(collectionItem));
     }
 
     @Override
     public ArrayList<Image> getPopular() {
+        //TODO: Get Popular Images From Server
         return getRecent();
     }
 
     @Override
     public ArrayList<Image> getFeatured() {
+        //TODO: Get Featured Images From Server
         return getRecent();
     }
 

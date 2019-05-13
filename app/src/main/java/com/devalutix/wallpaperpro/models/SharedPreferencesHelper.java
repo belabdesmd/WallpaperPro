@@ -22,6 +22,7 @@ public class SharedPreferencesHelper {
     private SharedPreferences sharedPref;
     private Gson gson;
 
+    //Constructor
     public SharedPreferencesHelper(SharedPreferences sharedPref, Gson gson) {
         this.sharedPref = sharedPref;
         this.gson = gson;
@@ -78,22 +79,34 @@ public class SharedPreferencesHelper {
         return sharedPref != null && sharedPref.getBoolean(permission, true);
     }
 
+    /**
+     * Set Download Enabled if user Provides the Permission
+     */
     public void setDownloadEnable(boolean enable) {
         SharedPreferences.Editor editor;
         editor = sharedPref.edit();
         editor.putBoolean("Download", enable).apply();
     }
 
+    /**
+     * Check if Downloading Option Available
+     */
     public boolean isDownloadEnable() {
         return sharedPref.getBoolean("Download", false);
     }
 
+    /**
+     * Set Dark Mode Enabled Or Disabled
+     */
     public void setDarkModeEnable(boolean isEnabled) {
         SharedPreferences.Editor editor;
         editor = sharedPref.edit();
         editor.putBoolean("DARK_MODE", isEnabled).apply();
     }
 
+    /**
+     * Check if Dark Mode is Enabled
+     */
     public boolean isDarkModeEnabled() {
         return sharedPref.getBoolean("DARK_MODE", false);
     }

@@ -115,20 +115,22 @@ public class ImagesActivity extends AppCompatActivity implements ImagesContract.
     //Essentials Methods
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES)
-            setTheme(R.style.AppDarkTheme);
-        else setTheme(R.style.AppLightTheme);
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_images);
-
-        //Set ButterKnife
-        ButterKnife.bind(this);
-
         //Initialize Dagger For Application
         mvpComponent = getComponent();
 
         //Inject the Component Here
         mvpComponent.inject(this);
+
+        //Set Dark Mode
+        if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES)
+            setTheme(R.style.AppDarkTheme);
+        else setTheme(R.style.AppLightTheme);
+
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_images);
+
+        //Set ButterKnife
+        ButterKnife.bind(this);
 
         //Attach View To Presenter
         mPresenter.attach(this);
@@ -158,6 +160,7 @@ public class ImagesActivity extends AppCompatActivity implements ImagesContract.
             }
         });
 
+        //Init Edit Collection PopUp
         initEditCollectionPopUp();
     }
 
@@ -350,17 +353,6 @@ public class ImagesActivity extends AppCompatActivity implements ImagesContract.
         }
     }
 
-    public class MyItemDecoration extends RecyclerView.ItemDecoration {
-
-        @Override
-        public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
-            // only for the last one
-            outRect.bottom = 16;
-            outRect.right = 16;
-            outRect.left = 16;
-        }
-    }
-
     public void hideKeyboard() {
         InputMethodManager imm = (InputMethodManager) this.getSystemService(Activity.INPUT_METHOD_SERVICE);
         //Find the currently focused view, so we can grab the correct window token from it.
@@ -370,5 +362,16 @@ public class ImagesActivity extends AppCompatActivity implements ImagesContract.
             view = new View(this);
         }
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
+    public class MyItemDecoration extends RecyclerView.ItemDecoration {
+
+        @Override
+        public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+            // only for the last one
+            outRect.bottom = 16;
+            outRect.right = 16;
+            outRect.left = 16;
+        }
     }
 }

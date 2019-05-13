@@ -19,7 +19,7 @@ import com.devalutix.wallpaperpro.ui.fragments.CategoriesFragment;
 
 import java.util.ArrayList;
 
-public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.ViewHolder>{
+public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.ViewHolder> {
     private static final String TAG = "CategoriesAdapter";
 
     //Declarations

@@ -14,7 +14,6 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.text.Spannable;
@@ -29,7 +28,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.devalutix.wallpaperpro.R;
-import com.devalutix.wallpaperpro.base.BaseApplication;
 import com.devalutix.wallpaperpro.contracts.WallpaperContract;
 import com.devalutix.wallpaperpro.di.components.DaggerMVPComponent;
 import com.devalutix.wallpaperpro.di.components.MVPComponent;
@@ -40,7 +38,6 @@ import com.devalutix.wallpaperpro.presenters.FavoritesPresenter;
 import com.devalutix.wallpaperpro.presenters.WallpaperPresenter;
 import com.devalutix.wallpaperpro.ui.adapters.FavoritesAdapter;
 import com.devalutix.wallpaperpro.ui.adapters.WallpaperPagerAdapter;
-import com.devalutix.wallpaperpro.ui.fragments.FavoritesFragment;
 import com.devalutix.wallpaperpro.ui.fragments.WallpaperFragment;
 import com.devalutix.wallpaperpro.utils.Config;
 import com.google.android.gms.ads.AdRequest;
@@ -151,6 +148,13 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
     //Essentials Methods
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        //Initialize Dagger For Application
+        mvpComponent = getComponent();
+
+        //Inject the Component Here
+        mvpComponent.inject(this);
+
+        //Set Dark Mode
         if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES)
             setTheme(R.style.AppDarkTheme);
         else setTheme(R.style.AppLightTheme);
@@ -159,12 +163,6 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
 
         //Set ButterKnife
         ButterKnife.bind(this);
-
-        //Initialize Dagger For Application
-        mvpComponent = getComponent();
-
-        //Inject the Component Here
-        mvpComponent.inject(this);
 
         //Attach View To Presenter
         mPresenter.attach(this);
@@ -226,7 +224,7 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
                 return true;
             }
             case R.id.action_favorite: {
-                mPresenter.addToFavorites(images.get(mViewPager.getCurrentItem()));
+                mPresenter.openAddToFavoritesPopUp();
                 return true;
             }
         }
@@ -238,7 +236,7 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
 
     @Override
     public void initViewPager() {
-
+        Log.d(TAG, "initViewPager: Initialising View Pager");
         WallpaperPagerAdapter adapter = new WallpaperPagerAdapter(getSupportFragmentManager());
 
         /*
@@ -278,6 +276,9 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
 
     @Override
     public void initPopUpInfos() {
+
+        //TODO: Use Bottom Sheet Instead
+
         slideUpInfo = new SlideUpBuilder(info_popup)
                 .withStartState(SlideUp.State.HIDDEN)
                 .withStartGravity(Gravity.BOTTOM)
@@ -299,6 +300,8 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
 
     @Override
     public void initInfos(int position) {
+
+        //TODO: Visual Polish
 
         //Declarations
         String topic;
@@ -427,7 +430,7 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
 
     @Override
     public void initInterstitialAd() {
-
+        //TODO: Init Interstitial Ad
     }
 
     @Override
@@ -451,25 +454,25 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
     }
 
     @Override
-    public void enableLikes() {
+    public void enableLike() {
         like.setImageResource(R.drawable.like_enabled);
         likesTextView.setTextColor(getResources().getColor(R.color.colorAccent));
     }
 
     @Override
-    public void disableLikes() {
+    public void disableLike() {
         like.setImageResource(R.drawable.like);
         likesTextView.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
     }
 
     @Override
-    public void enableDislikes() {
+    public void enableDislike() {
         dislike.setImageResource(R.drawable.dislike_enabled);
         dislikesTextView.setTextColor(getResources().getColor(R.color.colorAccent));
     }
 
     @Override
-    public void disableDislikes() {
+    public void disableDislike() {
         dislike.setImageResource(R.drawable.dislike);
         dislikesTextView.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
     }

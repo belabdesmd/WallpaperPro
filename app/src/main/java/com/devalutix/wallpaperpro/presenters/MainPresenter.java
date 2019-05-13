@@ -3,21 +3,15 @@ package com.devalutix.wallpaperpro.presenters;
 import android.content.DialogInterface;
 import android.util.Log;
 
-import com.devalutix.wallpaperpro.base.BaseApplication;
 import com.devalutix.wallpaperpro.contracts.MainContract;
 import com.devalutix.wallpaperpro.models.SharedPreferencesHelper;
-import com.devalutix.wallpaperpro.pojo.Category;
 import com.devalutix.wallpaperpro.ui.activities.MainActivity;
 import com.devalutix.wallpaperpro.utils.GDPR;
 import com.devalutix.wallpaperpro.utils.PermissionUtil;
 import com.google.android.gms.ads.AdView;
 
-import javax.inject.Inject;
-
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
-
-import java.util.ArrayList;
 
 public class MainPresenter implements MainContract.Presenter {
     private static String TAG = "MainPresenter";
@@ -27,7 +21,6 @@ public class MainPresenter implements MainContract.Presenter {
     private PermissionUtil mPermissionUtil;
     private SharedPreferencesHelper sharedPreferencesHelper;
     private GDPR gdpr;
-
 
     //Constructor
     public MainPresenter(PermissionUtil mPermissionUtil, SharedPreferencesHelper sharedPreferencesHelper,
@@ -144,10 +137,5 @@ public class MainPresenter implements MainContract.Presenter {
     @Override
     public boolean isDarkModeEnabled() {
         return sharedPreferencesHelper.isDarkModeEnabled();
-    }
-
-
-    public ArrayList<Category> getCategories() {
-        return sharedPreferencesHelper.getCategories();
     }
 }

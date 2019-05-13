@@ -10,7 +10,7 @@ public interface CategoriesContract {
 
     interface Presenter extends BasePresenter<View> {
 
-        boolean checkNetwork();
+        boolean hasInternetConnection();
 
         void initRecyclerView();
 

@@ -3,19 +3,20 @@ package com.devalutix.wallpaperpro.presenters;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.util.Log;
 
 import com.devalutix.wallpaperpro.contracts.ImagesContract;
+import com.devalutix.wallpaperpro.di.annotations.ApplicationContext;
 import com.devalutix.wallpaperpro.models.SharedPreferencesHelper;
 import com.devalutix.wallpaperpro.pojo.Category;
 import com.devalutix.wallpaperpro.pojo.Collection;
 import com.devalutix.wallpaperpro.pojo.Image;
 import com.devalutix.wallpaperpro.ui.activities.ImagesActivity;
+import com.devalutix.wallpaperpro.utils.Config;
 import com.google.gson.Gson;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
@@ -31,7 +32,7 @@ public class ImagesPresenter implements ImagesContract.Presenter {
     private SharedPreferencesHelper mSharedPrefsHelper;
 
     //Constructor
-    public ImagesPresenter(Gson gson, Context mContext, SharedPreferencesHelper mSharedPrefsHelper) {
+    public ImagesPresenter(@ApplicationContext Context mContext, Gson gson, SharedPreferencesHelper mSharedPrefsHelper) {
         this.gson = gson;
         this.mContext = mContext;
         this.mSharedPrefsHelper = mSharedPrefsHelper;
@@ -55,7 +56,7 @@ public class ImagesPresenter implements ImagesContract.Presenter {
 
     //Methods
     @Override
-    public boolean checkNetwork() {
+    public boolean hasInternetNetwork() {
         ConnectivityManager conMgr = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo netInfo = conMgr.getActiveNetworkInfo();
 
@@ -64,6 +65,8 @@ public class ImagesPresenter implements ImagesContract.Presenter {
 
     @Override
     public void initRecyclerView(String mode, String name) {
+        Log.d(TAG, "initRecyclerView: Initializing Recycler View");
+
         ArrayList<Image> images = null;
         this.mode = mode;
 
@@ -83,12 +86,16 @@ public class ImagesPresenter implements ImagesContract.Presenter {
         mView.initRecyclerView(images);
 
         //Init Recycler View
-        if (!checkNetwork() || images == null) mView.showNoNetwork();
-        else mView.showPicturesList();
+        if (!hasInternetNetwork() || images == null)
+            mView.showNoNetwork();
+        else
+            mView.showPicturesList();
     }
 
     @Override
     public void updateRecyclerView(String name) {
+        Log.d(TAG, "updateRecyclerView: Updating Recycler View");
+
         ArrayList<Image> images = null;
         switch (mode) {
             case "collection": {
@@ -107,7 +114,7 @@ public class ImagesPresenter implements ImagesContract.Presenter {
         mView.setPageName(name);
 
         //Init Recycler View
-        if (!checkNetwork() || images == null) mView.showNoNetwork();
+        if (!hasInternetNetwork() || images == null) mView.showNoNetwork();
         else {
             mView.updateRecyclerView(images);
             mView.showPicturesList();
@@ -116,6 +123,7 @@ public class ImagesPresenter implements ImagesContract.Presenter {
 
     @Override
     public ArrayList<Image> getImagesFromCollection(String name) {
+        Log.d(TAG, "getImagesFromCollection: Getting Images From Collection");
 
         ArrayList<Collection> allCollections = mSharedPrefsHelper.getCollections();
         ArrayList<Image> images = new ArrayList<>();
@@ -124,7 +132,7 @@ public class ImagesPresenter implements ImagesContract.Presenter {
         int i = 0;
 
         while (!found && i < allCollections.size()) {
-            if (allCollections.get(i).getCollectioName().equals(name)) {
+            if (allCollections.get(i).getCollectionName().equals(name)) {
                 images = allCollections.get(i).getCollectionPictures();
                 found = true;
             } else i++;
@@ -135,10 +143,11 @@ public class ImagesPresenter implements ImagesContract.Presenter {
 
     @Override
     public ArrayList<Image> getImageFromCategory(String name) {
-        //TODO: Delete Dummy Data
 
-        Image[] collectionItem = gson.fromJson(readJSONFromAsset(), Image[].class);
-        ArrayList<Image> recentImages = new ArrayList<Image>(Arrays.asList(collectionItem));
+        //TODO: Get Category Images From Server Of the Category name passed as parameter
+
+        Image[] categoryItem = gson.fromJson(readJSONFromAsset(), Image[].class);
+        ArrayList<Image> recentImages = new ArrayList<Image>(Arrays.asList(categoryItem));
 
         ArrayList<Image> images = new ArrayList<>();
 
@@ -158,6 +167,8 @@ public class ImagesPresenter implements ImagesContract.Presenter {
 
     @Override
     public String getThumbnail(String mode, String name) {
+        Log.d(TAG, "getThumbnail: Getting Thumbnail");
+
         switch (mode) {
             case "collection":
                 if (!getImagesFromCollection(name).isEmpty())
@@ -172,28 +183,47 @@ public class ImagesPresenter implements ImagesContract.Presenter {
 
     @Override
     public void removeCollection(String name) {
-        ArrayList<Collection> allCollections = mSharedPrefsHelper.getCollections();
-        allCollections.remove(new Collection(name, null));
+        Log.d(TAG, "removeCollection: Removing Collection");
 
+        ArrayList<Collection> allCollections = mSharedPrefsHelper.getCollections();
+
+        //Remove Collection From List
+        if (!name.equals(Config.MY_FAVORITES_COLLECTION_NAME))
+            allCollections.remove(new Collection(name, null));
+
+        //Save List
         mSharedPrefsHelper.saveCollections(allCollections);
     }
 
     @Override
     public void editCollection(String name, String newName) {
+        Log.d(TAG, "editCollection: Editing Collection Name");
+
         ArrayList<Collection> allCollections = mSharedPrefsHelper.getCollections();
-        for (Collection collection :
-                allCollections) {
-            if (collection.getCollectioName().equals(name)) collection.setCollectioName(newName);
+
+        boolean found = false;
+        int i = 0;
+
+        while (!found && i < allCollections.size()) {
+            if (allCollections.get(i).getCollectionName().equals(name)) {
+                allCollections.get(i).setCollectionName(newName);
+                found = true;
+            } else i++;
         }
 
         mSharedPrefsHelper.saveCollections(allCollections);
+
+        //Change Page Name
         mView.setPageName(newName);
     }
 
-    private Category getCategory(String name) {
+    private Category getCategory(String categoryName) {
+
+        //TODO: Get Category From Server Of the Category name passed as parameter
+
         for (Category category :
                 mSharedPrefsHelper.getCategories()) {
-            if (category.getCategoryName().equals(name))
+            if (category.getCategoryName().equals(categoryName))
                 return category;
         }
 

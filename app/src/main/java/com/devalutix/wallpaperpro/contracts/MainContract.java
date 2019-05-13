@@ -24,6 +24,10 @@ public interface MainContract {
 
         void initAdBanner();
 
+        void initSearchBar();
+
+        void darkModeListener();
+
         void showSearchBar();
 
         void showAddCollection();
@@ -35,6 +39,10 @@ public interface MainContract {
         void initViewPager();
 
         void initTabLayout();
+
+        void hideKeyboard();
+
+        void restartApp();
     }
 
 }

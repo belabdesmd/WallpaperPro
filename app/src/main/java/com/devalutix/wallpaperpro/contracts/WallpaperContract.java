@@ -15,11 +15,13 @@ public interface WallpaperContract {
 
         void likePicture(int position);
 
+        void unLikePicture(int position);
+
         void dislikePicture(int position);
 
-        void addToFavorites(Image image);
+        void unDislikePicture(int position);
 
-        void addRating(Image image);
+        void openAddToFavoritesPopUp();
 
         void sharePicture(int position);
 
@@ -50,13 +52,13 @@ public interface WallpaperContract {
 
         void hideFavorite();
 
-        void enableLikes();
+        void enableLike();
 
-        void disableLikes();
+        void disableLike();
 
-        void enableDislikes();
+        void enableDislike();
 
-        void disableDislikes();
+        void disableDislike();
 
         void showInterstitialAd();
     }
