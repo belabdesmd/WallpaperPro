@@ -36,12 +36,25 @@ Mockups-Low Fidelity : [Check Mockup](./20190416_081423.jpg)
       - Popular
     - Search Picture (by Tags)
     
-<h2>Steps (App UI Structure)</h2>
+<h2>TODO (App UI Structure)</h2>
 
-<h2>Steps (App UI Events)</h2>
+- [ ] Splash Activity (Features Of the App)
+- [ ] Request Permission Page
+- [ ] Fix Drawer Menu
+- [ ] Use Bottom Sheet
+- [ ] Infos Visual Polish
+- [ ] Fix Like/Unlike
+- [ ] Fix Dislike/Undislike
 
-<h2>Steps (App Logic)</h2>
+<h2>TODO (App Logic)</h2>
 
-<h2>Steps (Admin Panel)</h2>
-
-<h2>Steps (Link App with Admin Panel)</h2>
+- [ ] Get Categories From Server
+- [ ] Get Recent Images
+- [ ] Get Featured Images
+- [ ] Get Popular Images
+- [ ] Get Categroy From Sever
+- [ ] Get Category Images
+- [ ] Save Image
+- [ ] Like Image
+- [ ] Dislike Image
+- [ ] Share Image
