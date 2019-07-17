@@ -55,7 +55,7 @@ public class MVPModule {
     @Provides
     @Singleton
     ImagesPresenter providesImagesPresenter(Gson gson, @ApplicationContext Context mContext, SharedPreferencesHelper mSharedPrefsHelper){
-        return new ImagesPresenter(gson, mContext, mSharedPrefsHelper);
+        return new ImagesPresenter(mContext, gson, mSharedPrefsHelper);
     }
 
     @Provides

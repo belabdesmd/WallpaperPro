@@ -1,0 +1,37 @@
+[
+  {
+    "categoryName": "Animal",
+    "categoryImageUrl": "https://img.icons8.com/color/96/000000/panda.png",
+    "categoryThumbnailUrl": "https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
+  },
+  {
+    "categoryName": "Bird",
+    "categoryImageUrl": "https://img.icons8.com/color/96/000000/duck.png",
+    "categoryThumbnailUrl": "https://images.pexels.com/photos/416179/pexels-photo-416179.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
+  },
+  {
+    "categoryName": "Flower",
+    "categoryImageUrl": "https://img.icons8.com/color/96/000000/bunch-flowers.png",
+    "categoryThumbnailUrl": "https://images.pexels.com/photos/60597/dahlia-red-blossom-bloom-60597.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
+  },
+  {
+    "categoryName": "Mountain",
+    "categoryImageUrl": "https://img.icons8.com/color/96/000000/mountain.png",
+    "categoryThumbnailUrl": "https://images.pexels.com/photos/1054218/pexels-photo-1054218.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
+  },
+  {
+    "categoryName": "Sea",
+    "categoryImageUrl": "https://img.icons8.com/color/96/000000/sea-waves.png",
+    "categoryThumbnailUrl": "https://images.pexels.com/photos/1001682/pexels-photo-1001682.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
+  },
+  {
+    "categoryName": "Sky",
+    "categoryImageUrl": "https://img.icons8.com/color/96/000000/clouds.png",
+    "categoryThumbnailUrl": "https://images.pexels.com/photos/158827/field-corn-air-frisch-158827.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
+  },
+  {
+    "categoryName": "Tree",
+    "categoryImageUrl": "https://img.icons8.com/color/96/000000/palm-tree.png",
+    "categoryThumbnailUrl": "https://images.pexels.com/photos/1250260/pexels-photo-1250260.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
+  }
+]
