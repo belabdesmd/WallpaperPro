@@ -9,6 +9,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -53,22 +54,12 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.View
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.collection_recyclerview_item, parent, false);
 
-        width = parent.getMeasuredWidth() / 3;
-
-        itemView.setLayoutParams(new RecyclerView.LayoutParams(width, ViewGroup.LayoutParams.WRAP_CONTENT));
-
         return new FavoritesAdapter.ViewHolder(itemView);
     }
 
     @Override
     public void onBindViewHolder(@NonNull FavoritesAdapter.ViewHolder holder, int position) {
         Log.d(TAG, "onBindViewHolder: Setting Views.");
-
-
-        //Loading the Image
-        holder.thumbnail.getLayoutParams().width = width;
-        holder.thumbnail.getLayoutParams().height = width;
-        holder.thumbnail.requestLayout();
 
         if (mView != null) {
             if (!mCollections.get(position).getCollectionPictures().isEmpty())
@@ -77,9 +68,6 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.View
                         .fitCenter()
                         //.placeholder(R.drawable.loading_spinner)
                         .into(holder.thumbnail);
-            else {
-                holder.thumbnail.setImageResource(R.color.colorAccent);
-            }
         } else if (mView1 != null) {
             if (!mCollections.get(position).getCollectionPictures().isEmpty())
                 Glide.with(mView1)
@@ -87,9 +75,6 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.View
                         .fitCenter()
                         //.placeholder(R.drawable.loading_spinner)
                         .into(holder.thumbnail);
-            else {
-                holder.thumbnail.setImageResource(R.color.colorAccent);
-            }
         }
 
 
@@ -140,7 +125,7 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.View
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder
     static class ViewHolder extends RecyclerView.ViewHolder {
-        ConstraintLayout container;
+        CardView container;
         ImageView thumbnail;
         TextView name;
 

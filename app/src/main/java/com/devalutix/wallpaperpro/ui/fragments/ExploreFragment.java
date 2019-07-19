@@ -119,12 +119,7 @@ public class ExploreFragment extends Fragment implements ExploreContract.View {
         mPresenter.initRecyclerView();
 
         //When Pulling To Refresh Listener
-        mRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                mPresenter.updateRecyclerView(mode);
-            }
-        });
+        mRefresh.setOnRefreshListener(() -> mPresenter.updateRecyclerView(mode));
 
         return view;
     }

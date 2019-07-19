@@ -15,6 +15,8 @@ public interface MainContract {
 
         GDPR getGDPR();
 
+        void searchImages(String query);
+
         void enableDarkMode(boolean isChecked);
 
         boolean isDarkModeEnabled();

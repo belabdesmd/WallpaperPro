@@ -25,6 +25,7 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.devalutix.wallpaperpro.R;
 import com.devalutix.wallpaperpro.contracts.MainContract;
@@ -242,6 +243,20 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
             @Override
             public boolean onClose() {
                 title.setVisibility(VISIBLE);
+                return false;
+            }
+        });
+
+        search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                Toast.makeText(MainActivity.this, "query: " + query, Toast.LENGTH_SHORT).show();
+                mPresenter.searchImages(query);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
                 return false;
             }
         });

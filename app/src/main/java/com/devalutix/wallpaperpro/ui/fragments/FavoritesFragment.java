@@ -50,7 +50,7 @@ import static android.content.Context.LAYOUT_INFLATER_SERVICE;
 
 public class FavoritesFragment extends Fragment implements FavoritesContract.View {
     private static String TAG = "FavoritesFragment";
-    private static final int COL_NUM = 3;
+    private static final int COL_NUM = 2;
 
     //Declarations
     private MVPComponent mvpComponent;

@@ -130,6 +130,11 @@ public class MainPresenter implements MainContract.Presenter {
     }
 
     @Override
+    public void searchImages(String query) {
+
+    }
+
+    @Override
     public void enableDarkMode(boolean isChecked) {
         sharedPreferencesHelper.setDarkModeEnable(isChecked);
     }

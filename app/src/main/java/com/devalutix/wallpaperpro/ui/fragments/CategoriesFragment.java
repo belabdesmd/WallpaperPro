@@ -37,7 +37,7 @@ public class CategoriesFragment extends Fragment implements CategoriesContract.V
     private static String TAG = "CategoriesFragment";
 
     //Declarations
-    MVPComponent mvpComponent;
+    private MVPComponent mvpComponent;
     private CategoriesAdapter mAdapter;
     private ArrayList<Category> categories;
     @Inject
@@ -46,6 +46,8 @@ public class CategoriesFragment extends Fragment implements CategoriesContract.V
     //View Declarations
     @BindView(R.id.category_recyclerview)
     RecyclerView mRecyclerView;
+    @BindView(R.id.swipe_to_refresh_categories)
+    SwipeRefreshLayout mRefresh;
     @BindView(R.id.no_network_category)
     ImageView noNetworkLayout;
 
@@ -62,13 +64,6 @@ public class CategoriesFragment extends Fragment implements CategoriesContract.V
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-        }
     }
 
     @Override
@@ -90,7 +85,11 @@ public class CategoriesFragment extends Fragment implements CategoriesContract.V
         mPresenter.attach(this);
 
         //Init Recycler View
+        mRefresh.setRefreshing(true);
         mPresenter.initRecyclerView();
+
+        //When Pulling To Refresh Listener
+        mRefresh.setOnRefreshListener(() -> mPresenter.updateRecyclerView());
 
         return view;
     }
@@ -138,10 +137,16 @@ public class CategoriesFragment extends Fragment implements CategoriesContract.V
 
         // Adding The New List of Categories
         mAdapter.addAll(categories);
+
+        /*
+         * Stop Refreshing the Animations
+         */
+        mRefresh.setRefreshing(false);
     }
 
     @Override
     public void showNoNetwork() {
+        mRefresh.setRefreshing(false);
 
         mRecyclerView.setVisibility(View.GONE);
         noNetworkLayout.setVisibility(View.VISIBLE);
@@ -150,6 +155,7 @@ public class CategoriesFragment extends Fragment implements CategoriesContract.V
 
     @Override
     public void showCategoriesList() {
+        mRefresh.setRefreshing(false);
 
         mRecyclerView.setVisibility(View.VISIBLE);
         noNetworkLayout.setVisibility(View.GONE);
@@ -161,8 +167,8 @@ public class CategoriesFragment extends Fragment implements CategoriesContract.V
         Intent goToWallpaper = new Intent(getActivity(), ImagesActivity.class);
 
         //Putting the Extras
-        goToWallpaper.putExtra("name",categoryName);
-        goToWallpaper.putExtra("mode","category");
+        goToWallpaper.putExtra("name", categoryName);
+        goToWallpaper.putExtra("mode", "category");
         goToWallpaper.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(goToWallpaper);
     }

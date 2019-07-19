@@ -153,12 +153,7 @@ public class ImagesActivity extends AppCompatActivity implements ImagesContract.
                 getIntent().getStringExtra("name"));
 
         //Pull To Refresh Listener
-        mRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                mPresenter.updateRecyclerView(getIntent().getStringExtra("name"));
-            }
-        });
+        mRefresh.setOnRefreshListener(() -> mPresenter.updateRecyclerView(getIntent().getStringExtra("name")));
 
         //Init Edit Collection PopUp
         initEditCollectionPopUp();
