@@ -73,12 +73,10 @@ public class ImagesPresenter implements ImagesContract.Presenter {
         switch (mode) {
             case "collection": {
                 images = getImagesFromCollection(name);
-                mView.showCollectionActions();
             }
             break;
             case "category": {
                 images = getImageFromCategory(name);
-                mView.hideCollectionActions();
             }
             break;
         }
@@ -100,18 +98,13 @@ public class ImagesPresenter implements ImagesContract.Presenter {
         switch (mode) {
             case "collection": {
                 images = getImagesFromCollection(name);
-                mView.showCollectionActions();
             }
             break;
             case "category": {
                 images = getImageFromCategory(name);
-                mView.hideCollectionActions();
             }
             break;
         }
-
-        //Set Page Name
-        mView.setPageName(name);
 
         //Init Recycler View
         if (!hasInternetNetwork() || images == null) mView.showNoNetwork();
@@ -212,9 +205,6 @@ public class ImagesPresenter implements ImagesContract.Presenter {
         }
 
         mSharedPrefsHelper.saveCollections(allCollections);
-
-        //Change Page Name
-        mView.setPageName(newName);
     }
 
     private Category getCategory(String categoryName) {

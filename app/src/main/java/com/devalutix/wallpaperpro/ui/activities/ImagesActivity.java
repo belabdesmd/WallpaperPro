@@ -28,6 +28,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.devalutix.wallpaperpro.R;
@@ -63,54 +64,12 @@ public class ImagesActivity extends AppCompatActivity implements ImagesContract.
     //View Declarations
     @BindView(R.id.images_toolbar)
     Toolbar mToolbar;
-    @BindView(R.id.add_collection_popup)
-    CardView add_collection_popup;
-    @BindView(R.id.images_page_thumbnail)
-    ImageView images_page_thumbnail;
-    @BindView(R.id.images_page_title)
-    TextView title;
     @BindView(R.id.images_recyclerview)
     RecyclerView mRecyclerView;
     @BindView(R.id.swipe_to_refresh_images)
     SwipeRefreshLayout mRefresh;
-    @BindView(R.id.add_collection_name)
-    EditText get_collection_name;
-    @BindView(R.id.done_adding)
-    Button add_collection;
-
-    @BindView(R.id.collection_tools)
-    LinearLayout tools;
     @BindView(R.id.no_network_images1)
     ImageView noNetworkLayout;
-
-    //ClickListeners
-    @OnClick(R.id.edit)
-    public void editCollection() {
-        showAddCollectionPopUp();
-    }
-
-    @OnClick(R.id.remove)
-    public void removeCollection() {
-        mPresenter.removeCollection(title.getText().toString());
-
-        Intent goToFavorites = new Intent(ImagesActivity.this, MainActivity.class);
-        goToFavorites.putExtra("ToFavorites", true);
-        startActivity(goToFavorites);
-    }
-
-
-    @OnClick(R.id.done_adding)
-    public void add_collection() {
-        mPresenter.editCollection(title.getText().toString(), get_collection_name.getText().toString());
-        cancel();
-    }
-
-    @OnClick(R.id.cancel_adding)
-    public void cancel() {
-        hideAddCollectionPopUp();
-        get_collection_name.getText().clear();
-        hideKeyboard();
-    }
 
     //Essentials Methods
     @Override
@@ -138,14 +97,8 @@ public class ImagesActivity extends AppCompatActivity implements ImagesContract.
         //Set Toolbar
         setToolbar();
 
-        //Show Collection Actions
-        if (getIntent().getStringExtra("mode").equals("collection")) showCollectionActions();
-        else hideCollectionActions();
-
         //Set Page Name
-        setPageName(getIntent().getStringExtra("name"));
-        setPageThumbnail(mPresenter.getThumbnail(getIntent().getStringExtra("mode"),
-                getIntent().getStringExtra("name")));
+        setPageName(getIntent().getStringExtra("mode"), getIntent().getStringExtra("name"));
 
         //init RecyclerView
         mRefresh.setRefreshing(true);
@@ -154,9 +107,6 @@ public class ImagesActivity extends AppCompatActivity implements ImagesContract.
 
         //Pull To Refresh Listener
         mRefresh.setOnRefreshListener(() -> mPresenter.updateRecyclerView(getIntent().getStringExtra("name")));
-
-        //Init Edit Collection PopUp
-        initEditCollectionPopUp();
     }
 
     @Override
@@ -195,18 +145,10 @@ public class ImagesActivity extends AppCompatActivity implements ImagesContract.
     }
 
     @Override
-    public void setPageName(String name) {
-        title.setText(name);
-    }
-
-    @Override
-    public void setPageThumbnail(String thumbnail) {
-        if (thumbnail != null)
-            Glide.with(this)
-                    .load(thumbnail)
-                    .fitCenter()
-                    //.placeholder(R.drawable.loading_spinner)
-                    .into(images_page_thumbnail);
+    public void setPageName(String mode, String name) {
+        if (mode.equals("search"))
+            mToolbar.setTitle("Search: " + name);
+        else mToolbar.setTitle(name);
     }
 
     @Override
@@ -242,46 +184,6 @@ public class ImagesActivity extends AppCompatActivity implements ImagesContract.
     }
 
     @Override
-    public void initEditCollectionPopUp() {
-        slideUpEditCollection = new SlideUpBuilder(add_collection_popup)
-                .withStartState(SlideUp.State.HIDDEN)
-                .withStartGravity(Gravity.TOP)
-                .withLoggingEnabled(true)
-                .withListeners(new SlideUp.Listener.Events() {
-                    @Override
-                    public void onSlide(float percent) {
-                    }
-
-                    @Override
-                    public void onVisibilityChanged(int visibility) {
-
-                    }
-                })
-                .build();
-
-        disableDoneButton();
-
-        //Getting Text
-        get_collection_name.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (s.length() > 0) enableDoneButton();
-                else disableDoneButton();
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
-    }
-
-    @Override
     public void showNoNetwork() {
         mRefresh.setRefreshing(false);
 
@@ -296,40 +198,6 @@ public class ImagesActivity extends AppCompatActivity implements ImagesContract.
 
         mRecyclerView.setVisibility(View.VISIBLE);
         noNetworkLayout.setVisibility(View.GONE);
-    }
-
-    @Override
-    public void enableDoneButton() {
-        add_collection.setBackground(getResources().getDrawable(R.drawable.filter_on));
-        add_collection.setEnabled(true);
-    }
-
-    @Override
-    public void disableDoneButton() {
-        add_collection.setBackground(getResources().getDrawable(R.drawable.disabled_button));
-        add_collection.setEnabled(false);
-    }
-
-    @Override
-    public void showAddCollectionPopUp() {
-        add_collection_popup.setVisibility(View.VISIBLE);
-        slideUpEditCollection.show();
-    }
-
-    @Override
-    public void hideAddCollectionPopUp() {
-        slideUpEditCollection.hide();
-        add_collection_popup.setVisibility(View.GONE);
-    }
-
-    @Override
-    public void showCollectionActions() {
-        tools.setVisibility(View.VISIBLE);
-    }
-
-    @Override
-    public void hideCollectionActions() {
-        tools.setVisibility(View.GONE);
     }
 
     @Override

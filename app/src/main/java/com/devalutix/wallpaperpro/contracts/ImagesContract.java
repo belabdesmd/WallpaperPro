@@ -32,9 +32,7 @@ public interface ImagesContract {
 
         void setToolbar();
 
-        void setPageName(String name);
-
-        void setPageThumbnail(String thumbnail);
+        void setPageName(String mode,String name);
 
         void initRecyclerView(ArrayList<Image> images);
 
@@ -45,19 +43,5 @@ public interface ImagesContract {
         void showNoNetwork();
 
         void showPicturesList();
-
-        void initEditCollectionPopUp();
-
-        void showCollectionActions();
-
-        void hideCollectionActions();
-
-        void showAddCollectionPopUp();
-
-        void hideAddCollectionPopUp();
-
-        void enableDoneButton();
-
-        void disableDoneButton();
     }
 }

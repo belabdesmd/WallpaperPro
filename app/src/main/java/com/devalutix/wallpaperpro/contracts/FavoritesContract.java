@@ -15,9 +15,14 @@ public interface FavoritesContract {
 
         void addCollection(Collection collection);
 
+        void editCollection(String collection);
+
+        void removeCollection();
+
         ArrayList<Collection> getCollectionsList();
 
         void addImageToCollection(String name, Image image);
+
     }
 
     interface View extends BaseView {
@@ -26,6 +31,8 @@ public interface FavoritesContract {
 
         void initAddCollectionPopUp();
 
+        void initEditCollectionPopUp();
+
         void updateRecyclerView(ArrayList<Collection> collections);
 
         void goToImages(String collectionName);
@@ -33,6 +40,10 @@ public interface FavoritesContract {
         void showAddCollectionPopUp();
 
         void hideAddCollectionPopUp();
+
+        void showEditCollectionPopUp();
+
+        void hideEditCollectionPopUp();
 
         void enableDoneButton();
 

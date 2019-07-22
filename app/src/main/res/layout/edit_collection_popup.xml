@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/add_collection_popup"
+    android:id="@+id/edit_collection_popup"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     app:cardBackgroundColor="?attr/backgroundColor"
@@ -13,7 +13,7 @@
         android:layout_height="match_parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/add_collection_toolbar"
+            android:id="@+id/edit_collection_toolbar"
             android:layout_width="match_parent"
             android:layout_height="64dp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -21,7 +21,7 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
-                android:id="@+id/cancel_adding"
+                android:id="@+id/cancel_editing"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -35,16 +35,26 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_marginStart="16dp"
-                android:text="Create Collection"
+                android:text="Edit Collection"
                 android:textColor="?attr/primaryTextColor"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@id/cancel_adding"
+                app:layout_constraintStart_toEndOf="@id/cancel_editing"
                 app:layout_constraintTop_toTopOf="parent" />
 
+            <ImageView
+                android:id="@+id/remove_collection"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/done_editing"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/remove" />
+
             <Button
-                android:id="@+id/done_adding"
+                android:id="@+id/done_editing"
                 android:layout_width="wrap_content"
                 android:layout_height="32dp"
                 android:layout_marginEnd="16dp"
@@ -59,7 +69,7 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <TextView
-            android:id="@+id/add_collection_hint"
+            android:id="@+id/edit_collection_hint"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -68,10 +78,10 @@
             android:textColor="?attr/primaryTextColor"
             android:textSize="24sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/add_collection_toolbar" />
+            app:layout_constraintTop_toBottomOf="@+id/edit_collection_toolbar" />
 
         <EditText
-            android:id="@+id/add_collection_name"
+            android:id="@+id/edit_collection_name"
             android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -82,7 +92,7 @@
             app:backgroundTint="?attr/primaryTextColor"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/add_collection_hint" />
+            app:layout_constraintTop_toBottomOf="@+id/edit_collection_hint" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

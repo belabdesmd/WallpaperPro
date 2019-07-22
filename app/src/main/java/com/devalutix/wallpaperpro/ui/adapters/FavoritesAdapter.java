@@ -84,16 +84,18 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.View
 
         //Click Listener
         final int finalPosition = position;
-        holder.container.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mView1 != null) {
-                    mPresenter.addImageToCollection(mCollections.get(finalPosition).getCollectionName(), mView1.getImage());
-                    Toast.makeText(mView1, "Wallpaper Added To " + mCollections.get(finalPosition).getCollectionName(), Toast.LENGTH_SHORT).show();
-                    mView1.hideFavorite();
-                } else if (mView != null)
-                    mView.goToImages(mCollections.get(finalPosition).getCollectionName());
-            }
+        holder.container.setOnClickListener(v -> {
+            if (mView1 != null) {
+                mPresenter.addImageToCollection(mCollections.get(finalPosition).getCollectionName(), mView1.getImage());
+                Toast.makeText(mView1, "Wallpaper Added To " + mCollections.get(finalPosition).getCollectionName(), Toast.LENGTH_SHORT).show();
+                mView1.hideFavorite();
+            } else if (mView != null)
+                mView.goToImages(mCollections.get(finalPosition).getCollectionName());
+        });
+
+        holder.container.setOnLongClickListener(view -> {
+            mView.showEditCollectionPopUp();
+            return false;
         });
     }
 

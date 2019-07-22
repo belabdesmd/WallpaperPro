@@ -1,5 +1,7 @@
 package com.devalutix.wallpaperpro.ui.activities;
 
+import androidx.annotation.ColorInt;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
@@ -13,13 +15,17 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
+import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -42,6 +48,7 @@ import com.devalutix.wallpaperpro.ui.fragments.WallpaperFragment;
 import com.devalutix.wallpaperpro.utils.Config;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.mancj.slideup.SlideUp;
 import com.mancj.slideup.SlideUpBuilder;
 
@@ -51,15 +58,15 @@ import javax.inject.Inject;
 
 public class WallpaperActivity extends AppCompatActivity implements WallpaperContract.View {
     private static String TAG = "WallpaperActivity";
-    private static final int COL_NUM = 3;
+    private static final int COL_NUM = 2;
 
     //Declarations
     private MVPComponent mvpComponent;
     private ArrayList<Image> images;
     private InterstitialAd mInterstitialAd;
     private FavoritesAdapter mAdapter;
-    private SlideUp slideUpInfo;
-    private SlideUp slideUpFavorites;
+    private BottomSheetBehavior info_popup_behavior;
+    private BottomSheetBehavior add_to_favorite_popup_behavior;
 
     @Inject
     WallpaperPresenter mPresenter;
@@ -76,6 +83,8 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
 
     @BindView(R.id.info_popup)
     CardView info_popup;
+    @BindView(R.id.index)
+    ImageView index;
     @BindView(R.id.add_to_favorites_popup)
     CardView add_to_favorites_popup;
     @BindView(R.id.collections_recyclerview)
@@ -85,49 +94,20 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
     TextView titleTextView;
     @BindView(R.id.date_added)
     TextView dateTextView;
-    @BindView(R.id.views)
-    TextView viewsTextView;
     @BindView(R.id.download_action)
     ImageView download;
     @BindView(R.id.downloads)
     TextView downloadsTextView;
-    @BindView(R.id.like_action)
-    ImageView like;
-    @BindView(R.id.likes)
-    TextView likesTextView;
-    @BindView(R.id.dislike_action)
-    ImageView dislike;
-    @BindView(R.id.dislikes)
-    TextView dislikesTextView;
     @BindView(R.id.categories)
     TextView categoriesTextView;
-    @BindView(R.id.tags)
-    TextView tagsTextView;
-    @BindView(R.id.owner)
-    TextView ownerTextView;
 
     //ClickListeners
-    @OnClick(R.id.cancel_info)
-    public void cancel() {
-        hideInfos();
-    }
-
-    @OnClick(R.id.like_action)
-    public void like() {
-        mPresenter.likePicture(mViewPager.getCurrentItem());
-    }
-
-    @OnClick(R.id.dislike_action)
-    public void dislike() {
-        mPresenter.dislikePicture(mViewPager.getCurrentItem());
-    }
-
     @OnClick(R.id.share_action)
     public void share() {
         mPresenter.sharePicture(mViewPager.getCurrentItem());
     }
 
-    @OnClick(R.id.download_action)
+    @OnClick(R.id.download_wrapper)
     public void download() {
         mPresenter.savePicture(mViewPager.getCurrentItem());
     }
@@ -177,7 +157,6 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
 
         //Init Info PopUp
         initPopUpInfos();
-
         //Init Add To Favorites PopUp
         initPopUpFavorite();
 
@@ -260,6 +239,7 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                hideInfos();
                 initInfos(position);
             }
 
@@ -278,25 +258,29 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
     @Override
     public void initPopUpInfos() {
 
-        //TODO: Use Bottom Sheet Instead
+        info_popup_behavior = BottomSheetBehavior.from(info_popup);
+        Context context = this;
+        info_popup_behavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            @Override
+            public void onStateChanged(@NonNull View bottomSheet, int newState) {
 
-        slideUpInfo = new SlideUpBuilder(info_popup)
-                .withStartState(SlideUp.State.HIDDEN)
-                .withStartGravity(Gravity.BOTTOM)
-                .withLoggingEnabled(true)
-                .withSlideFromOtherView(activity_container)
-                .withListeners(new SlideUp.Listener.Events() {
-                    @Override
-                    public void onSlide(float percent) {
+            }
 
-                    }
-
-                    @Override
-                    public void onVisibilityChanged(int visibility) {
-
-                    }
-                })
-                .build();
+            @Override
+            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+                if (slideOffset > 0) {
+                    TypedValue typedValue = new TypedValue();
+                    Resources.Theme theme = context.getTheme();
+                    theme.resolveAttribute(R.attr.backgroundColor, typedValue, true);
+                    @ColorInt int color = typedValue.data;
+                    info_popup.setCardBackgroundColor(color);
+                    index.setImageResource(R.drawable.index_popup);
+                } else {
+                    info_popup.setCardBackgroundColor(Color.TRANSPARENT);
+                    index.setImageResource(R.drawable.index);
+                }
+            }
+        });
     }
 
     @Override
@@ -331,28 +315,9 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
 
         dateTextView.setText(spannable1, TextView.BufferType.SPANNABLE);
 
-        //Adding Views
-        topic = "Views: ";
-        topicInfo = String.valueOf(images.get(position).getImageViews());
-
-        topicText = topic + topicInfo;
-
-        Spannable spannable2 = new SpannableString(topicText);
-        spannable2.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.colorAccent)), topic.length(), topic.length() + topicInfo.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-        viewsTextView.setText(spannable2, TextView.BufferType.SPANNABLE);
-
         //Adding Downloads
         topicInfo = String.valueOf(images.get(position).getImageDownloads());
         downloadsTextView.setText(topicInfo);
-
-        //Adding Likes
-        topicInfo = String.valueOf(images.get(position).getImageLikes());
-        likesTextView.setText(topicInfo);
-
-        //Adding Dislikes
-        topicInfo = String.valueOf(images.get(position).getImageDislikes());
-        dislikesTextView.setText(topicInfo);
 
         //Adding Categories
         topic = "Categories: ";
@@ -369,56 +334,12 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
         spannable3.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.colorAccent)), topic.length(), topic.length() + topicInfo.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
         categoriesTextView.setText(spannable3, TextView.BufferType.SPANNABLE);
-
-        //Adding Tags
-        topic = "Tags: ";
-        topicInfo = "";
-        for (int i = 0; i < images.get(position).getImageTags().size(); i++) {
-            if (i != images.get(position).getImageTags().size() - 1)
-                topicInfo = topicInfo + images.get(position).getImageTags().get(i) + ", ";
-            else topicInfo = topicInfo + images.get(position).getImageTags().get(i);
-        }
-
-        topicText = topic + topicInfo;
-
-        Spannable spannable4 = new SpannableString(topicText);
-        spannable4.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.colorAccent)), topic.length(), topic.length() + topicInfo.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-        tagsTextView.setText(spannable4, TextView.BufferType.SPANNABLE);
-
-        //Adding Tags
-        topic = "Owner: ";
-        topicInfo = images.get(position).getImageOwner();
-
-        topicText = topic + topicInfo;
-
-        Spannable spannable5 = new SpannableString(topicText);
-        spannable5.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.colorAccent)), topic.length(), topic.length() + topicInfo.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-        ownerTextView.setText(spannable5, TextView.BufferType.SPANNABLE);
-
-
     }
 
     @Override
     public void initPopUpFavorite() {
-        slideUpFavorites = new SlideUpBuilder(add_to_favorites_popup)
-                .withStartState(SlideUp.State.HIDDEN)
-                .withStartGravity(Gravity.BOTTOM)
-                .withLoggingEnabled(true)
-                .withSlideFromOtherView(activity_container)
-                .withListeners(new SlideUp.Listener.Events() {
-                    @Override
-                    public void onSlide(float percent) {
-
-                    }
-
-                    @Override
-                    public void onVisibilityChanged(int visibility) {
-
-                    }
-                })
-                .build();
+        add_to_favorites_popup.setMinimumHeight(300);
+        add_to_favorite_popup_behavior = BottomSheetBehavior.from(add_to_favorites_popup);
 
         //Declarations
         StaggeredGridLayoutManager mLayoutManager = new StaggeredGridLayoutManager(COL_NUM, StaggeredGridLayoutManager.VERTICAL);
@@ -436,46 +357,22 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
 
     @Override
     public void showInfos() {
-        slideUpInfo.show();
+        info_popup_behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
     }
 
     @Override
     public void hideInfos() {
-        slideUpInfo.hide();
+        info_popup_behavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
     }
 
     @Override
     public void showFavorite() {
-        slideUpFavorites.show();
+        add_to_favorite_popup_behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
     }
 
     @Override
     public void hideFavorite() {
-        slideUpFavorites.hide();
-    }
-
-    @Override
-    public void enableLike() {
-        like.setImageResource(R.drawable.like_enabled);
-        likesTextView.setTextColor(getResources().getColor(R.color.colorAccent));
-    }
-
-    @Override
-    public void disableLike() {
-        like.setImageResource(R.drawable.like);
-        likesTextView.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
-    }
-
-    @Override
-    public void enableDislike() {
-        dislike.setImageResource(R.drawable.dislike_enabled);
-        dislikesTextView.setTextColor(getResources().getColor(R.color.colorAccent));
-    }
-
-    @Override
-    public void disableDislike() {
-        dislike.setImageResource(R.drawable.dislike);
-        dislikesTextView.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
+        add_to_favorite_popup_behavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
     }
 
     @Override

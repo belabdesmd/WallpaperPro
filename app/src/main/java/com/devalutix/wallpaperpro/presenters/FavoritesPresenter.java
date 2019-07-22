@@ -68,6 +68,16 @@ public class FavoritesPresenter implements FavoritesContract.Presenter {
     }
 
     @Override
+    public void editCollection(String collection) {
+
+    }
+
+    @Override
+    public void removeCollection() {
+
+    }
+
+    @Override
     public ArrayList<Collection> getCollectionsList() {
         return mSharedPrefsHelper.getCollections();
     }

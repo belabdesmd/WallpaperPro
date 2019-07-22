@@ -49,44 +49,12 @@ public class WallpaperPresenter implements WallpaperContract.Presenter {
     }
 
     @Override
-    public void likePicture(int position) {
-        //TODO: Add Like To the Picture
-        //TODO: Fix the Like Event
-        mView.enableLike();
-    }
-
-    @Override
-    public void unLikePicture(int position) {
-        //TODO: Remove Like To the Picture
-        //TODO: Fix the Like Event
-        mView.disableLike();
-    }
-
-    @Override
-    public void dislikePicture(int position) {
-        //TODO: Add Dislike To the Picture
-        //TODO: Fix the Dislike Event
-        mView.enableDislike();
-    }
-
-    @Override
-    public void unDislikePicture(int position) {
-        //TODO: Remove Dislike To the Picture
-        //TODO: Fix the Dislike Event
-        mView.disableDislike();
-    }
-
-    @Override
     public void openAddToFavoritesPopUp() {
+
         mView.showFavorite();
 
         Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            public void run() {
-                mView.hideFavorite();
-            }
-        }, 3000);
-
+        handler.postDelayed(() -> mView.hideFavorite(), 3000);
 
     }
 

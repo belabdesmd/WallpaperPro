@@ -5,9 +5,12 @@
     android:id="@+id/info_popup"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:cardBackgroundColor="?attr/backgroundColor"
+    app:behavior_hideable="true"
+    app:behavior_peekHeight="32dp"
+    app:cardBackgroundColor="@android:color/transparent"
+    app:cardElevation="0dp"
     app:cardCornerRadius="16dp"
-    app:cardElevation="2dp"
+    app:layout_behavior="@string/bottom_sheet_behavior"
     app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent">
@@ -16,120 +19,25 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/actions_toolbar"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/popup_info_kicker"
             android:layout_width="match_parent"
-            android:layout_height="64dp"
-            app:cardElevation="1dp"
-            app:cardBackgroundColor="?attr/backgroundColor"
+            android:layout_height="32dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+            <ImageView
+                android:id="@+id/index"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/index" />
 
-                <ImageView
-                    android:id="@+id/cancel_info"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:layout_marginStart="16dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/cancel" />
-
-                <LinearLayout
-                    android:id="@+id/image_actions"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="32dp"
-                        android:orientation="vertical">
-
-                        <ImageView
-                            android:id="@+id/like_action"
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:layout_gravity="center_horizontal"
-                            app:srcCompat="@drawable/like" />
-
-                        <TextView
-                            android:id="@+id/likes"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal"
-                            android:textColor="?attr/primaryTextColor"
-                            android:textSize="12sp"
-                            tools:text="23" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="32dp"
-                        android:orientation="vertical">
-
-                        <ImageView
-                            android:id="@+id/dislike_action"
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:layout_gravity="center_horizontal"
-                            app:srcCompat="@drawable/dislike" />
-
-                        <TextView
-                            android:id="@+id/dislikes"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal"
-                            android:textColor="?attr/primaryTextColor"
-                            android:textSize="12sp"
-                            tools:text="16" />
-                    </LinearLayout>
-
-                    <ImageView
-                        android:id="@+id/share_action"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:layout_gravity="center_vertical"
-                        android:layout_marginEnd="32dp"
-                        app:srcCompat="@drawable/share" />
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="32dp"
-                        android:orientation="vertical">
-
-                        <ImageView
-                            android:id="@+id/download_action"
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:layout_gravity="center_horizontal"
-                            app:srcCompat="@drawable/download" />
-
-                        <TextView
-                            android:id="@+id/downloads"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal"
-                            android:textColor="?attr/primaryTextColor"
-                            android:textSize="12sp"
-                            tools:text="23" />
-                    </LinearLayout>
-
-                </LinearLayout>
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-        </androidx.cardview.widget.CardView>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <TextView
             android:id="@+id/image_title"
@@ -137,10 +45,11 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
-            android:textColor="?attr/secondaryTextColor"
+            android:textColor="?attr/primaryTextColor"
+            android:textStyle="bold"
             android:textSize="18sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/actions_toolbar"
+            app:layout_constraintTop_toBottomOf="@id/popup_info_kicker"
             tools:text="Title: Nature Image" />
 
         <TextView
@@ -149,23 +58,13 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
-            android:textColor="?attr/secondaryTextColor"
+            android:textColor="?attr/primaryTextColor"
+            android:textStyle="bold"
             android:textSize="18sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/image_title"
             tools:text="Date Added: 05/06/2019" />
 
-        <TextView
-            android:id="@+id/views"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:textColor="?attr/secondaryTextColor"
-            android:textSize="18sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/date_added"
-            tools:text="Views: 365" />
 
         <TextView
             android:id="@+id/categories"
@@ -173,50 +72,64 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
-            android:textColor="?attr/secondaryTextColor"
-            android:textSize="18sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/views"
-            tools:text="Categories: Nature, Sky, Forest" />
-
-        <TextView
-            android:id="@+id/tags"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:textColor="?attr/secondaryTextColor"
-            android:textSize="18sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/categories"
-            tools:text="Tags: Nature, Sky, Forest" />
-
-        <TextView
-            android:id="@+id/owner"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
             android:layout_marginBottom="32dp"
-            android:textColor="?attr/secondaryTextColor"
+            android:textColor="?attr/primaryTextColor"
+            android:textStyle="bold"
             android:textSize="18sp"
             app:layout_constraintBottom_toTopOf="@id/set_as_wallpaper"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tags"
-            tools:text="Owner: Belfodil Abdessamed" />
+            app:layout_constraintTop_toBottomOf="@id/date_added"
+            tools:text="Categories: Nature, Sky, Forest" />
 
-        <Button
+        <TextView
             android:id="@+id/set_as_wallpaper"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:background="@drawable/filter_on"
-            android:padding="16dp"
-            android:text="set Wallpaper"
-            android:textColor="@color/colorPrimary"
+            android:layout_marginStart="32dp"
+            android:layout_marginBottom="32dp"
+            android:text="Set Wallpaper"
+            android:textColor="@color/colorAccent"
+            android:textSize="18sp"
+            android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
+
+        <ImageView
+            android:id="@+id/share_action"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginEnd="32dp"
+            app:layout_constraintBottom_toBottomOf="@id/set_as_wallpaper"
+            app:layout_constraintEnd_toStartOf="@id/download_wrapper"
+            app:layout_constraintTop_toTopOf="@id/set_as_wallpaper"
+            app:srcCompat="@drawable/share" />
+
+        <LinearLayout
+            android:id="@+id/download_wrapper"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="32dp"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="@id/set_as_wallpaper"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/set_as_wallpaper">
+
+            <ImageView
+                android:id="@+id/download_action"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center_horizontal"
+                app:srcCompat="@drawable/download" />
+
+            <TextView
+                android:id="@+id/downloads"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:textColor="?attr/primaryTextColor"
+                android:textSize="12sp"
+                tools:text="23" />
+        </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

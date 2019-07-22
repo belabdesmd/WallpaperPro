@@ -1,5 +1,6 @@
 package com.devalutix.wallpaperpro.ui.fragments;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Build;
@@ -20,11 +21,11 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.PopupWindow;
 
 import com.devalutix.wallpaperpro.R;
 import com.devalutix.wallpaperpro.contracts.FavoritesContract;
@@ -38,9 +39,6 @@ import com.devalutix.wallpaperpro.presenters.FavoritesPresenter;
 import com.devalutix.wallpaperpro.ui.activities.ImagesActivity;
 import com.devalutix.wallpaperpro.ui.activities.MainActivity;
 import com.devalutix.wallpaperpro.ui.adapters.FavoritesAdapter;
-import com.devalutix.wallpaperpro.ui.custom.CustomPopUpWindow;
-import com.mancj.slideup.SlideUp;
-import com.mancj.slideup.SlideUpBuilder;
 
 import java.util.ArrayList;
 
@@ -56,35 +54,25 @@ public class FavoritesFragment extends Fragment implements FavoritesContract.Vie
     private MVPComponent mvpComponent;
     private FavoritesAdapter mAdapter;
     private ArrayList<Collection> collections;
-    private SlideUp slideUpAddCollection;
     private FrameLayout activity_container;
+
+    private AlertDialog mDialogAdd;
+    private AlertDialog mDialogEdit;
 
     @Inject
     FavoritesPresenter mPresenter;
 
     //View Declarations
-    @BindView(R.id.add_collection_popup)
-    CardView add_collection_popup;
     @BindView(R.id.favorites_recyclerview)
     RecyclerView mRecyclerView;
-    @BindView(R.id.add_collection_name)
-    EditText get_collection_name;
-    @BindView(R.id.done_adding)
-    Button add_collection;
 
-    //Click Listeners
-    @OnClick(R.id.done_adding)
-    public void add_collection() {
-        mPresenter.addCollection(new Collection(get_collection_name.getText().toString(), new ArrayList<Image>()));
-        cancel();
-    }
+    private CardView add_collection_popup;
+    private EditText get_collection_name;
+    private Button add_collection;
 
-    @OnClick(R.id.cancel_adding)
-    public void cancel() {
-        hideAddCollectionPopUp();
-        get_collection_name.getText().clear();
-        ((MainActivity) getActivity()).hideKeyboard();
-    }
+    private CardView edit_collection_popup;
+    private EditText get_collection_name_edit;
+    private Button edit_collection;
 
     //Constructor
     public FavoritesFragment() {
@@ -117,6 +105,7 @@ public class FavoritesFragment extends Fragment implements FavoritesContract.Vie
 
         //Init Add Collections PoUp
         initAddCollectionPopUp();
+        initEditCollectionPopUp();
 
         return view;
     }
@@ -134,7 +123,6 @@ public class FavoritesFragment extends Fragment implements FavoritesContract.Vie
     }
 
     //Methods
-
     @Override
     public void initRecyclerView(ArrayList<Collection> collections) {
 
@@ -152,23 +140,88 @@ public class FavoritesFragment extends Fragment implements FavoritesContract.Vie
 
     @Override
     public void initAddCollectionPopUp() {
-        slideUpAddCollection = new SlideUpBuilder(add_collection_popup)
-                .withStartState(SlideUp.State.HIDDEN)
-                .withStartGravity(Gravity.TOP)
-                .withLoggingEnabled(true)
-                .withSlideFromOtherView(activity_container)
-                .withListeners(new SlideUp.Listener.Events() {
-                    @Override
-                    public void onSlide(float percent) {
-                    }
+        LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(LAYOUT_INFLATER_SERVICE);
 
-                    @Override
-                    public void onVisibilityChanged(int visibility) {
+        // Inflate the custom layout/view
+        View customView = inflater.inflate(R.layout.add_collection_popup, null);
 
-                    }
-                })
-                .build();
+        //Create the Alert Dialog
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+        alertDialogBuilder.setCancelable(true);
+        alertDialogBuilder.setView(customView);
+        mDialogAdd = alertDialogBuilder.create();
 
+        //Init Views
+        add_collection_popup = customView.findViewById(R.id.add_collection_popup);
+        get_collection_name = customView.findViewById(R.id.add_collection_name);
+        add_collection = customView.findViewById(R.id.done_adding);
+
+        //Listeners
+        add_collection.setOnClickListener(view -> {
+            mPresenter.addCollection(new Collection(get_collection_name.getText().toString(), new ArrayList<Image>()));
+            hideAddCollectionPopUp();
+            get_collection_name.getText().clear();
+            ((MainActivity) getActivity()).hideKeyboard();
+        });
+        customView.findViewById(R.id.cancel_adding).setOnClickListener(view -> {
+            hideAddCollectionPopUp();
+            get_collection_name.getText().clear();
+            ((MainActivity) getActivity()).hideKeyboard();
+        });
+
+        //Disable Done Button
+        disableDoneButton();
+
+        //Getting Text
+        get_collection_name.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.length() > 0) enableDoneButton();
+                else disableDoneButton();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+    }
+
+    @Override
+    public void initEditCollectionPopUp() {
+        LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(LAYOUT_INFLATER_SERVICE);
+
+        // Inflate the custom layout/view
+        View customView = inflater.inflate(R.layout.edit_collection_popup, null);
+
+        //Create the Alert Dialog
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+        alertDialogBuilder.setCancelable(true);
+        alertDialogBuilder.setView(customView);
+        mDialogEdit = alertDialogBuilder.create();
+
+        //Init Views
+        edit_collection_popup = customView.findViewById(R.id.edit_collection_popup);
+        get_collection_name_edit = customView.findViewById(R.id.edit_collection_name);
+        edit_collection = customView.findViewById(R.id.done_editing);
+
+        //Listeners
+        edit_collection.setOnClickListener(view -> {
+            mPresenter.editCollection(get_collection_name_edit.getText().toString());
+            hideEditCollectionPopUp();
+            get_collection_name_edit.getText().clear();
+            ((MainActivity) getActivity()).hideKeyboard();
+        });
+        customView.findViewById(R.id.remove_collection).setOnClickListener(view -> {
+            mPresenter.removeCollection();
+        });
+
+        //Disable Done Button
         disableDoneButton();
 
         //Getting Text
@@ -214,15 +267,22 @@ public class FavoritesFragment extends Fragment implements FavoritesContract.Vie
 
     @Override
     public void showAddCollectionPopUp() {
-        add_collection_popup.setVisibility(View.VISIBLE);
-        add_collection_popup.bringToFront();
-        slideUpAddCollection.show();
+        mDialogAdd.show();
     }
 
     @Override
     public void hideAddCollectionPopUp() {
-        slideUpAddCollection.hide();
-        add_collection_popup.setVisibility(View.GONE);
+        mDialogAdd.cancel();
+    }
+
+    @Override
+    public void showEditCollectionPopUp() {
+        mDialogEdit.show();
+    }
+
+    @Override
+    public void hideEditCollectionPopUp() {
+        mDialogEdit.cancel();
     }
 
     @Override
