@@ -83,8 +83,8 @@ public class ApplicationModule {
      */
     @Provides
     @Singleton
-    GDPR providesGDPR(){
-        return new GDPR(form, mApplication);
+    GDPR providesGDPR(SharedPreferencesHelper sharedPreferencesHelper){
+        return new GDPR(sharedPreferencesHelper, form, mApplication);
     }
 
     @Provides

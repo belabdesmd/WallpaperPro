@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.devalutix.wallpaperpro.models.SharedPreferencesHelper;
 import com.google.ads.consent.ConsentForm;
 import com.google.ads.consent.ConsentFormListener;
 import com.google.ads.consent.ConsentInfoUpdateListener;
@@ -13,6 +14,7 @@ import com.google.ads.consent.ConsentStatus;
 import com.google.ads.mediation.admob.AdMobAdapter;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.InterstitialAd;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -21,16 +23,13 @@ public class GDPR {
     private static final String TAG = "GDPR";
 
     private ConsentForm form;
-    private AdView ad;
     private Context mContext;
+    private SharedPreferencesHelper sharedPreferencesHelper;
 
-    public GDPR(ConsentForm form, Context mContext) {
+    public GDPR(SharedPreferencesHelper sharedPreferencesHelper, ConsentForm form, Context mContext) {
         this.form = form;
         this.mContext = mContext;
-    }
-
-    public void setAd(AdView ad) {
-        this.ad = ad;
+        this.sharedPreferencesHelper = sharedPreferencesHelper;
     }
 
     /**
@@ -50,11 +49,11 @@ public class GDPR {
                 switch (consentStatus) {
                     case PERSONALIZED:
                         Log.d(TAG, "Showing Personalized ads");
-                        showPersonalizedAds();
+                        sharedPreferencesHelper.setAdPersonalized(true);
                         break;
                     case NON_PERSONALIZED:
                         Log.d(TAG, "Showing Non-Personalized ads");
-                        showNonPersonalizedAds();
+                        sharedPreferencesHelper.setAdPersonalized(false);
                         break;
                     case UNKNOWN:
                         Log.d(TAG, "Requesting Consent");
@@ -62,7 +61,7 @@ public class GDPR {
                                 .isRequestLocationInEeaOrUnknown()) {
                             requestConsent();
                         } else {
-                            showPersonalizedAds();
+                            sharedPreferencesHelper.setAdPersonalized(true);
                         }
                         break;
                     default:
@@ -115,16 +114,15 @@ public class GDPR {
                             Log.d(TAG, "Requesting Consent: Requesting consent again");
                             switch (consentStatus) {
                                 case PERSONALIZED:
-                                    showPersonalizedAds();
+                                    sharedPreferencesHelper.setAdPersonalized(true);
                                     break;
                                 case NON_PERSONALIZED:
-                                    showNonPersonalizedAds();
+                                    sharedPreferencesHelper.setAdPersonalized(false);
                                     break;
                                 case UNKNOWN:
-                                    showNonPersonalizedAds();
+                                    sharedPreferencesHelper.setAdPersonalized(false);
                                     break;
                             }
-
                         }
                         // Consent form was closed.
                     }
@@ -141,25 +139,34 @@ public class GDPR {
         form.load();
     }
 
-    private void showPersonalizedAds() {
-        Log.d(TAG, "showPersonalizedAds: Showing Personalized Ad");
-
-        //banner
-            Log.d(TAG, "showPersonalizedAds: Setting Intesrtitial Ad");
-            AdRequest adRequest = new AdRequest.Builder()
-                    .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
-                    .build();
-            ad.loadAd(adRequest);
+    public void showPersonalizedAdBanner(AdView ad) {
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .build();
+        ad.loadAd(adRequest);
     }
 
-    private void showNonPersonalizedAds() {
-        Log.d(TAG, "showPersonalizedAds: Showing UnPersonalized Ad");
+    public void showNonPersonalizedAdBanner(AdView ad) {
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .addNetworkExtrasBundle(AdMobAdapter.class, getNonPersonalizedAdsBundle())
+                .build();
+        ad.loadAd(adRequest);
+    }
 
-            AdRequest adRequest = new AdRequest.Builder()
-                    .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
-                    .addNetworkExtrasBundle(AdMobAdapter.class, getNonPersonalizedAdsBundle())
-                    .build();
-            ad.loadAd(adRequest);
+    public void loadPersonalizedInterstitialAd(InterstitialAd mInterstitialAd) {
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .build();
+        mInterstitialAd.loadAd(adRequest);
+    }
+
+    public void loadNonPersonalizedInterstitialAd(InterstitialAd mInterstitialAd) {
+        AdRequest request = new AdRequest.Builder()
+                .addNetworkExtrasBundle(AdMobAdapter.class, getNonPersonalizedAdsBundle())
+                .build();
+
+        mInterstitialAd.loadAd(request);
     }
 
     private Bundle getNonPersonalizedAdsBundle() {
@@ -179,9 +186,5 @@ public class GDPR {
         } else {
             Log.d(TAG, "Not Showing consent form");
         }
-    }
-
-    public AdView getmAd() {
-        return ad;
     }
 }

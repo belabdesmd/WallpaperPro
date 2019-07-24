@@ -13,24 +13,25 @@ import com.google.gson.Gson;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 public class ExplorePresenter implements ExploreContract.Presenter {
     private static String TAG = "ExplorePresenter";
 
-    //Declarations
+    /***************************************** Declarations ***************************************/
     private ExploreFragment mView;
     private Gson gson;
     private Context mContext;
 
-    //Constructor
+    /***************************************** Constructor ****************************************/
     public ExplorePresenter(@ApplicationContext Context mContext, Gson gson) {
         this.mContext = mContext;
         this.gson = gson;
     }
 
-    //Essential Methods
+    /***************************************** Essential Methods **********************************/
     @Override
     public void attach(ExploreContract.View view) {
         mView = (ExploreFragment) view;
@@ -46,7 +47,7 @@ public class ExplorePresenter implements ExploreContract.Presenter {
         return !(mView == null);
     }
 
-    //Methods
+    /***************************************** Methods ********************************************/
     @Override
     public boolean hasInternetAccess() {
         ConnectivityManager conMgr = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -100,7 +101,7 @@ public class ExplorePresenter implements ExploreContract.Presenter {
     public ArrayList<Image> getRecent() {
         //TODO: Get Recent Images From Server
         Image[] collectionItem = gson.fromJson(readJSONFromAsset(), Image[].class);
-        return new ArrayList<Image>(Arrays.asList(collectionItem));
+        return new ArrayList<>(Arrays.asList(collectionItem));
     }
 
     @Override
@@ -121,14 +122,14 @@ public class ExplorePresenter implements ExploreContract.Presenter {
     }
 
     private String readJSONFromAsset() {
-        String json = null;
+        String json;
         try {
             InputStream is = mContext.getAssets().open("images.json");
             int size = is.available();
             byte[] buffer = new byte[size];
             is.read(buffer);
             is.close();
-            json = new String(buffer, "UTF-8");
+            json = new String(buffer, StandardCharsets.UTF_8);
         } catch (IOException ex) {
             ex.printStackTrace();
             return null;

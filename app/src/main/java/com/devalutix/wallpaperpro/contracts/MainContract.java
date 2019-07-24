@@ -11,9 +11,9 @@ public interface MainContract {
 
         void requestPermission(String writeExternalStorage, int requestWriteStorage);
 
-        void initGDPR(AdView ad);
+        void checkGDPRConsent();
 
-        GDPR getGDPR();
+        void loadAd(AdView ad);
 
         void searchImages(String query);
 

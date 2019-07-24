@@ -19,18 +19,20 @@ import butterknife.ButterKnife;
 public class WallpaperFragment extends Fragment {
     public static final String TAG = "WallpaperFragment";
 
-    //Declarations
+    /****************************************** Declarations **************************************/
     private String wallpaperImageUrl;
     private WallpaperPresenter mPresenter;
 
-    //View Declarations
+    /****************************************** View Declarations *********************************/
     @BindView(R.id.wallpaper)
     ImageView image;
 
+    /****************************************** Constructor ***************************************/
     public WallpaperFragment() {
         //Require Empty Constructor
     }
 
+    /****************************************** Essential Methods *********************************/
     public static WallpaperFragment newInstance(String image) {
 
         Bundle args = new Bundle();
@@ -53,6 +55,7 @@ public class WallpaperFragment extends Fragment {
         View view = inflater.inflate(R.layout.one_wallpaper_fragment, container, false);
         ButterKnife.bind(this, view);
 
+        assert getArguments() != null;
         wallpaperImageUrl = getArguments().getString("image");
 
         //Loading the Image

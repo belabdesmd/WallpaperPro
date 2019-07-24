@@ -2,6 +2,7 @@ package com.devalutix.wallpaperpro.pojo;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Objects;
 
 public class Image {
 
@@ -86,5 +87,13 @@ public class Image {
 
     public String getImageOwner() {
         return imageOwner;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Image image = (Image) o;
+        return Objects.equals(imageID, image.imageID);
     }
 }

@@ -1,18 +1,10 @@
 package com.devalutix.wallpaperpro.ui.custom;
 
-import android.annotation.TargetApi;
 import android.content.Context;
-import android.os.Build;
 import android.util.AttributeSet;
-import android.widget.RelativeLayout;
 
 import androidx.cardview.widget.CardView;
-import androidx.constraintlayout.widget.ConstraintLayout;
 
-/**********************************
- © 2018 Sam Dev
- ALL RIGHTS RESERVED
- ***********************************/
 public class SquareCardView extends CardView {
 
     public SquareCardView(Context context) {

@@ -12,11 +12,11 @@ import com.devalutix.wallpaperpro.pojo.Category;
 import com.devalutix.wallpaperpro.pojo.Collection;
 import com.devalutix.wallpaperpro.pojo.Image;
 import com.devalutix.wallpaperpro.ui.activities.ImagesActivity;
-import com.devalutix.wallpaperpro.utils.Config;
 import com.google.gson.Gson;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
@@ -24,21 +24,21 @@ import java.util.Objects;
 public class ImagesPresenter implements ImagesContract.Presenter {
     private static String TAG = "ImagesPresenter";
 
-    //Declarations
+    /***************************************** Declarations ***************************************/
     private ImagesActivity mView;
     private Gson gson;
     private Context mContext;
     private String mode;
     private SharedPreferencesHelper mSharedPrefsHelper;
 
-    //Constructor
+    /***************************************** Constructor ****************************************/
     public ImagesPresenter(@ApplicationContext Context mContext, Gson gson, SharedPreferencesHelper mSharedPrefsHelper) {
         this.gson = gson;
         this.mContext = mContext;
         this.mSharedPrefsHelper = mSharedPrefsHelper;
     }
 
-    //Essential Methods
+    /***************************************** Essential Methods **********************************/
     @Override
     public void attach(ImagesContract.View view) {
         mView = (ImagesActivity) view;
@@ -54,7 +54,7 @@ public class ImagesPresenter implements ImagesContract.Presenter {
         return !(mView == null);
     }
 
-    //Methods
+    /***************************************** Methods ********************************************/
     @Override
     public boolean hasInternetNetwork() {
         ConnectivityManager conMgr = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -140,7 +140,7 @@ public class ImagesPresenter implements ImagesContract.Presenter {
         //TODO: Get Category Images From Server Of the Category name passed as parameter
 
         Image[] categoryItem = gson.fromJson(readJSONFromAsset(), Image[].class);
-        ArrayList<Image> recentImages = new ArrayList<Image>(Arrays.asList(categoryItem));
+        ArrayList<Image> recentImages = new ArrayList<>(Arrays.asList(categoryItem));
 
         ArrayList<Image> images = new ArrayList<>();
 
@@ -151,11 +151,6 @@ public class ImagesPresenter implements ImagesContract.Presenter {
         }
 
         return images;
-    }
-
-    @Override
-    public String listToString(ArrayList<Image> images) {
-        return gson.toJson(images);
     }
 
     @Override
@@ -174,39 +169,6 @@ public class ImagesPresenter implements ImagesContract.Presenter {
         return null;
     }
 
-    @Override
-    public void removeCollection(String name) {
-        Log.d(TAG, "removeCollection: Removing Collection");
-
-        ArrayList<Collection> allCollections = mSharedPrefsHelper.getCollections();
-
-        //Remove Collection From List
-        if (!name.equals(Config.MY_FAVORITES_COLLECTION_NAME))
-            allCollections.remove(new Collection(name, null));
-
-        //Save List
-        mSharedPrefsHelper.saveCollections(allCollections);
-    }
-
-    @Override
-    public void editCollection(String name, String newName) {
-        Log.d(TAG, "editCollection: Editing Collection Name");
-
-        ArrayList<Collection> allCollections = mSharedPrefsHelper.getCollections();
-
-        boolean found = false;
-        int i = 0;
-
-        while (!found && i < allCollections.size()) {
-            if (allCollections.get(i).getCollectionName().equals(name)) {
-                allCollections.get(i).setCollectionName(newName);
-                found = true;
-            } else i++;
-        }
-
-        mSharedPrefsHelper.saveCollections(allCollections);
-    }
-
     private Category getCategory(String categoryName) {
 
         //TODO: Get Category From Server Of the Category name passed as parameter
@@ -221,18 +183,23 @@ public class ImagesPresenter implements ImagesContract.Presenter {
     }
 
     private String readJSONFromAsset() {
-        String json = null;
+        String json;
         try {
             InputStream is = mContext.getAssets().open("images.json");
             int size = is.available();
             byte[] buffer = new byte[size];
             is.read(buffer);
             is.close();
-            json = new String(buffer, "UTF-8");
+            json = new String(buffer, StandardCharsets.UTF_8);
         } catch (IOException ex) {
             ex.printStackTrace();
             return null;
         }
         return json;
+    }
+
+    @Override
+    public String listToString(ArrayList<Image> images) {
+        return gson.toJson(images);
     }
 }

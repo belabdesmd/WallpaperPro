@@ -7,22 +7,22 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
-import com.devalutix.wallpaperpro.pojo.Image;
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class WallpaperPagerAdapter extends FragmentPagerAdapter {
     private static final String TAG = "WallpaperPagerAdapter";
 
-    //Declarations
+    /*************************************** Declarations *****************************************/
     private final List<Fragment> mFragmentList = new ArrayList<>();
 
+    /*************************************** Constructor ******************************************/
     public WallpaperPagerAdapter(@NonNull FragmentManager fm) {
         super(fm);
     }
 
-
+    /*************************************** Methods **********************************************/
+    @NonNull
     @Override
     public Fragment getItem(int position) {
         return mFragmentList.get(position);

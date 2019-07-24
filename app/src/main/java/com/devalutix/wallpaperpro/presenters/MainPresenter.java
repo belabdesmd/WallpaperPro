@@ -6,6 +6,7 @@ import android.util.Log;
 import com.devalutix.wallpaperpro.contracts.MainContract;
 import com.devalutix.wallpaperpro.models.SharedPreferencesHelper;
 import com.devalutix.wallpaperpro.ui.activities.MainActivity;
+import com.devalutix.wallpaperpro.utils.Config;
 import com.devalutix.wallpaperpro.utils.GDPR;
 import com.devalutix.wallpaperpro.utils.PermissionUtil;
 import com.google.android.gms.ads.AdView;
@@ -16,13 +17,13 @@ import androidx.core.app.ActivityCompat;
 public class MainPresenter implements MainContract.Presenter {
     private static String TAG = "MainPresenter";
 
-    //Declarations
+    /***************************************** Declarations ***************************************/
     private MainActivity mView;
     private PermissionUtil mPermissionUtil;
     private SharedPreferencesHelper sharedPreferencesHelper;
     private GDPR gdpr;
 
-    //Constructor
+    /***************************************** Constructor ****************************************/
     public MainPresenter(PermissionUtil mPermissionUtil, SharedPreferencesHelper sharedPreferencesHelper,
                          GDPR gdpr) {
         this.mPermissionUtil = mPermissionUtil;
@@ -30,7 +31,7 @@ public class MainPresenter implements MainContract.Presenter {
         this.gdpr = gdpr;
     }
 
-    //Essential Methods
+    /***************************************** Essential Methods **********************************/
     @Override
     public void attach(MainContract.View view) {
         mView = (MainActivity) view;
@@ -46,7 +47,7 @@ public class MainPresenter implements MainContract.Presenter {
         return !(mView == null);
     }
 
-    //Methods
+    /***************************************** Methods ********************************************/
     @Override
     public void requestPermission(String permission, int permissionRequest) {
         mPermissionUtil.checkPermission(mView, permission,
@@ -119,14 +120,19 @@ public class MainPresenter implements MainContract.Presenter {
     }
 
     @Override
-    public void initGDPR(AdView ad) {
-        gdpr.setAd(ad);
-        gdpr.checkForConsent();
+    public void checkGDPRConsent() {
+        if (Config.ENABLE_GDPR) {
+            gdpr.checkForConsent();
+        }
     }
 
     @Override
-    public GDPR getGDPR() {
-        return gdpr;
+    public void loadAd(AdView ad) {
+        if (sharedPreferencesHelper.isAdPersonalized()){
+            gdpr.showPersonalizedAdBanner(ad);
+        }else{
+            gdpr.showNonPersonalizedAdBanner(ad);
+        }
     }
 
     @Override

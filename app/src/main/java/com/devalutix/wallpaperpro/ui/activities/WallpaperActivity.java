@@ -26,7 +26,6 @@ import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.util.TypedValue;
-import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -46,21 +45,22 @@ import com.devalutix.wallpaperpro.ui.adapters.FavoritesAdapter;
 import com.devalutix.wallpaperpro.ui.adapters.WallpaperPagerAdapter;
 import com.devalutix.wallpaperpro.ui.fragments.WallpaperFragment;
 import com.devalutix.wallpaperpro.utils.Config;
-import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
-import com.mancj.slideup.SlideUp;
-import com.mancj.slideup.SlideUpBuilder;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import javax.inject.Inject;
+
+import static android.view.View.GONE;
 
 public class WallpaperActivity extends AppCompatActivity implements WallpaperContract.View {
     private static String TAG = "WallpaperActivity";
     private static final int COL_NUM = 2;
 
-    //Declarations
+    /**************************************** Declarations ****************************************/
     private MVPComponent mvpComponent;
     private ArrayList<Image> images;
     private InterstitialAd mInterstitialAd;
@@ -73,7 +73,7 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
     @Inject
     FavoritesPresenter favoritePresenter;
 
-    //View Declarations
+    /**************************************** View Declarations ***********************************/
     @BindView(R.id.wallpaper_toolbar)
     Toolbar mToolbar;
     @BindView(R.id.wallpaper_container)
@@ -100,16 +100,25 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
     TextView downloadsTextView;
     @BindView(R.id.categories)
     TextView categoriesTextView;
+    @BindView(R.id.adView_wallpaper)
+    AdView ad;
 
-    //ClickListeners
+    /**************************************** Click Listeners *************************************/
     @OnClick(R.id.share_action)
     public void share() {
-        mPresenter.sharePicture(mViewPager.getCurrentItem());
+        mPresenter.sharePicture(images.get(mViewPager.getCurrentItem()));
+        hideInfos();
     }
 
     @OnClick(R.id.download_wrapper)
     public void download() {
-        mPresenter.savePicture(mViewPager.getCurrentItem());
+        mPresenter.savePicture(images.get(mViewPager.getCurrentItem()));
+    }
+
+    @OnClick(R.id.set_as_wallpaper)
+    public void set_wallpaper() {
+        mPresenter.setAsWallpaper(images.get(mViewPager.getCurrentItem()));
+        hideInfos();
     }
 
     @OnClick(R.id.popup_info_kicker)
@@ -124,8 +133,7 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
         startActivity(goToFavorites);
     }
 
-
-    //Essentials Methods
+    /**************************************** Essential Methods ***********************************/
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //Initialize Dagger For Application
@@ -161,6 +169,7 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
         initPopUpFavorite();
 
         //Init Interstitial Ads
+        initAdBanner();
         initInterstitialAd();
     }
 
@@ -176,15 +185,22 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
         return mvpComponent;
     }
 
-    //Methods
     @Override
-    public void setToolbar() {
-        Log.d(TAG, "setToolbar: Setting the Toolbar.");
+    protected void onPause() {
+        super.onPause();
+        ad.pause();
+    }
 
-        setSupportActionBar(mToolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.back);
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ad.destroy();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ad.resume();
     }
 
     @Override
@@ -204,6 +220,7 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
                 return true;
             }
             case R.id.action_favorite: {
+                Log.d(TAG, "onOptionsItemSelected: Clicked On Favorites");
                 mPresenter.openAddToFavoritesPopUp();
                 return true;
             }
@@ -212,6 +229,34 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
         // If we got here, the user's action was not recognized.
         // Invoke the superclass to handle it.
         return super.onOptionsItemSelected(item);
+    }
+
+    /**************************************** Methods *********************************************/
+    @Override
+    public void setToolbar() {
+        Log.d(TAG, "setToolbar: Setting the Toolbar.");
+
+        setSupportActionBar(mToolbar);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.back_white);
+    }
+
+    @Override
+    public void initAdBanner() {
+        if (Config.ENABLE_AD_BANNER) {
+            mPresenter.loadAd(ad);
+        } else {
+            ad.setVisibility(GONE);
+        }
+    }
+
+    @Override
+    public void initInterstitialAd() {
+        mInterstitialAd = new InterstitialAd(this);
+        //TODO: Add Client's Ad Unit ID
+        mInterstitialAd.setAdUnitId("ca-app-pub-3940256099942544/1033173712");
+        mPresenter.loadInterstitialAd(mInterstitialAd);
     }
 
     @Override
@@ -271,7 +316,7 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
                 if (slideOffset > 0) {
                     TypedValue typedValue = new TypedValue();
                     Resources.Theme theme = context.getTheme();
-                    theme.resolveAttribute(R.attr.backgroundColor, typedValue, true);
+                    theme.resolveAttribute(R.attr.cardColor, typedValue, true);
                     @ColorInt int color = typedValue.data;
                     info_popup.setCardBackgroundColor(color);
                     index.setImageResource(R.drawable.index_popup);
@@ -290,12 +335,12 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
 
         //Declarations
         String topic;
-        String topicInfo;
+        StringBuilder topicInfo;
         String topicText;
 
         //Adding Date
         topic = "Title: ";
-        topicInfo = images.get(position).getImageTitle();
+        topicInfo = new StringBuilder(images.get(position).getImageTitle());
 
         topicText = topic + topicInfo;
 
@@ -306,7 +351,7 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
 
         //Adding Date
         topic = "Date Added: ";
-        topicInfo = images.get(position).getImageDateAdded().toString();
+        topicInfo = new StringBuilder(images.get(position).getImageDateAdded());
 
         topicText = topic + topicInfo;
 
@@ -316,16 +361,16 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
         dateTextView.setText(spannable1, TextView.BufferType.SPANNABLE);
 
         //Adding Downloads
-        topicInfo = String.valueOf(images.get(position).getImageDownloads());
-        downloadsTextView.setText(topicInfo);
+        topicInfo = new StringBuilder(String.valueOf(images.get(position).getImageDownloads()));
+        downloadsTextView.setText(topicInfo.toString());
 
         //Adding Categories
         topic = "Categories: ";
-        topicInfo = "";
+        topicInfo = new StringBuilder();
         for (int i = 0; i < images.get(position).getImageCategories().size(); i++) {
             if (i != images.get(position).getImageCategories().size() - 1)
-                topicInfo = topicInfo + images.get(position).getImageCategories().get(i) + ", ";
-            else topicInfo = topicInfo + images.get(position).getImageCategories().get(i);
+                topicInfo.append(images.get(position).getImageCategories().get(i)).append(", ");
+            else topicInfo.append(images.get(position).getImageCategories().get(i));
         }
 
         topicText = topic + topicInfo;
@@ -338,7 +383,6 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
 
     @Override
     public void initPopUpFavorite() {
-        add_to_favorites_popup.setMinimumHeight(300);
         add_to_favorite_popup_behavior = BottomSheetBehavior.from(add_to_favorites_popup);
 
         //Declarations
@@ -348,11 +392,8 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.addItemDecoration(new WallpaperActivity.MyItemDecoration());
         mRecyclerView.setAdapter(mAdapter);
-    }
 
-    @Override
-    public void initInterstitialAd() {
-        //TODO: Init Interstitial Ad
+        hideFavorite();
     }
 
     @Override
@@ -367,28 +408,21 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
 
     @Override
     public void showFavorite() {
+        Log.d(TAG, "showFavorite: Shows Favorites");
         add_to_favorite_popup_behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+        favoritePresenter.addImageToCollection(Config.MY_FAVORITES_COLLECTION_NAME, getImage());
     }
 
     @Override
     public void hideFavorite() {
+        Log.d(TAG, "showFavorite: Hides Favorites");
         add_to_favorite_popup_behavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
     }
 
     @Override
     public void showInterstitialAd() {
-        /*
-         * if  Interstitial Ad is enabled and GDPR is disabled then int Intesrtitial ad
-         * else Do nothing
-         */
-        if (Config.ENABLE_AD_INTERSTITIAL && !Config.ENABLE_GDPR) {
-            //Gdpr Disabled and Interstitial Ad Enabled
-            mInterstitialAd = new InterstitialAd(this);
-            mInterstitialAd.setAdUnitId(getResources().getString(R.string.ADMOB_INTERSTITIAL_AD_ID));
-            mInterstitialAd.loadAd(new AdRequest.Builder()
-                    .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
-                    .build());
-        }
+        if (mInterstitialAd.isLoaded())
+            mInterstitialAd.show();
     }
 
     public Image getImage() {
@@ -398,7 +432,8 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
     public class MyItemDecoration extends RecyclerView.ItemDecoration {
 
         @Override
-        public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+        public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent,
+                                   @NonNull RecyclerView.State state) {
             // only for the last one
             outRect.bottom = 48;
             outRect.right = 32;

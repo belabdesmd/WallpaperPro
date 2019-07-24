@@ -22,10 +22,6 @@ public interface ImagesContract {
         String listToString(ArrayList<Image> images);
 
         String getThumbnail(String mode, String name);
-
-        void removeCollection(String text);
-
-        void editCollection(String toString, String toString1);
     }
 
     interface View extends BaseView {

@@ -19,7 +19,7 @@
                 android:id="@+id/no_network_category"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:background="?attr/iconColor"
+                android:background="@drawable/internet_off"
                 android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"

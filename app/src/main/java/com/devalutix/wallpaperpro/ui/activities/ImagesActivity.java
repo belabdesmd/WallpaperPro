@@ -1,51 +1,38 @@
 package com.devalutix.wallpaperpro.ui.activities;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
-import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.devalutix.wallpaperpro.R;
-import com.devalutix.wallpaperpro.base.BaseApplication;
 import com.devalutix.wallpaperpro.contracts.ImagesContract;
 import com.devalutix.wallpaperpro.di.components.DaggerMVPComponent;
 import com.devalutix.wallpaperpro.di.components.MVPComponent;
 import com.devalutix.wallpaperpro.di.modules.ApplicationModule;
 import com.devalutix.wallpaperpro.di.modules.MVPModule;
-import com.devalutix.wallpaperpro.pojo.Collection;
 import com.devalutix.wallpaperpro.pojo.Image;
 import com.devalutix.wallpaperpro.presenters.ImagesPresenter;
 import com.devalutix.wallpaperpro.ui.adapters.ImagesAdapter;
-import com.mancj.slideup.SlideUp;
-import com.mancj.slideup.SlideUpBuilder;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import javax.inject.Inject;
 
@@ -57,7 +44,6 @@ public class ImagesActivity extends AppCompatActivity implements ImagesContract.
     private MVPComponent mvpComponent;
     private ImagesAdapter mAdapter;
     private ArrayList<Image> images;
-    private SlideUp slideUpEditCollection;
     @Inject
     ImagesPresenter mPresenter;
 
@@ -127,7 +113,7 @@ public class ImagesActivity extends AppCompatActivity implements ImagesContract.
         Log.d(TAG, "setToolbar: Setting the Toolbar.");
 
         setSupportActionBar(mToolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.back);
     }
 
@@ -146,9 +132,10 @@ public class ImagesActivity extends AppCompatActivity implements ImagesContract.
 
     @Override
     public void setPageName(String mode, String name) {
+        Log.d(TAG, "setPageName: Setting Page Name : "+ name);
         if (mode.equals("search"))
-            mToolbar.setTitle("Search: " + name);
-        else mToolbar.setTitle(name);
+            Objects.requireNonNull(getSupportActionBar()).setTitle("Search: " + name);
+        else Objects.requireNonNull(getSupportActionBar()).setTitle(name);
     }
 
     @Override
@@ -230,7 +217,8 @@ public class ImagesActivity extends AppCompatActivity implements ImagesContract.
     public class MyItemDecoration extends RecyclerView.ItemDecoration {
 
         @Override
-        public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+        public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent,
+                                   @NonNull RecyclerView.State state) {
             // only for the last one
             outRect.bottom = 16;
             outRect.right = 16;

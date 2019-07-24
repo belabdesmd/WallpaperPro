@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.devalutix.wallpaperpro.R;
 import com.devalutix.wallpaperpro.pojo.Image;
-import com.devalutix.wallpaperpro.presenters.ExplorePresenter;
 import com.devalutix.wallpaperpro.ui.activities.ImagesActivity;
 import com.devalutix.wallpaperpro.ui.fragments.ExploreFragment;
 
@@ -22,11 +21,12 @@ import java.util.ArrayList;
 public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ViewHolder> {
     private static final String TAG = "ImagesAdapter";
 
-    //Declarations
+    /*************************************** Declarations *****************************************/
     private ArrayList<Image> mImages;
     private ExploreFragment mView = null;
     private ImagesActivity mView1 = null;
 
+    /*************************************** Constructor ******************************************/
     public ImagesAdapter(ArrayList<Image> mImages, ExploreFragment mView) {
         this.mImages = mImages;
         this.mView = mView;
@@ -37,6 +37,7 @@ public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ViewHolder
         this.mView1 = mView1;
     }
 
+    /*************************************** Methods **********************************************/
     @NonNull
     @Override
     public ImagesAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -73,15 +74,12 @@ public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ViewHolder
 
         //Click Listener
         final int finalPosition = position;
-        holder.container.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        holder.container.setOnClickListener(v -> {
 
-                if (mView == null)
-                    mView1.goToWallpaperActivity(finalPosition, mImages);
-                else if (mView1 == null)
-                    mView.goToWallpaperActivity(finalPosition, mImages);
-            }
+            if (mView == null)
+                mView1.goToWallpaperActivity(finalPosition, mImages);
+            else if (mView1 == null)
+                mView.goToWallpaperActivity(finalPosition, mImages);
         });
     }
 
@@ -91,27 +89,16 @@ public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ViewHolder
         else return mImages.size();
     }
 
-    /**
-     * Clear All the ArrayList
-     */
     public void clearAll() {
         if (mImages != null) mImages.clear();
         notifyDataSetChanged();
     }
 
-    /**
-     * Add the New ArrayList
-     *
-     * @param categories : the ArrayList to Add
-     */
     public void addAll(ArrayList<Image> categories) {
         mImages = categories;
         notifyDataSetChanged();
     }
 
-    // Provide a reference to the views for each data item
-    // Complex data items may need more than one view per item, and
-    // you provide access to all the views for a data item in a view holder
     static class ViewHolder extends RecyclerView.ViewHolder {
         CardView container;
         ImageView image;

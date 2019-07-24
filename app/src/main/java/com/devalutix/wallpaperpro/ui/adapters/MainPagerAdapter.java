@@ -1,5 +1,6 @@
 package com.devalutix.wallpaperpro.ui.adapters;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,16 +19,18 @@ import androidx.fragment.app.FragmentPagerAdapter;
 
 public class MainPagerAdapter extends FragmentPagerAdapter {
 
-    //Declarations
+    /*************************************** Declarations *****************************************/
     private ArrayList<Fragment> fragments;
     private Context context;
 
+    /*************************************** Constructor ******************************************/
     public MainPagerAdapter(@NonNull FragmentManager fm, ArrayList<Fragment> fragments, Context context) {
         super(fm);
         this.fragments = fragments;
         this.context = context;
     }
 
+    /*************************************** Methods **********************************************/
     @NonNull
     @Override
     public Fragment getItem(int position) {
@@ -40,10 +43,10 @@ public class MainPagerAdapter extends FragmentPagerAdapter {
     }
 
     public View getTabView(int position) {
-        View view = LayoutInflater.from(context).inflate(R.layout.custom_tab, null);
-        TextView tv = (TextView) view.findViewById(R.id.tab_title);
+        @SuppressLint("InflateParams") View view = LayoutInflater.from(context).inflate(R.layout.custom_tab, null);
+        TextView tv = view.findViewById(R.id.tab_title);
         tv.setText(Config.tabTitles[position]);
-        ImageView img = (ImageView) view.findViewById(R.id.tab_icon);
+        ImageView img = view.findViewById(R.id.tab_icon);
         img.setImageResource(Config.tabIconsDisabled[position]);
         return view;
     }

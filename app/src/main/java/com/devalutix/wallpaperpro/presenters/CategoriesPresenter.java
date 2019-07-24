@@ -14,24 +14,25 @@ import com.google.gson.Gson;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 public class CategoriesPresenter implements CategoriesContract.Presenter {
     private static String TAG = "CategoriesPresenter";
 
-    //Declarations
+    /***************************************** Declarations ***************************************/
     private CategoriesFragment mView;
     private Context mContext;
     private SharedPreferencesHelper mSharedPrefsHelper;
 
-    //Constructor
+    /***************************************** Constructor ****************************************/
     public CategoriesPresenter(@ApplicationContext Context mContext, SharedPreferencesHelper mSharedPrefsHelper) {
         this.mContext = mContext;
         this.mSharedPrefsHelper = mSharedPrefsHelper;
     }
 
-    //Essential Methods
+    /***************************************** Essential Methods **********************************/
     @Override
     public void attach(CategoriesContract.View view) {
         mView = (CategoriesFragment) view;
@@ -47,7 +48,7 @@ public class CategoriesPresenter implements CategoriesContract.Presenter {
         return !(mView == null);
     }
 
-    //Methods
+    /***************************************** Methods ********************************************/
     @Override
     public boolean hasInternetConnection() {
         ConnectivityManager conMgr = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -95,20 +96,19 @@ public class CategoriesPresenter implements CategoriesContract.Presenter {
 
         Gson gson = new Gson();
         Category[] categoryItem = gson.fromJson(readJSONFromAsset(), Category[].class);
-        ArrayList<Category> categories = new ArrayList<Category>(Arrays.asList(categoryItem));
 
-        return categories;
+        return new ArrayList<>(Arrays.asList(categoryItem));
     }
 
     private String readJSONFromAsset() {
-        String json = null;
+        String json;
         try {
             InputStream is = mContext.getAssets().open("categories.json");
             int size = is.available();
             byte[] buffer = new byte[size];
             is.read(buffer);
             is.close();
-            json = new String(buffer, "UTF-8");
+            json = new String(buffer, StandardCharsets.UTF_8);
         } catch (IOException ex) {
             ex.printStackTrace();
             return null;

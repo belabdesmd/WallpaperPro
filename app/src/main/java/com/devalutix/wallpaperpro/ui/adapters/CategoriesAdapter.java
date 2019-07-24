@@ -22,17 +22,19 @@ import java.util.ArrayList;
 public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.ViewHolder> {
     private static final String TAG = "CategoriesAdapter";
 
-    //Declarations
+    /*************************************** Declarations *****************************************/
     private CategoriesPresenter mPresenter;
     private ArrayList<Category> mCategories;
     private CategoriesFragment mView;
 
+    /*************************************** Constructor ******************************************/
     public CategoriesAdapter(CategoriesPresenter mPresenter, ArrayList<Category> mCategories, CategoriesFragment mView) {
         this.mPresenter = mPresenter;
         this.mCategories = mCategories;
         this.mView = mView;
     }
 
+    /*************************************** Methods **********************************************/
     @NonNull
     @Override
     public CategoriesAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -60,12 +62,7 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Vi
 
         //Click Listener
         final int finalPosition = position;
-        holder.container.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mView.goToImages(mCategories.get(finalPosition).getCategoryName());
-            }
-        });
+        holder.container.setOnClickListener(v -> mView.goToImages(mCategories.get(finalPosition).getCategoryName()));
     }
 
     @Override
@@ -74,27 +71,16 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Vi
         else return mCategories.size();
     }
 
-    /**
-     * Clear All the ArrayList
-     */
     public void clearAll() {
         if (mCategories != null) mCategories.clear();
         notifyDataSetChanged();
     }
 
-    /**
-     * Add the New ArrayList
-     *
-     * @param categories : the ArrayList to Add
-     */
     public void addAll(ArrayList<Category> categories) {
         mCategories = categories;
         notifyDataSetChanged();
     }
 
-    // Provide a reference to the views for each data item
-    // Complex data items may need more than one view per item, and
-    // you provide access to all the views for a data item in a view holder
     static class ViewHolder extends RecyclerView.ViewHolder {
         CardView container;
         ImageView image;

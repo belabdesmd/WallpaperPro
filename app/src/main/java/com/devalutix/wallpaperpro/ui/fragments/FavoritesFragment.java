@@ -1,11 +1,17 @@
 package com.devalutix.wallpaperpro.ui.fragments;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.content.res.Resources;
+import android.graphics.Color;
 import android.graphics.Rect;
-import android.os.Build;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 
+import androidx.annotation.ColorInt;
+import androidx.annotation.NonNull;
+import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
@@ -13,11 +19,10 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.Gravity;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,7 +30,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.PopupWindow;
 
 import com.devalutix.wallpaperpro.R;
 import com.devalutix.wallpaperpro.contracts.FavoritesContract;
@@ -41,6 +45,7 @@ import com.devalutix.wallpaperpro.ui.activities.MainActivity;
 import com.devalutix.wallpaperpro.ui.adapters.FavoritesAdapter;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import javax.inject.Inject;
 
@@ -50,11 +55,10 @@ public class FavoritesFragment extends Fragment implements FavoritesContract.Vie
     private static String TAG = "FavoritesFragment";
     private static final int COL_NUM = 2;
 
-    //Declarations
+    /****************************************** Declarations **************************************/
     private MVPComponent mvpComponent;
     private FavoritesAdapter mAdapter;
     private ArrayList<Collection> collections;
-    private FrameLayout activity_container;
 
     private AlertDialog mDialogAdd;
     private AlertDialog mDialogEdit;
@@ -62,31 +66,30 @@ public class FavoritesFragment extends Fragment implements FavoritesContract.Vie
     @Inject
     FavoritesPresenter mPresenter;
 
-    //View Declarations
+    /****************************************** View Declarations *********************************/
     @BindView(R.id.favorites_recyclerview)
     RecyclerView mRecyclerView;
 
-    private CardView add_collection_popup;
     private EditText get_collection_name;
     private Button add_collection;
 
-    private CardView edit_collection_popup;
     private EditText get_collection_name_edit;
     private Button edit_collection;
+    private ImageView remove_collection;
 
-    //Constructor
+    /****************************************** Constructor ***************************************/
     public FavoritesFragment() {
         // Required empty public constructor
     }
 
-    //Essentials Methods
+    /****************************************** Essential Methods *********************************/
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_favorite, container, false);
 
-        activity_container = (FrameLayout) view.findViewById(R.id.favorites_container);
+        FrameLayout activity_container = view.findViewById(R.id.favorites_container);
 
         //Init ButterKnife
         ButterKnife.bind(this, view);
@@ -115,14 +118,14 @@ public class FavoritesFragment extends Fragment implements FavoritesContract.Vie
         if (mvpComponent == null) {
             mvpComponent = DaggerMVPComponent
                     .builder()
-                    .applicationModule(new ApplicationModule(getActivity().getApplication()))
+                    .applicationModule(new ApplicationModule(Objects.requireNonNull(getActivity()).getApplication()))
                     .mVPModule(new MVPModule(getActivity()))
                     .build();
         }
         return mvpComponent;
     }
 
-    //Methods
+    /****************************************** Methods *******************************************/
     @Override
     public void initRecyclerView(ArrayList<Collection> collections) {
 
@@ -140,10 +143,10 @@ public class FavoritesFragment extends Fragment implements FavoritesContract.Vie
 
     @Override
     public void initAddCollectionPopUp() {
-        LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(LAYOUT_INFLATER_SERVICE);
+        LayoutInflater inflater = (LayoutInflater) Objects.requireNonNull(getActivity()).getSystemService(LAYOUT_INFLATER_SERVICE);
 
         // Inflate the custom layout/view
-        View customView = inflater.inflate(R.layout.add_collection_popup, null);
+        @SuppressLint("InflateParams") View customView = inflater.inflate(R.layout.add_collection_popup, null);
 
         //Create the Alert Dialog
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
@@ -151,10 +154,22 @@ public class FavoritesFragment extends Fragment implements FavoritesContract.Vie
         alertDialogBuilder.setView(customView);
         mDialogAdd = alertDialogBuilder.create();
 
+        Objects.requireNonNull(mDialogAdd.getWindow()).setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
         //Init Views
-        add_collection_popup = customView.findViewById(R.id.add_collection_popup);
+        CardView add_collection_popup = customView.findViewById(R.id.add_collection_popup);
         get_collection_name = customView.findViewById(R.id.add_collection_name);
         add_collection = customView.findViewById(R.id.done_adding);
+
+        //Edit Color
+        TypedValue typedValue = new TypedValue();
+        Resources.Theme theme = getActivity().getTheme();
+        theme.resolveAttribute(R.attr.primaryTextColor, typedValue, true);
+        @ColorInt int color1 = typedValue.data;
+        get_collection_name.setTextColor(color1);
+        theme.resolveAttribute(R.attr.secondaryTextColor, typedValue, true);
+        @ColorInt int color2 = typedValue.data;
+        get_collection_name.setHintTextColor(color2);
 
         //Listeners
         add_collection.setOnClickListener(view -> {
@@ -162,6 +177,7 @@ public class FavoritesFragment extends Fragment implements FavoritesContract.Vie
             hideAddCollectionPopUp();
             get_collection_name.getText().clear();
             ((MainActivity) getActivity()).hideKeyboard();
+            mPresenter.updateRecyclerView();
         });
         customView.findViewById(R.id.cancel_adding).setOnClickListener(view -> {
             hideAddCollectionPopUp();
@@ -194,10 +210,10 @@ public class FavoritesFragment extends Fragment implements FavoritesContract.Vie
 
     @Override
     public void initEditCollectionPopUp() {
-        LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(LAYOUT_INFLATER_SERVICE);
+        LayoutInflater inflater = (LayoutInflater) Objects.requireNonNull(getActivity()).getSystemService(LAYOUT_INFLATER_SERVICE);
 
         // Inflate the custom layout/view
-        View customView = inflater.inflate(R.layout.edit_collection_popup, null);
+        @SuppressLint("InflateParams") View customView = inflater.inflate(R.layout.edit_collection_popup, null);
 
         //Create the Alert Dialog
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
@@ -205,27 +221,35 @@ public class FavoritesFragment extends Fragment implements FavoritesContract.Vie
         alertDialogBuilder.setView(customView);
         mDialogEdit = alertDialogBuilder.create();
 
+        Objects.requireNonNull(mDialogEdit.getWindow()).setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
         //Init Views
-        edit_collection_popup = customView.findViewById(R.id.edit_collection_popup);
+        CardView edit_collection_popup = customView.findViewById(R.id.edit_collection_popup);
         get_collection_name_edit = customView.findViewById(R.id.edit_collection_name);
         edit_collection = customView.findViewById(R.id.done_editing);
+        remove_collection = customView.findViewById(R.id.remove_collection);
 
-        //Listeners
-        edit_collection.setOnClickListener(view -> {
-            mPresenter.editCollection(get_collection_name_edit.getText().toString());
+        //Edit Color
+        TypedValue typedValue = new TypedValue();
+        Resources.Theme theme = getActivity().getTheme();
+        theme.resolveAttribute(R.attr.primaryTextColor, typedValue, true);
+        @ColorInt int color1 = typedValue.data;
+        get_collection_name_edit.setTextColor(color1);
+        theme.resolveAttribute(R.attr.secondaryTextColor, typedValue, true);
+        @ColorInt int color2 = typedValue.data;
+        get_collection_name_edit.setHintTextColor(color2);
+
+        customView.findViewById(R.id.cancel_editing).setOnClickListener(view -> {
             hideEditCollectionPopUp();
             get_collection_name_edit.getText().clear();
             ((MainActivity) getActivity()).hideKeyboard();
-        });
-        customView.findViewById(R.id.remove_collection).setOnClickListener(view -> {
-            mPresenter.removeCollection();
         });
 
         //Disable Done Button
         disableDoneButton();
 
         //Getting Text
-        get_collection_name.addTextChangedListener(new TextWatcher() {
+        get_collection_name_edit.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -276,8 +300,21 @@ public class FavoritesFragment extends Fragment implements FavoritesContract.Vie
     }
 
     @Override
-    public void showEditCollectionPopUp() {
+    public void showEditCollectionPopUp(String collectionName) {
         mDialogEdit.show();
+        get_collection_name_edit.setText(collectionName);
+        remove_collection.setOnClickListener(view -> {
+            mPresenter.removeCollection(collectionName);
+            hideEditCollectionPopUp();
+            mPresenter.updateRecyclerView();
+        });
+        edit_collection.setOnClickListener(view -> {
+            mPresenter.editCollection(collectionName, get_collection_name_edit.getText().toString());
+            hideEditCollectionPopUp();
+            get_collection_name_edit.getText().clear();
+            ((MainActivity) Objects.requireNonNull(getActivity())).hideKeyboard();
+            mPresenter.updateRecyclerView();
+        });
     }
 
     @Override
@@ -300,7 +337,8 @@ public class FavoritesFragment extends Fragment implements FavoritesContract.Vie
     public class MyItemDecoration extends RecyclerView.ItemDecoration {
 
         @Override
-        public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+        public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent,
+                                   @NonNull RecyclerView.State state) {
             // only for the last one
             outRect.bottom = 48;
             outRect.right = 32;

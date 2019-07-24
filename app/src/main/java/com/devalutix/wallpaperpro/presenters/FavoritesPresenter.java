@@ -1,6 +1,8 @@
 package com.devalutix.wallpaperpro.presenters;
 
+import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.devalutix.wallpaperpro.contracts.FavoritesContract;
 import com.devalutix.wallpaperpro.models.SharedPreferencesHelper;
@@ -14,16 +16,18 @@ import java.util.ArrayList;
 public class FavoritesPresenter implements FavoritesContract.Presenter {
     private static String TAG = "FavoritesPresenter";
 
-    //Declarations
+    /***************************************** Declarations ***************************************/
     private FavoritesFragment mView;
     private SharedPreferencesHelper mSharedPrefsHelper;
+    private Context mContext;
 
-    //Constructor
-    public FavoritesPresenter(SharedPreferencesHelper sharedPreferencesHelper) {
+    /***************************************** Constructor ****************************************/
+    public FavoritesPresenter(Context mContext, SharedPreferencesHelper sharedPreferencesHelper) {
         mSharedPrefsHelper = sharedPreferencesHelper;
+        this.mContext = mContext;
     }
 
-    //Essential Methods
+    /***************************************** Essential Methods **********************************/
     @Override
     public void attach(FavoritesContract.View view) {
         mView = (FavoritesFragment) view;
@@ -39,7 +43,7 @@ public class FavoritesPresenter implements FavoritesContract.Presenter {
         return !(mView == null);
     }
 
-    //Methods
+    /***************************************** Methods ********************************************/
     @Override
     public void initRecyclerView() {
         Log.d(TAG, "initRecyclerView: Init Collections List");
@@ -48,11 +52,24 @@ public class FavoritesPresenter implements FavoritesContract.Presenter {
         //IF There is No Collection (First Time), Create The My Favorites Collection
         if (collections == null) {
             collections = new ArrayList<>();
-            collections.add(new Collection(Config.MY_FAVORITES_COLLECTION_NAME, new ArrayList<Image>()));
+            collections.add(new Collection(Config.MY_FAVORITES_COLLECTION_NAME, new ArrayList<>()));
             mSharedPrefsHelper.saveCollections(collections);
         }
 
         mView.initRecyclerView(collections);
+    }
+
+    @Override
+    public void updateRecyclerView() {
+        Log.d(TAG, "initRecyclerView: Init Collections List");
+        ArrayList<Collection> collections = getCollectionsList();
+
+        mView.updateRecyclerView(collections);
+    }
+
+    @Override
+    public ArrayList<Collection> getCollectionsList() {
+        return mSharedPrefsHelper.getCollections();
     }
 
     @Override
@@ -68,18 +85,36 @@ public class FavoritesPresenter implements FavoritesContract.Presenter {
     }
 
     @Override
-    public void editCollection(String collection) {
+    public void editCollection(String oldCollectionName, String collectionName) {
+        Log.d(TAG, "editCollection: Editing Collection Name");
 
+        ArrayList<Collection> allCollections = mSharedPrefsHelper.getCollections();
+
+        boolean found = false;
+        int i = 0;
+
+        while (!found && i < allCollections.size()) {
+            if (allCollections.get(i).getCollectionName().equals(oldCollectionName)) {
+                allCollections.get(i).setCollectionName(collectionName);
+                found = true;
+            } else i++;
+        }
+
+        mSharedPrefsHelper.saveCollections(allCollections);
     }
 
     @Override
-    public void removeCollection() {
+    public void removeCollection(String collectionName) {
+        Log.d(TAG, "removeCollection: Removing Collection");
 
-    }
+        ArrayList<Collection> allCollections = mSharedPrefsHelper.getCollections();
 
-    @Override
-    public ArrayList<Collection> getCollectionsList() {
-        return mSharedPrefsHelper.getCollections();
+        //Remove Collection From List
+        if (!collectionName.equals(Config.MY_FAVORITES_COLLECTION_NAME))
+            allCollections.remove(new Collection(collectionName, null));
+
+        //Save List
+        mSharedPrefsHelper.saveCollections(allCollections);
     }
 
     @Override
@@ -94,11 +129,14 @@ public class FavoritesPresenter implements FavoritesContract.Presenter {
 
         while (i < collections.size() && !found) {
             if (collections.get(i).getCollectionName().equals(collectionName)) {
-                collections.get(i).getCollectionPictures().add(image);
+                if (!collections.get(i).getCollectionPictures().contains(image))
+                    collections.get(i).getCollectionPictures().add(image);
                 found = true;
             } else i++;
         }
 
         mSharedPrefsHelper.saveCollections(collections);
+
+        Toast.makeText(mContext, image.getImageTitle() + " Added to " + collectionName, Toast.LENGTH_SHORT).show();
     }
 }

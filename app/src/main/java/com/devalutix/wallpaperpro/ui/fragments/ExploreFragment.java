@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
@@ -13,7 +14,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +21,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 
 import com.devalutix.wallpaperpro.R;
-import com.devalutix.wallpaperpro.base.BaseApplication;
 import com.devalutix.wallpaperpro.contracts.ExploreContract;
 import com.devalutix.wallpaperpro.di.components.DaggerMVPComponent;
 import com.devalutix.wallpaperpro.di.components.MVPComponent;
@@ -33,6 +32,7 @@ import com.devalutix.wallpaperpro.ui.activities.WallpaperActivity;
 import com.devalutix.wallpaperpro.ui.adapters.ImagesAdapter;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import javax.inject.Inject;
 
@@ -40,7 +40,7 @@ public class ExploreFragment extends Fragment implements ExploreContract.View {
     private static String TAG = "ExploreFragment";
     private static final int COL_NUM = 3;
 
-    //Declarations
+    /****************************************** Declarations **************************************/
     private MVPComponent mvpComponent;
     private ImagesAdapter mAdapter;
     private ArrayList<Image> images;
@@ -48,7 +48,7 @@ public class ExploreFragment extends Fragment implements ExploreContract.View {
     @Inject
     ExplorePresenter mPresenter;
 
-    //View Declarations
+    /****************************************** View Declarations *********************************/
     @BindView(R.id.explore_recyclerview)
     RecyclerView mRecyclerView;
     @BindView(R.id.swipe_to_refresh_explore)
@@ -63,7 +63,7 @@ public class ExploreFragment extends Fragment implements ExploreContract.View {
     @BindView(R.id.featured_filter)
     Button featured;
 
-    //ClickListeners
+    /****************************************** Click Listeners ***********************************/
     @OnClick(R.id.popular_filter)
     void popularFilter() {
         mRefresh.setRefreshing(true);
@@ -88,14 +88,14 @@ public class ExploreFragment extends Fragment implements ExploreContract.View {
         mPresenter.updateRecyclerView("featured");
     }
 
-    //Constructor
+    /****************************************** Constructor ***************************************/
     public ExploreFragment() {
         // Required empty public constructor
     }
 
-    //Essentials Methods
+    /****************************************** Essential Methods *********************************/
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_explore, container, false);
@@ -129,15 +129,14 @@ public class ExploreFragment extends Fragment implements ExploreContract.View {
         if (mvpComponent == null) {
             mvpComponent = DaggerMVPComponent
                     .builder()
-                    .applicationModule(new ApplicationModule(getActivity().getApplication()))
+                    .applicationModule(new ApplicationModule(Objects.requireNonNull(getActivity()).getApplication()))
                     .mVPModule(new MVPModule(getActivity()))
                     .build();
         }
         return mvpComponent;
     }
 
-    //Methods
-
+    /****************************************** Methods *******************************************/
     @Override
     public void initRecyclerView(ArrayList<Image> images) {
 
@@ -242,7 +241,8 @@ public class ExploreFragment extends Fragment implements ExploreContract.View {
     public class MyItemDecoration extends RecyclerView.ItemDecoration {
 
         @Override
-        public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+        public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent,
+                                   @NonNull RecyclerView.State state) {
             // only for the last one
             outRect.bottom = 16;
             outRect.right = 16;

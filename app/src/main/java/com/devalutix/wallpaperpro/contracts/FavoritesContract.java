@@ -13,11 +13,13 @@ public interface FavoritesContract {
 
         void initRecyclerView();
 
+        void updateRecyclerView();
+
         void addCollection(Collection collection);
 
-        void editCollection(String collection);
+        void editCollection(String oldCollectionName, String collectionName);
 
-        void removeCollection();
+        void removeCollection(String collectionName);
 
         ArrayList<Collection> getCollectionsList();
 
@@ -41,7 +43,7 @@ public interface FavoritesContract {
 
         void hideAddCollectionPopUp();
 
-        void showEditCollectionPopUp();
+        void showEditCollectionPopUp(String collectionName);
 
         void hideEditCollectionPopUp();
 

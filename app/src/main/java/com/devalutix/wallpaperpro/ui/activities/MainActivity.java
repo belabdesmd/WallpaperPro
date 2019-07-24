@@ -1,6 +1,6 @@
 package com.devalutix.wallpaperpro.ui.activities;
 
-import androidx.annotation.NonNull;
+import androidx.annotation.ColorInt;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.SearchView;
@@ -16,12 +16,14 @@ import butterknife.OnClick;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -39,12 +41,12 @@ import com.devalutix.wallpaperpro.ui.fragments.CategoriesFragment;
 import com.devalutix.wallpaperpro.ui.fragments.ExploreFragment;
 import com.devalutix.wallpaperpro.ui.fragments.FavoritesFragment;
 import com.devalutix.wallpaperpro.utils.Config;
-import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import javax.inject.Inject;
 
@@ -55,7 +57,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     private static String TAG = "MainActivity";
     private static final int REQUEST_WRITE_STORAGE = 1;
 
-    //Declarations
+    /**************************************** Declarations ****************************************/
     private MVPComponent mvpComponent;
     @Inject
     MainPresenter mPresenter;
@@ -64,7 +66,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     private ExploreFragment explore;
     private CategoriesFragment categories;
 
-    //View Declarations
+    /**************************************** View Declarations ***********************************/
     @BindView(R.id.drawer_layout)
     DrawerLayout mDrawerLayout;
     @BindView(R.id.nav_view)
@@ -82,13 +84,13 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     @BindView(R.id.adView_main)
     AdView ad;
 
-    //ClickListeners
+    /**************************************** Click Listeners *************************************/
     @OnClick(R.id.add_collection)
     public void showAddCollectionPopUp() {
         favorites.showAddCollectionPopUp();
     }
 
-    //Essentials Methods
+    /**************************************** Essential Methods ***********************************/
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.d(TAG, "onCreate: Creating Views");
@@ -119,6 +121,9 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         //Request Storage Permission
         mPresenter.requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, REQUEST_WRITE_STORAGE);
 
+        //Check For Consent
+        mPresenter.checkGDPRConsent();
+
         //Init Ad Banner
         initAdBanner();
 
@@ -139,16 +144,13 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         darkModeListener();
 
         //Navigation Menu OnClickListener
-        mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        mNavigationView.setNavigationItemSelectedListener(item -> {
 
-                //TODO: Add Drawer Menu Actions
+            //TODO: Add Drawer Menu Actions
 
-                // close drawer when item is tapped
-                mDrawerLayout.closeDrawers();
-                return true;
-            }
+            // close drawer when item is tapped
+            mDrawerLayout.closeDrawers();
+            return true;
         });
 
         //Go To Favorites (After Saving a Picture)
@@ -172,57 +174,45 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     @Override
     protected void onPause() {
         super.onPause();
-        AdView ad1;
-        if (Config.ENABLE_AD_BANNER) {
-            if (Config.ENABLE_GDPR) {
-                //If Gdpr enabled get the Variable banner ad from the Class Gdpr
-                //else use the current one
-                ad1 = mPresenter.getGDPR().getmAd();
-            } else ad1 = ad;
-            ad1.pause();
-        }
+        ad.pause();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        AdView ad1;
-        if (Config.ENABLE_AD_BANNER) {
-            if (Config.ENABLE_GDPR) {
-                //If Gdpr enabled get the Variable banner ad from the Class Gdpr
-                //else use the current one
-                ad1 = mPresenter.getGDPR().getmAd();
-            } else ad1 = ad;
-            ad1.destroy();
-        }
+        ad.destroy();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        AdView ad1;
-        if (Config.ENABLE_AD_BANNER) {
-            if (Config.ENABLE_GDPR) {
-                //If Gdpr enabled get the Variable banner ad from the Class Gdpr
-                //else use the current one
-                ad1 = mPresenter.getGDPR().getmAd();
-            } else ad1 = ad;
-            ad1.resume();
-        }
+        ad.resume();
     }
 
-    //Methods
+    /**************************************** Methods *********************************************/
+    @Override
+    public void darkModeListener() {
+        //Dark Mode
+        MenuItem dark_mode_item = mNavigationView.getMenu().findItem(R.id.dark_mode);
+        Switch dark_mode = (Switch) MenuItemCompat.getActionView(dark_mode_item);
+        dark_mode.setChecked(mPresenter.isDarkModeEnabled());
+        dark_mode.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                mPresenter.enableDarkMode(true);
+                restartApp();
+            } else {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                mPresenter.enableDarkMode(false);
+                restartApp();
+            }
+        });
+    }
+
     @Override
     public void initAdBanner() {
         if (Config.ENABLE_AD_BANNER) {
-            if (Config.ENABLE_GDPR) {
-                mPresenter.initGDPR(ad);
-            } else {
-                AdRequest adRequest = new AdRequest.Builder()
-                        .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
-                        .build();
-                ad.loadAd(adRequest);
-            }
+            mPresenter.loadAd(ad);
         } else {
             ad.setVisibility(GONE);
         }
@@ -231,20 +221,19 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     @Override
     public void initSearchBar() {
         Log.d(TAG, "initSearchBar: Init Search Bar");
+        EditText searchEditText = search.findViewById(R.id.search_src_text);
+        TypedValue typedValue = new TypedValue();
+        Resources.Theme theme = this.getTheme();
+        theme.resolveAttribute(R.attr.primaryTextColor, typedValue, true);
+        @ColorInt int color = typedValue.data;
+        searchEditText.setTextColor(color);
+        searchEditText.setHintTextColor(color);
 
-        search.setOnSearchClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                title.setVisibility(View.INVISIBLE);
-            }
-        });
+        search.setOnSearchClickListener(v -> title.setVisibility(View.INVISIBLE));
 
-        search.setOnCloseListener(new SearchView.OnCloseListener() {
-            @Override
-            public boolean onClose() {
-                title.setVisibility(VISIBLE);
-                return false;
-            }
+        search.setOnCloseListener(() -> {
+            title.setVisibility(VISIBLE);
+            return false;
         });
 
         search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -260,65 +249,6 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
                 return false;
             }
         });
-    }
-
-    @Override
-    public void darkModeListener() {
-        //Dark Mode
-        MenuItem dark_mode_item = mNavigationView.getMenu().findItem(R.id.dark_mode);
-        Switch dark_mode = (Switch) MenuItemCompat.getActionView(dark_mode_item);
-        dark_mode.setChecked(mPresenter.isDarkModeEnabled());
-        dark_mode.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-                    mPresenter.enableDarkMode(true);
-                    restartApp();
-                } else {
-                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-                    mPresenter.enableDarkMode(false);
-                    restartApp();
-                }
-            }
-        });
-    }
-
-    @Override
-    public void showSearchBar() {
-        hideAll();
-        search.setVisibility(VISIBLE);
-    }
-
-    @Override
-    public void showAddCollection() {
-        hideAll();
-        add_collection.setVisibility(VISIBLE);
-    }
-
-    @Override
-    public void hideAll() {
-        search.setVisibility(GONE);
-        add_collection.setVisibility(GONE);
-    }
-
-    @Override
-    public void enableTabAt(int x) {
-        TabLayout.Tab tab = mTab.getTabAt(x);
-
-        for (int i = 0; i < 3; i++) {
-            if (i == x) {
-                ((ImageView) tab.getCustomView().findViewById(R.id.tab_icon))
-                        .setImageResource(Config.tabIconsEnabled[i]);
-                tab.getCustomView().findViewById(R.id.tab_title).setVisibility(VISIBLE);
-
-            } else {
-                TabLayout.Tab tab1 = mTab.getTabAt(i);
-                ((ImageView) tab1.getCustomView().findViewById(R.id.tab_icon))
-                        .setImageResource(Config.tabIconsDisabled[i]);
-                tab1.getCustomView().findViewById(R.id.tab_title).setVisibility(GONE);
-            }
-        }
     }
 
     @Override
@@ -343,6 +273,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         // Iterate over all tabs and set the custom view
         for (int i = 0; i < mTab.getTabCount(); i++) {
             TabLayout.Tab tab = mTab.getTabAt(i);
+            assert tab != null;
             tab.setCustomView(mAdapter.getTabView(i));
         }
         enableTabAt(0);
@@ -373,7 +304,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
 
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
-                ((ImageView) tab.getCustomView().findViewById(R.id.tab_icon))
+                ((ImageView) Objects.requireNonNull(tab.getCustomView()).findViewById(R.id.tab_icon))
                         .setImageResource(Config.tabIconsDisabled[tab.getPosition()]);
                 tab.getCustomView().findViewById(R.id.tab_title).setVisibility(GONE);
             }
@@ -383,6 +314,45 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
                 onTabSelected(tab);
             }
         });
+    }
+
+    @Override
+    public void showSearchBar() {
+        hideAll();
+        search.setVisibility(VISIBLE);
+    }
+
+    @Override
+    public void showAddCollection() {
+        hideAll();
+        add_collection.setVisibility(VISIBLE);
+    }
+
+    @Override
+    public void hideAll() {
+        search.setVisibility(GONE);
+        add_collection.setVisibility(GONE);
+    }
+
+    @Override
+    public void enableTabAt(int x) {
+        TabLayout.Tab tab = mTab.getTabAt(x);
+
+        for (int i = 0; i < 3; i++) {
+            if (i == x) {
+                assert tab != null;
+                ((ImageView) Objects.requireNonNull(tab.getCustomView()).findViewById(R.id.tab_icon))
+                        .setImageResource(Config.tabIconsEnabled[i]);
+                tab.getCustomView().findViewById(R.id.tab_title).setVisibility(VISIBLE);
+
+            } else {
+                TabLayout.Tab tab1 = mTab.getTabAt(i);
+                assert tab1 != null;
+                ((ImageView) Objects.requireNonNull(tab1.getCustomView()).findViewById(R.id.tab_icon))
+                        .setImageResource(Config.tabIconsDisabled[i]);
+                tab1.getCustomView().findViewById(R.id.tab_title).setVisibility(GONE);
+            }
+        }
     }
 
     @Override

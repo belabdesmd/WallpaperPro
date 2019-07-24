@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
@@ -18,7 +19,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.devalutix.wallpaperpro.R;
-import com.devalutix.wallpaperpro.base.BaseApplication;
 import com.devalutix.wallpaperpro.contracts.CategoriesContract;
 import com.devalutix.wallpaperpro.di.components.DaggerMVPComponent;
 import com.devalutix.wallpaperpro.di.components.MVPComponent;
@@ -30,20 +30,21 @@ import com.devalutix.wallpaperpro.ui.activities.ImagesActivity;
 import com.devalutix.wallpaperpro.ui.adapters.CategoriesAdapter;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import javax.inject.Inject;
 
 public class CategoriesFragment extends Fragment implements CategoriesContract.View {
     private static String TAG = "CategoriesFragment";
 
-    //Declarations
+    /****************************************** Declarations **************************************/
     private MVPComponent mvpComponent;
     private CategoriesAdapter mAdapter;
     private ArrayList<Category> categories;
     @Inject
     CategoriesPresenter mPresenter;
 
-    //View Declarations
+    /****************************************** View Declarations *********************************/
     @BindView(R.id.category_recyclerview)
     RecyclerView mRecyclerView;
     @BindView(R.id.swipe_to_refresh_categories)
@@ -51,23 +52,14 @@ public class CategoriesFragment extends Fragment implements CategoriesContract.V
     @BindView(R.id.no_network_category)
     ImageView noNetworkLayout;
 
-    //ClickListeners
-
-    //Constructor
+    /****************************************** Constructor ***************************************/
     public CategoriesFragment() {
         // Required empty public constructor
     }
 
-    //Essentials Methods
-    public static CategoriesFragment newInstance(String param1, String param2) {
-        CategoriesFragment fragment = new CategoriesFragment();
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
-        return fragment;
-    }
-
+    /****************************************** Essential Methods *********************************/
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_category, container, false);
@@ -99,7 +91,7 @@ public class CategoriesFragment extends Fragment implements CategoriesContract.V
         if (mvpComponent == null) {
             mvpComponent = DaggerMVPComponent
                     .builder()
-                    .applicationModule(new ApplicationModule(getActivity().getApplication()))
+                    .applicationModule(new ApplicationModule(Objects.requireNonNull(getActivity()).getApplication()))
                     .mVPModule(new MVPModule(getActivity()))
                     .build();
         }
@@ -112,7 +104,7 @@ public class CategoriesFragment extends Fragment implements CategoriesContract.V
         mPresenter.updateRecyclerView();
     }
 
-    //Methods
+    /****************************************** Methods *******************************************/
     @Override
     public void initRecyclerView(ArrayList<Category> categories) {
 
@@ -176,11 +168,12 @@ public class CategoriesFragment extends Fragment implements CategoriesContract.V
     public class MyItemDecoration extends RecyclerView.ItemDecoration {
 
         @Override
-        public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+        public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent,
+                                   @NonNull RecyclerView.State state) {
             // only for the last one
             outRect.bottom = 32;
-            outRect.right = 16;
-            outRect.left = 16;
+            outRect.right = 24;
+            outRect.left = 24;
         }
     }
 }

@@ -12,7 +12,7 @@ public class Config {
      * Set this Boolean true if you want to enable Ad Banners or false
      * To disable Ad Banners
      */
-    public static final boolean ENABLE_AD_BANNER = false;
+    public static final boolean ENABLE_AD_BANNER = true;
     /**
      * Set this Boolean true if you want to enable Interstitial ad or false
      * To disable Interstitial ad
@@ -50,8 +50,6 @@ public class Config {
      */
     public static final String YOUTUBE_CHANNEL = "https://www.youtube.com/user/theofficialfacebook";
 
-
-    public static final int DOWNLOADS_BEFORE_LOADING_AD = 3;
 
     public static final String MY_FAVORITES_COLLECTION_NAME = "My Favorites";
 

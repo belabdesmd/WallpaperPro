@@ -10,7 +10,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -19,20 +18,20 @@ import com.devalutix.wallpaperpro.pojo.Collection;
 import com.devalutix.wallpaperpro.presenters.FavoritesPresenter;
 import com.devalutix.wallpaperpro.ui.activities.WallpaperActivity;
 import com.devalutix.wallpaperpro.ui.fragments.FavoritesFragment;
+import com.devalutix.wallpaperpro.utils.Config;
 
 import java.util.ArrayList;
 
 public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.ViewHolder> {
-    private static final String TAG = "FavoritesAdaoter";
+    private static final String TAG = "FavoritesAdapter";
 
-    //Declarations
+    /*************************************** Declarations *****************************************/
     private FavoritesPresenter mPresenter;
     private ArrayList<Collection> mCollections;
     private FavoritesFragment mView = null;
     private WallpaperActivity mView1 = null;
-    private int width;
 
-    //Constructor
+    /*************************************** Constructor ******************************************/
     public FavoritesAdapter(FavoritesPresenter mPresenter, ArrayList<Collection> mCollections, FavoritesFragment mView) {
         this.mPresenter = mPresenter;
         this.mCollections = mCollections;
@@ -45,7 +44,7 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.View
         this.mView1 = mView;
     }
 
-    //Methods
+    /*************************************** Methods **********************************************/
     @NonNull
     @Override
     public FavoritesAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -94,8 +93,11 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.View
         });
 
         holder.container.setOnLongClickListener(view -> {
-            mView.showEditCollectionPopUp();
-            return false;
+            if (mView != null) {
+                if (!mCollections.get(position).getCollectionName().equals(Config.MY_FAVORITES_COLLECTION_NAME))
+                    mView.showEditCollectionPopUp(mCollections.get(position).getCollectionName());
+            }
+            return true;
         });
     }
 
@@ -105,27 +107,16 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.View
         else return mCollections.size();
     }
 
-    /**
-     * Clear All the ArrayList
-     */
     public void clearAll() {
         if (mCollections != null) mCollections.clear();
         notifyDataSetChanged();
     }
 
-    /**
-     * Add the New ArrayList
-     *
-     * @param collections : the ArrayList to Add
-     */
     public void addAll(ArrayList<Collection> collections) {
         mCollections = collections;
         notifyDataSetChanged();
     }
 
-    // Provide a reference to the views for each data item
-    // Complex data items may need more than one view per item, and
-    // you provide access to all the views for a data item in a view holder
     static class ViewHolder extends RecyclerView.ViewHolder {
         CardView container;
         ImageView thumbnail;

@@ -4,7 +4,6 @@ package com.devalutix.wallpaperpro.di.components;
 import android.content.Context;
 
 import com.devalutix.wallpaperpro.di.annotations.ActivityContext;
-import com.devalutix.wallpaperpro.di.annotations.ApplicationContext;
 import com.devalutix.wallpaperpro.di.modules.ApplicationModule;
 import com.devalutix.wallpaperpro.di.modules.MVPModule;
 import com.devalutix.wallpaperpro.ui.activities.ImagesActivity;

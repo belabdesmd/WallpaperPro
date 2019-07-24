@@ -12,8 +12,7 @@
         android:id="@+id/main_activity"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="?attr/backgroundColor"
-        tools:context=".ui.activities.MainActivity">
+        android:background="?attr/backgroundColor">
 
         <TextView
             android:id="@+id/page_title"
@@ -46,13 +45,13 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
             android:visibility="gone"
-            app:searchHintIcon="@drawable/search"
-            app:searchIcon="@drawable/search"
+            app:backgroundTint="?attr/secondaryTextColor"
             app:closeIcon="@drawable/close_search"
-            app:backgroundTint="?attr/primaryTextColor"
             app:layout_constraintBottom_toBottomOf="@id/page_title"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/page_title" />
+            app:layout_constraintTop_toTopOf="@id/page_title"
+            app:searchHintIcon="@drawable/search"
+            app:searchIcon="@drawable/search" />
 
         <androidx.viewpager.widget.ViewPager
             android:id="@+id/view_pager_main"
@@ -95,10 +94,10 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:fitsSystemWindows="true"
         android:background="?attr/backgroundColor"
-        app:itemTextColor="?attr/primaryTextColor"
+        android:fitsSystemWindows="true"
         app:headerLayout="@layout/nav_header"
+        app:itemTextColor="?attr/primaryTextColor"
         app:menu="@menu/navigation_menu" />
 
 </androidx.drawerlayout.widget.DrawerLayout>

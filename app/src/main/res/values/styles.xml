@@ -11,6 +11,7 @@
         <item name="backgroundColor">@color/colorPrimary</item>
         <item name="secondaryTextColor">@color/grey</item>
         <item name="iconColor">@color/colorPrimaryDark</item>
+        <item name="cardColor">@color/colorPrimary</item>
     </style>
 
     <style name="AppDarkTheme" parent="Theme.AppCompat.Light.NoActionBar">
@@ -24,19 +25,16 @@
         <item name="backgroundColor">@color/colorPrimaryDark</item>
         <item name="secondaryTextColor">@color/grey</item>
         <item name="iconColor">@color/colorPrimary</item>
+        <item name="cardColor">#1C1C1C</item>
     </style>
 
+    <style name="AppLightTheme.Launcher">
+    <item name="android:windowBackground">@drawable/launch_screen</item>
+    </style>
 
     <!-- The Style Of the Text in the Toolbar. -->
     <style name="Toolbar.TitleText" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
         <item name="android:textSize">22sp</item>
-    </style>
-
-    <!-- The Style Of the arrow in the Toolbar. -->
-    <style name="ToolbarColoredBackArrow" parent="AppLightTheme">
-        <item name="android:direction">right_to_left</item>
-        <item name="android:textColorPrimary">@android:color/white</item>
-        <item name="android:textColorSecondary">@android:color/white</item>
     </style>
 
 </resources>

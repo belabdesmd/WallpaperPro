@@ -60,8 +60,8 @@ public class MVPModule {
 
     @Provides
     @Singleton
-    WallpaperPresenter providesWallpaperPresenter(Gson gson, SharedPreferencesHelper mSharedPrefsHelper){
-        return new WallpaperPresenter(gson, mSharedPrefsHelper);
+    WallpaperPresenter providesWallpaperPresenter(Gson gson, SharedPreferencesHelper mSharedPrefsHelper, GDPR gdpr){
+        return new WallpaperPresenter(gson, mSharedPrefsHelper, gdpr);
     }
 
     @Provides
@@ -78,7 +78,7 @@ public class MVPModule {
 
     @Provides
     @Singleton
-    FavoritesPresenter providesFavoritesPresenter(SharedPreferencesHelper sharedPreferencesHelper){
-        return new FavoritesPresenter(sharedPreferencesHelper);
+    FavoritesPresenter providesFavoritesPresenter(@ApplicationContext Context mContext, SharedPreferencesHelper sharedPreferencesHelper){
+        return new FavoritesPresenter(mContext, sharedPreferencesHelper);
     }
 }
