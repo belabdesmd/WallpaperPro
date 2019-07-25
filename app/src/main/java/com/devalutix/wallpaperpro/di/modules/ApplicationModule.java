@@ -12,6 +12,8 @@ import com.devalutix.wallpaperpro.presenters.FavoritesPresenter;
 import com.devalutix.wallpaperpro.presenters.ImagesPresenter;
 import com.devalutix.wallpaperpro.presenters.MainPresenter;
 import com.devalutix.wallpaperpro.presenters.WallpaperPresenter;
+import com.devalutix.wallpaperpro.utils.ApiEndpointInterface;
+import com.devalutix.wallpaperpro.utils.Config;
 import com.devalutix.wallpaperpro.utils.GDPR;
 import com.devalutix.wallpaperpro.utils.PermissionUtil;
 import com.google.ads.consent.ConsentForm;
@@ -21,6 +23,8 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 /**********************************
  © 2018 Sam Dev
@@ -64,6 +68,21 @@ public class ApplicationModule {
     @Singleton
     Gson provideGson(){
         return new Gson();
+    }
+
+    @Provides
+    @Singleton
+    Retrofit providesRetrofitInstance(){
+        return new Retrofit.Builder()
+                .baseUrl(Config.BASE_API_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+    }
+
+    @Provides
+    @Singleton
+    ApiEndpointInterface providesApiEndpoints(Retrofit retrofit){
+        return retrofit.create(ApiEndpointInterface.class);
     }
 
     @Provides

@@ -4,11 +4,15 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.devalutix.wallpaperpro.contracts.ExploreContract;
 import com.devalutix.wallpaperpro.di.annotations.ApplicationContext;
+import com.devalutix.wallpaperpro.pojo.CategoryS;
 import com.devalutix.wallpaperpro.pojo.Image;
+import com.devalutix.wallpaperpro.pojo.ImageS;
 import com.devalutix.wallpaperpro.ui.fragments.ExploreFragment;
+import com.devalutix.wallpaperpro.utils.ApiEndpointInterface;
 import com.google.gson.Gson;
 
 import java.io.IOException;
@@ -17,18 +21,24 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class ExplorePresenter implements ExploreContract.Presenter {
     private static String TAG = "ExplorePresenter";
 
     /***************************************** Declarations ***************************************/
     private ExploreFragment mView;
-    private Gson gson;
     private Context mContext;
+    private Gson gson;
+    private ApiEndpointInterface apiService;
 
     /***************************************** Constructor ****************************************/
-    public ExplorePresenter(@ApplicationContext Context mContext, Gson gson) {
+    public ExplorePresenter(@ApplicationContext Context mContext, Gson gson, ApiEndpointInterface apiService) {
         this.mContext = mContext;
         this.gson = gson;
+        this.apiService = apiService;
     }
 
     /***************************************** Essential Methods **********************************/
@@ -99,20 +109,69 @@ public class ExplorePresenter implements ExploreContract.Presenter {
 
     @Override
     public ArrayList<Image> getRecent() {
-        //TODO: Get Recent Images From Server
+
+        ArrayList<ImageS> wallpapers;
+        Call<ArrayList<ImageS>> call = apiService.getRecentImages();
+
+        call.enqueue(new Callback<ArrayList<ImageS>>() {
+            @Override
+            public void onResponse(Call<ArrayList<ImageS>> call, Response<ArrayList<ImageS>> response) {
+                //TODO: Get Response
+                Toast.makeText(mView.getActivity(), "Code: " + response.code(), Toast.LENGTH_LONG).show();
+                Toast.makeText(mView.getActivity(), "Message: " + response.message(), Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<ImageS>> call, Throwable t) {
+                Toast.makeText(mView.getActivity(), "Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
+
         Image[] collectionItem = gson.fromJson(readJSONFromAsset(), Image[].class);
         return new ArrayList<>(Arrays.asList(collectionItem));
     }
 
     @Override
     public ArrayList<Image> getPopular() {
-        //TODO: Get Popular Images From Server
+        ArrayList<ImageS> wallpapers;
+        Call<ArrayList<ImageS>> call = apiService.getPopularImages();
+
+        call.enqueue(new Callback<ArrayList<ImageS>>() {
+            @Override
+            public void onResponse(Call<ArrayList<ImageS>> call, Response<ArrayList<ImageS>> response) {
+                //TODO: Get Response
+                Toast.makeText(mView.getActivity(), "Code: " + response.code(), Toast.LENGTH_LONG).show();
+                Toast.makeText(mView.getActivity(), "Message: " + response.message(), Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<ImageS>> call, Throwable t) {
+                Toast.makeText(mView.getActivity(), "Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
+
         return getRecent();
     }
 
     @Override
     public ArrayList<Image> getFeatured() {
-        //TODO: Get Featured Images From Server
+        ArrayList<ImageS> wallpapers;
+        Call<ArrayList<ImageS>> call = apiService.getFeaturedImages();
+
+        call.enqueue(new Callback<ArrayList<ImageS>>() {
+            @Override
+            public void onResponse(Call<ArrayList<ImageS>> call, Response<ArrayList<ImageS>> response) {
+                //TODO: Get Response
+                Toast.makeText(mView.getActivity(), "Code: " + response.code(), Toast.LENGTH_LONG).show();
+                Toast.makeText(mView.getActivity(), "Message: " + response.message(), Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<ImageS>> call, Throwable t) {
+                Toast.makeText(mView.getActivity(), "Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
+
         return getRecent();
     }
 

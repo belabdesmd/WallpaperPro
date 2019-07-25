@@ -19,6 +19,8 @@ public interface ImagesContract {
 
         ArrayList<Image> getImageFromCategory(String name);
 
+        ArrayList<Image> getSearchResults(String name);
+
         String listToString(ArrayList<Image> images);
 
         String getThumbnail(String mode, String name);

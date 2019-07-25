@@ -4,12 +4,15 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.devalutix.wallpaperpro.contracts.CategoriesContract;
 import com.devalutix.wallpaperpro.di.annotations.ApplicationContext;
 import com.devalutix.wallpaperpro.models.SharedPreferencesHelper;
 import com.devalutix.wallpaperpro.pojo.Category;
+import com.devalutix.wallpaperpro.pojo.CategoryS;
 import com.devalutix.wallpaperpro.ui.fragments.CategoriesFragment;
+import com.devalutix.wallpaperpro.utils.ApiEndpointInterface;
 import com.google.gson.Gson;
 
 import java.io.IOException;
@@ -18,6 +21,10 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class CategoriesPresenter implements CategoriesContract.Presenter {
     private static String TAG = "CategoriesPresenter";
 
@@ -25,11 +32,14 @@ public class CategoriesPresenter implements CategoriesContract.Presenter {
     private CategoriesFragment mView;
     private Context mContext;
     private SharedPreferencesHelper mSharedPrefsHelper;
+    private ApiEndpointInterface apiService;
 
     /***************************************** Constructor ****************************************/
-    public CategoriesPresenter(@ApplicationContext Context mContext, SharedPreferencesHelper mSharedPrefsHelper) {
+    public CategoriesPresenter(@ApplicationContext Context mContext, SharedPreferencesHelper mSharedPrefsHelper,
+                               ApiEndpointInterface apiService) {
         this.mContext = mContext;
         this.mSharedPrefsHelper = mSharedPrefsHelper;
+        this.apiService = apiService;
     }
 
     /***************************************** Essential Methods **********************************/
@@ -92,7 +102,22 @@ public class CategoriesPresenter implements CategoriesContract.Presenter {
     @Override
     public ArrayList<Category> getCategories() {
 
-        //TODO: Get Categories From Server
+        ArrayList<CategoryS> categories;
+        Call<ArrayList<CategoryS>> call = apiService.getCategories();
+
+        call.enqueue(new Callback<ArrayList<CategoryS>>() {
+            @Override
+            public void onResponse(Call<ArrayList<CategoryS>> call, Response<ArrayList<CategoryS>> response) {
+                //TODO: Get Response
+                Toast.makeText(mView.getActivity(), "Code: " + response.code(), Toast.LENGTH_LONG).show();
+                Toast.makeText(mView.getActivity(), "Message: " + response.message(), Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<CategoryS>> call, Throwable t) {
+                Toast.makeText(mView.getActivity(), "Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
 
         Gson gson = new Gson();
         Category[] categoryItem = gson.fromJson(readJSONFromAsset(), Category[].class);

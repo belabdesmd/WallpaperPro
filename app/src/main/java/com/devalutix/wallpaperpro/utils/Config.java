@@ -54,6 +54,9 @@ public class Config {
     public static final String MY_FAVORITES_COLLECTION_NAME = "My Favorites";
 
 
+    public static final String BASE_API_URL = "https://abdessamed.localhost.run/api/";
+
+
     public static String[] tabTitles = {"Explore", "Categories", "Favorites"};
 
 

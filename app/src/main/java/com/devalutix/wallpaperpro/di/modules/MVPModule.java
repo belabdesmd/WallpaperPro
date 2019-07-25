@@ -12,6 +12,7 @@ import com.devalutix.wallpaperpro.presenters.FavoritesPresenter;
 import com.devalutix.wallpaperpro.presenters.ImagesPresenter;
 import com.devalutix.wallpaperpro.presenters.MainPresenter;
 import com.devalutix.wallpaperpro.presenters.WallpaperPresenter;
+import com.devalutix.wallpaperpro.utils.ApiEndpointInterface;
 import com.devalutix.wallpaperpro.utils.GDPR;
 import com.devalutix.wallpaperpro.utils.PermissionUtil;
 import com.google.gson.Gson;
@@ -48,37 +49,39 @@ public class MVPModule {
     @Singleton
     MainPresenter providesMainPresenter(SharedPreferencesHelper sharedPreferencesHelper,
                                         PermissionUtil util,
-                                        GDPR gdpr){
-        return new MainPresenter(util,sharedPreferencesHelper,gdpr);
+                                        GDPR gdpr) {
+        return new MainPresenter(util, sharedPreferencesHelper, gdpr);
     }
 
     @Provides
     @Singleton
-    ImagesPresenter providesImagesPresenter(Gson gson, @ApplicationContext Context mContext, SharedPreferencesHelper mSharedPrefsHelper){
-        return new ImagesPresenter(mContext, gson, mSharedPrefsHelper);
+    ImagesPresenter providesImagesPresenter(Gson gson, @ApplicationContext Context mContext,
+                                            SharedPreferencesHelper mSharedPrefsHelper, ApiEndpointInterface apiService) {
+        return new ImagesPresenter(mContext, gson, mSharedPrefsHelper, apiService);
     }
 
     @Provides
     @Singleton
-    WallpaperPresenter providesWallpaperPresenter(Gson gson, SharedPreferencesHelper mSharedPrefsHelper, GDPR gdpr){
+    WallpaperPresenter providesWallpaperPresenter(Gson gson, SharedPreferencesHelper mSharedPrefsHelper, GDPR gdpr) {
         return new WallpaperPresenter(gson, mSharedPrefsHelper, gdpr);
     }
 
     @Provides
     @Singleton
-    ExplorePresenter providesExplorePresenter(@ApplicationContext Context context, Gson gson){
-        return new ExplorePresenter(context, gson);
+    ExplorePresenter providesExplorePresenter(@ApplicationContext Context context, Gson gson, ApiEndpointInterface apiService) {
+        return new ExplorePresenter(context, gson, apiService);
     }
 
     @Provides
     @Singleton
-    CategoriesPresenter providesCategoriesPresenter(@ApplicationContext Context mContext, SharedPreferencesHelper mSharedPrefsHelper){
-        return new CategoriesPresenter(mContext, mSharedPrefsHelper);
+    CategoriesPresenter providesCategoriesPresenter(@ApplicationContext Context mContext, SharedPreferencesHelper mSharedPrefsHelper
+            , ApiEndpointInterface apiService) {
+        return new CategoriesPresenter(mContext, mSharedPrefsHelper, apiService);
     }
 
     @Provides
     @Singleton
-    FavoritesPresenter providesFavoritesPresenter(@ApplicationContext Context mContext, SharedPreferencesHelper sharedPreferencesHelper){
+    FavoritesPresenter providesFavoritesPresenter(@ApplicationContext Context mContext, SharedPreferencesHelper sharedPreferencesHelper) {
         return new FavoritesPresenter(mContext, sharedPreferencesHelper);
     }
 }

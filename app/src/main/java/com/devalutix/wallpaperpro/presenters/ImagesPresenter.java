@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.devalutix.wallpaperpro.contracts.ImagesContract;
 import com.devalutix.wallpaperpro.di.annotations.ApplicationContext;
@@ -11,7 +12,9 @@ import com.devalutix.wallpaperpro.models.SharedPreferencesHelper;
 import com.devalutix.wallpaperpro.pojo.Category;
 import com.devalutix.wallpaperpro.pojo.Collection;
 import com.devalutix.wallpaperpro.pojo.Image;
+import com.devalutix.wallpaperpro.pojo.ImageS;
 import com.devalutix.wallpaperpro.ui.activities.ImagesActivity;
+import com.devalutix.wallpaperpro.utils.ApiEndpointInterface;
 import com.google.gson.Gson;
 
 import java.io.IOException;
@@ -20,6 +23,10 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class ImagesPresenter implements ImagesContract.Presenter {
     private static String TAG = "ImagesPresenter";
@@ -30,12 +37,15 @@ public class ImagesPresenter implements ImagesContract.Presenter {
     private Context mContext;
     private String mode;
     private SharedPreferencesHelper mSharedPrefsHelper;
+    private ApiEndpointInterface apiService;
 
     /***************************************** Constructor ****************************************/
-    public ImagesPresenter(@ApplicationContext Context mContext, Gson gson, SharedPreferencesHelper mSharedPrefsHelper) {
+    public ImagesPresenter(@ApplicationContext Context mContext, Gson gson, SharedPreferencesHelper mSharedPrefsHelper
+            , ApiEndpointInterface apiService) {
         this.gson = gson;
         this.mContext = mContext;
         this.mSharedPrefsHelper = mSharedPrefsHelper;
+        this.apiService = apiService;
     }
 
     /***************************************** Essential Methods **********************************/
@@ -79,6 +89,10 @@ public class ImagesPresenter implements ImagesContract.Presenter {
                 images = getImageFromCategory(name);
             }
             break;
+            case "search": {
+                images = getSearchResults(name);
+            }
+            break;
         }
 
         mView.initRecyclerView(images);
@@ -102,6 +116,10 @@ public class ImagesPresenter implements ImagesContract.Presenter {
             break;
             case "category": {
                 images = getImageFromCategory(name);
+            }
+            break;
+            case "search": {
+                images = getSearchResults(name);
             }
             break;
         }
@@ -137,7 +155,22 @@ public class ImagesPresenter implements ImagesContract.Presenter {
     @Override
     public ArrayList<Image> getImageFromCategory(String name) {
 
-        //TODO: Get Category Images From Server Of the Category name passed as parameter
+        ArrayList<ImageS> wallpapers;
+        Call<ArrayList<ImageS>> call = apiService.getCategoryWallpapers(name);
+
+        call.enqueue(new Callback<ArrayList<ImageS>>() {
+            @Override
+            public void onResponse(Call<ArrayList<ImageS>> call, Response<ArrayList<ImageS>> response) {
+                //TODO: Get Response
+                Log.d(TAG, "onResponse: " + response.message());
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<ImageS>> call, Throwable t) {
+
+                Log.d(TAG, "onResponse: " + t.getMessage());
+            }
+        });
 
         Image[] categoryItem = gson.fromJson(readJSONFromAsset(), Image[].class);
         ArrayList<Image> recentImages = new ArrayList<>(Arrays.asList(categoryItem));
@@ -151,6 +184,27 @@ public class ImagesPresenter implements ImagesContract.Presenter {
         }
 
         return images;
+    }
+
+    @Override
+    public ArrayList<Image> getSearchResults(String name) {
+        ArrayList<ImageS> wallpapers;
+        Call<ArrayList<ImageS>> call = apiService.searchWallpapers(name);
+
+        call.enqueue(new Callback<ArrayList<ImageS>>() {
+            @Override
+            public void onResponse(Call<ArrayList<ImageS>> call, Response<ArrayList<ImageS>> response) {
+                //TODO: Get Response
+                Toast.makeText(mView, "Code: " + response.code(), Toast.LENGTH_LONG).show();
+                Toast.makeText(mView, "Message: " + response.message(), Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<ImageS>> call, Throwable t) {
+                Toast.makeText(mView, "Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
+        return getImageFromCategory(name);
     }
 
     @Override
