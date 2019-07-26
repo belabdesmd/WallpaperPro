@@ -28,8 +28,10 @@ import com.devalutix.wallpaperpro.di.modules.ApplicationModule;
 import com.devalutix.wallpaperpro.di.modules.MVPModule;
 import com.devalutix.wallpaperpro.pojo.Image;
 import com.devalutix.wallpaperpro.presenters.ExplorePresenter;
+import com.devalutix.wallpaperpro.ui.activities.MainActivity;
 import com.devalutix.wallpaperpro.ui.activities.WallpaperActivity;
 import com.devalutix.wallpaperpro.ui.adapters.ImagesAdapter;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -119,7 +121,10 @@ public class ExploreFragment extends Fragment implements ExploreContract.View {
         mPresenter.initRecyclerView();
 
         //When Pulling To Refresh Listener
-        mRefresh.setOnRefreshListener(() -> mPresenter.updateRecyclerView(mode));
+        mRefresh.setOnRefreshListener(() -> {
+            ((MainActivity) getActivity()).hideRetryCard();
+            mPresenter.updateRecyclerView(mode);
+        });
 
         return view;
     }
@@ -236,6 +241,13 @@ public class ExploreFragment extends Fragment implements ExploreContract.View {
             goToWallpaper.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(goToWallpaper);
         }
+    }
+
+    @Override
+    public void refresh() {
+        ((MainActivity) getActivity()).hideRetryCard();
+        mRefresh.setRefreshing(true);
+        mPresenter.updateRecyclerView(mPresenter.getMode());
     }
 
     public class MyItemDecoration extends RecyclerView.ItemDecoration {

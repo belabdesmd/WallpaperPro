@@ -1,10 +1,12 @@
 package com.devalutix.wallpaperpro.presenters;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.util.Log;
 
 import com.devalutix.wallpaperpro.contracts.MainContract;
 import com.devalutix.wallpaperpro.models.SharedPreferencesHelper;
+import com.devalutix.wallpaperpro.ui.activities.ImagesActivity;
 import com.devalutix.wallpaperpro.ui.activities.MainActivity;
 import com.devalutix.wallpaperpro.utils.Config;
 import com.devalutix.wallpaperpro.utils.GDPR;
@@ -137,7 +139,13 @@ public class MainPresenter implements MainContract.Presenter {
 
     @Override
     public void searchImages(String query) {
+        Intent goToWallpaper = new Intent(mView, ImagesActivity.class);
 
+        //Putting the Extras
+        goToWallpaper.putExtra("name", query);
+        goToWallpaper.putExtra("mode", "search");
+        goToWallpaper.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        mView.startActivity(goToWallpaper);
     }
 
     @Override

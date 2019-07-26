@@ -8,6 +8,10 @@
     android:fitsSystemWindows="true"
     tools:context=".ui.activities.MainActivity">
 
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/main_activity"
         android:layout_width="match_parent"
@@ -87,6 +91,10 @@
             app:tabMode="fixed" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <include layout="@layout/retry_card"/>
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
     <!-- Container for contents of drawer - use NavigationView to make configuration easier -->
     <com.google.android.material.navigation.NavigationView

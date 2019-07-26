@@ -27,6 +27,7 @@ import com.devalutix.wallpaperpro.di.modules.MVPModule;
 import com.devalutix.wallpaperpro.pojo.Category;
 import com.devalutix.wallpaperpro.presenters.CategoriesPresenter;
 import com.devalutix.wallpaperpro.ui.activities.ImagesActivity;
+import com.devalutix.wallpaperpro.ui.activities.MainActivity;
 import com.devalutix.wallpaperpro.ui.adapters.CategoriesAdapter;
 
 import java.util.ArrayList;
@@ -81,7 +82,10 @@ public class CategoriesFragment extends Fragment implements CategoriesContract.V
         mPresenter.initRecyclerView();
 
         //When Pulling To Refresh Listener
-        mRefresh.setOnRefreshListener(() -> mPresenter.updateRecyclerView());
+        mRefresh.setOnRefreshListener(() -> {
+            ((MainActivity) getActivity()).hideRetryCard();
+            mPresenter.updateRecyclerView();
+        });
 
         return view;
     }
@@ -163,6 +167,13 @@ public class CategoriesFragment extends Fragment implements CategoriesContract.V
         goToWallpaper.putExtra("mode", "category");
         goToWallpaper.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(goToWallpaper);
+    }
+
+    @Override
+    public void refresh() {
+        ((MainActivity) getActivity()).hideRetryCard();
+        mRefresh.setRefreshing(false);
+        mPresenter.updateRecyclerView();
     }
 
     public class MyItemDecoration extends RecyclerView.ItemDecoration {

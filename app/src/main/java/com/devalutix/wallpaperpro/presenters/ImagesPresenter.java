@@ -14,6 +14,7 @@ import com.devalutix.wallpaperpro.pojo.Collection;
 import com.devalutix.wallpaperpro.pojo.Image;
 import com.devalutix.wallpaperpro.pojo.ImageS;
 import com.devalutix.wallpaperpro.ui.activities.ImagesActivity;
+import com.devalutix.wallpaperpro.ui.activities.MainActivity;
 import com.devalutix.wallpaperpro.utils.ApiEndpointInterface;
 import com.google.gson.Gson;
 
@@ -80,20 +81,49 @@ public class ImagesPresenter implements ImagesContract.Presenter {
         ArrayList<Image> images = null;
         this.mode = mode;
 
+        Call<ArrayList<ImageS>> call = null;
+
         switch (mode) {
             case "collection": {
+                //TODO: Init Images From Collections
                 images = getImagesFromCollection(name);
             }
             break;
             case "category": {
                 images = getImageFromCategory(name);
+                call = apiService.getCategoryWallpapers(name);
             }
             break;
             case "search": {
                 images = getSearchResults(name);
+                call = apiService.searchWallpapers(name);
             }
             break;
         }
+
+        if (mode.equals("search") || mode.equals("category"))
+            call.enqueue(new Callback<ArrayList<ImageS>>() {
+                @Override
+                public void onResponse(Call<ArrayList<ImageS>> call, Response<ArrayList<ImageS>> response) {
+                    Toast.makeText(mView, "Response: " + response.code(), Toast.LENGTH_SHORT).show();
+                    if (response.isSuccessful()) {
+                        //mView.initRecyclerView(response.body());
+                        //mView.showPicturesList();
+                    } else {
+                        //mView.initRecyclerView(null);
+                        //mView.showNoNetwork();
+                        (mView).showRetryCard("Server Problem");
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ArrayList<ImageS>> call, Throwable t) {
+                    Toast.makeText(mView, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                    //mView.initRecyclerView(null);
+                    //mView.showNoNetwork();
+                    mView.showRetryCard("Internet Connection Problem");
+                }
+            });
 
         mView.initRecyclerView(images);
 
@@ -109,20 +139,49 @@ public class ImagesPresenter implements ImagesContract.Presenter {
         Log.d(TAG, "updateRecyclerView: Updating Recycler View");
 
         ArrayList<Image> images = null;
+        Call<ArrayList<ImageS>> call = null;
+
         switch (mode) {
             case "collection": {
+                //TODO: Init Images From Collections
                 images = getImagesFromCollection(name);
             }
             break;
             case "category": {
                 images = getImageFromCategory(name);
+                call = apiService.getCategoryWallpapers(name);
             }
             break;
             case "search": {
                 images = getSearchResults(name);
+                call = apiService.searchWallpapers(name);
             }
             break;
         }
+
+        if (mode.equals("search") || mode.equals("category"))
+            call.enqueue(new Callback<ArrayList<ImageS>>() {
+                @Override
+                public void onResponse(Call<ArrayList<ImageS>> call, Response<ArrayList<ImageS>> response) {
+                    Toast.makeText(mView, "Code: " + response.code(), Toast.LENGTH_SHORT).show();
+                    if (response.isSuccessful()) {
+                        //mView.updateRecyclerView(response.body());
+                        //mView.showPicturesList();
+                    } else {
+                        //mView.updateRecyclerView(null);
+                        //mView.showNoNetwork();
+                        mView.showRetryCard("Server Problem");
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ArrayList<ImageS>> call, Throwable t) {
+                    Toast.makeText(mView, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                    //mView.updateRecyclerView(null);
+                    //mView.showNoNetwork();
+                    mView.showRetryCard("Internet Connection Problem");
+                }
+            });
 
         //Init Recycler View
         if (!hasInternetNetwork() || images == null) mView.showNoNetwork();
@@ -154,24 +213,6 @@ public class ImagesPresenter implements ImagesContract.Presenter {
 
     @Override
     public ArrayList<Image> getImageFromCategory(String name) {
-
-        ArrayList<ImageS> wallpapers;
-        Call<ArrayList<ImageS>> call = apiService.getCategoryWallpapers(name);
-
-        call.enqueue(new Callback<ArrayList<ImageS>>() {
-            @Override
-            public void onResponse(Call<ArrayList<ImageS>> call, Response<ArrayList<ImageS>> response) {
-                //TODO: Get Response
-                Log.d(TAG, "onResponse: " + response.message());
-            }
-
-            @Override
-            public void onFailure(Call<ArrayList<ImageS>> call, Throwable t) {
-
-                Log.d(TAG, "onResponse: " + t.getMessage());
-            }
-        });
-
         Image[] categoryItem = gson.fromJson(readJSONFromAsset(), Image[].class);
         ArrayList<Image> recentImages = new ArrayList<>(Arrays.asList(categoryItem));
 
@@ -188,22 +229,6 @@ public class ImagesPresenter implements ImagesContract.Presenter {
 
     @Override
     public ArrayList<Image> getSearchResults(String name) {
-        ArrayList<ImageS> wallpapers;
-        Call<ArrayList<ImageS>> call = apiService.searchWallpapers(name);
-
-        call.enqueue(new Callback<ArrayList<ImageS>>() {
-            @Override
-            public void onResponse(Call<ArrayList<ImageS>> call, Response<ArrayList<ImageS>> response) {
-                //TODO: Get Response
-                Toast.makeText(mView, "Code: " + response.code(), Toast.LENGTH_LONG).show();
-                Toast.makeText(mView, "Message: " + response.message(), Toast.LENGTH_LONG).show();
-            }
-
-            @Override
-            public void onFailure(Call<ArrayList<ImageS>> call, Throwable t) {
-                Toast.makeText(mView, "Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
-            }
-        });
         return getImageFromCategory(name);
     }
 
@@ -250,6 +275,11 @@ public class ImagesPresenter implements ImagesContract.Presenter {
             return null;
         }
         return json;
+    }
+
+    @Override
+    public String getMode() {
+        return mode;
     }
 
     @Override

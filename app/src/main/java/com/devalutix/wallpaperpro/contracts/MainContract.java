@@ -28,11 +28,17 @@ public interface MainContract {
 
         void initSearchBar();
 
+        void initRetrySheet();
+
         void darkModeListener();
 
         void showSearchBar();
 
         void showAddCollection();
+
+        void showRetryCard(String message);
+
+        void hideRetryCard();
 
         void hideAll();
 

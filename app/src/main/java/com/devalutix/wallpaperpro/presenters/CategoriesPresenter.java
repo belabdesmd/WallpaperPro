@@ -11,6 +11,7 @@ import com.devalutix.wallpaperpro.di.annotations.ApplicationContext;
 import com.devalutix.wallpaperpro.models.SharedPreferencesHelper;
 import com.devalutix.wallpaperpro.pojo.Category;
 import com.devalutix.wallpaperpro.pojo.CategoryS;
+import com.devalutix.wallpaperpro.ui.activities.MainActivity;
 import com.devalutix.wallpaperpro.ui.fragments.CategoriesFragment;
 import com.devalutix.wallpaperpro.utils.ApiEndpointInterface;
 import com.google.gson.Gson;
@@ -73,6 +74,31 @@ public class CategoriesPresenter implements CategoriesContract.Presenter {
 
         ArrayList<Category> categories = getCategories();
 
+        Call<ArrayList<CategoryS>> call = apiService.getCategories();
+
+        call.enqueue(new Callback<ArrayList<CategoryS>>() {
+            @Override
+            public void onResponse(Call<ArrayList<CategoryS>> call, Response<ArrayList<CategoryS>> response) {
+                Toast.makeText(mView.getActivity(), "Code: " + response.code(), Toast.LENGTH_SHORT).show();
+                if (response.isSuccessful()){
+                //mView.initRecyclerView(response.body());
+                //mView.showCategoriesList();
+                } else{
+                //mView.initRecyclerView(null);
+                //mView.showNoNetwork();
+                ((MainActivity) mView.getActivity()).showRetryCard("Server Problem");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<CategoryS>> call, Throwable t) {
+                Toast.makeText(mView.getActivity(), "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                //mView.initRecyclerView(null);
+                //mView.showNoNetwork();
+                ((MainActivity) mView.getActivity()).showRetryCard("Internet Connection Problem");
+            }
+        });
+
         //Init Recycler View
         mView.initRecyclerView(categories);
 
@@ -89,6 +115,31 @@ public class CategoriesPresenter implements CategoriesContract.Presenter {
 
         ArrayList<Category> categories = getCategories();
 
+        Call<ArrayList<CategoryS>> call = apiService.getCategories();
+
+        call.enqueue(new Callback<ArrayList<CategoryS>>() {
+            @Override
+            public void onResponse(Call<ArrayList<CategoryS>> call, Response<ArrayList<CategoryS>> response) {
+                Toast.makeText(mView.getActivity(), "code: " + response.code(), Toast.LENGTH_SHORT).show();
+                if (response.isSuccessful()){
+                //mView.updateRecyclerView(response.body());
+                //mView.showCategoriesList();
+                }else{
+                //mView.updateRecyclerView(null);
+                //mView.showNoNetwork();
+                ((MainActivity) mView.getActivity()).showRetryCard("Server Problem");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<CategoryS>> call, Throwable t) {
+                Toast.makeText(mView.getActivity(), "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                //mView.updateRecyclerView(null);
+                //mView.showNoNetwork();
+                ((MainActivity) mView.getActivity()).showRetryCard("Internet Connection Problem");
+            }
+        });
+
         //Update Recycler View
         mView.updateRecyclerView(categories);
 
@@ -101,24 +152,6 @@ public class CategoriesPresenter implements CategoriesContract.Presenter {
 
     @Override
     public ArrayList<Category> getCategories() {
-
-        ArrayList<CategoryS> categories;
-        Call<ArrayList<CategoryS>> call = apiService.getCategories();
-
-        call.enqueue(new Callback<ArrayList<CategoryS>>() {
-            @Override
-            public void onResponse(Call<ArrayList<CategoryS>> call, Response<ArrayList<CategoryS>> response) {
-                //TODO: Get Response
-                Toast.makeText(mView.getActivity(), "Code: " + response.code(), Toast.LENGTH_LONG).show();
-                Toast.makeText(mView.getActivity(), "Message: " + response.message(), Toast.LENGTH_LONG).show();
-            }
-
-            @Override
-            public void onFailure(Call<ArrayList<CategoryS>> call, Throwable t) {
-                Toast.makeText(mView.getActivity(), "Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
-            }
-        });
-
         Gson gson = new Gson();
         Category[] categoryItem = gson.fromJson(readJSONFromAsset(), Category[].class);
 

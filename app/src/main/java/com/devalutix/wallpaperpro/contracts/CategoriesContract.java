@@ -30,6 +30,8 @@ public interface CategoriesContract {
         void showCategoriesList();
 
         void goToImages(String categoryName);
+
+        void refresh();
     }
 
 }

@@ -4,6 +4,7 @@ import androidx.annotation.ColorInt;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.SearchView;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.view.MenuItemCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
@@ -42,6 +43,7 @@ import com.devalutix.wallpaperpro.ui.fragments.ExploreFragment;
 import com.devalutix.wallpaperpro.ui.fragments.FavoritesFragment;
 import com.devalutix.wallpaperpro.utils.Config;
 import com.google.android.gms.ads.AdView;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
 
@@ -62,21 +64,35 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     @Inject
     MainPresenter mPresenter;
     private MainPagerAdapter mAdapter;
-    private FavoritesFragment favorites;
     private ExploreFragment explore;
     private CategoriesFragment categories;
+    private FavoritesFragment favorites;
+    private BottomSheetBehavior retry_behavior;
 
     /**************************************** View Declarations ***********************************/
+    //Drawer Menu
     @BindView(R.id.drawer_layout)
     DrawerLayout mDrawerLayout;
     @BindView(R.id.nav_view)
     NavigationView mNavigationView;
+
+    //Page Title
     @BindView(R.id.page_title)
     TextView title;
+
+    //View Pages
     @BindView(R.id.view_pager_main)
     ViewPager mViewPager;
     @BindView(R.id.tab_layout_main)
     TabLayout mTab;
+
+    //Retry
+    @BindView(R.id.retry_card)
+    ConstraintLayout retry_card;
+    @BindView(R.id.retry_msg)
+    TextView retry_msg;
+
+    //Actions
     @BindView(R.id.add_collection)
     ImageView add_collection;
     @BindView(R.id.search)
@@ -88,6 +104,18 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     @OnClick(R.id.add_collection)
     public void showAddCollectionPopUp() {
         favorites.showAddCollectionPopUp();
+    }
+
+    @OnClick(R.id.retry)
+    public void retry(){
+        switch (mViewPager.getCurrentItem()){
+            case 0:
+                explore.refresh();
+                break;
+            case 1:
+                categories.refresh();
+                break;
+        }
     }
 
     /**************************************** Essential Methods ***********************************/
@@ -142,6 +170,9 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
 
         //Init Dark Mode
         darkModeListener();
+
+        //Init Retry
+        initRetrySheet();
 
         //Navigation Menu OnClickListener
         mNavigationView.setNavigationItemSelectedListener(item -> {
@@ -239,7 +270,6 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                Toast.makeText(MainActivity.this, "query: " + query, Toast.LENGTH_SHORT).show();
                 mPresenter.searchImages(query);
                 return false;
             }
@@ -317,6 +347,12 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     }
 
     @Override
+    public void initRetrySheet(){
+        retry_behavior = BottomSheetBehavior.from(retry_card);
+        hideRetryCard();
+    }
+
+    @Override
     public void showSearchBar() {
         hideAll();
         search.setVisibility(VISIBLE);
@@ -326,6 +362,17 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     public void showAddCollection() {
         hideAll();
         add_collection.setVisibility(VISIBLE);
+    }
+
+    @Override
+    public void showRetryCard(String message){
+        retry_msg.setText(message);
+        retry_behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+    }
+
+    @Override
+    public void hideRetryCard(){
+        retry_behavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
     }
 
     @Override

@@ -4,12 +4,14 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -20,6 +22,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.devalutix.wallpaperpro.R;
 import com.devalutix.wallpaperpro.contracts.ImagesContract;
@@ -30,6 +33,7 @@ import com.devalutix.wallpaperpro.di.modules.MVPModule;
 import com.devalutix.wallpaperpro.pojo.Image;
 import com.devalutix.wallpaperpro.presenters.ImagesPresenter;
 import com.devalutix.wallpaperpro.ui.adapters.ImagesAdapter;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -40,14 +44,15 @@ public class ImagesActivity extends AppCompatActivity implements ImagesContract.
     private static String TAG = "ImagesActivity";
     private static final int COL_NUM = 3;
 
-    //Declarations
+    /**************************************** Declarations ****************************************/
     private MVPComponent mvpComponent;
     private ImagesAdapter mAdapter;
     private ArrayList<Image> images;
     @Inject
     ImagesPresenter mPresenter;
+    private BottomSheetBehavior retry_behavior;
 
-    //View Declarations
+    /**************************************** View Declarations ***********************************/
     @BindView(R.id.images_toolbar)
     Toolbar mToolbar;
     @BindView(R.id.images_recyclerview)
@@ -57,7 +62,21 @@ public class ImagesActivity extends AppCompatActivity implements ImagesContract.
     @BindView(R.id.no_network_images1)
     ImageView noNetworkLayout;
 
-    //Essentials Methods
+    //Retry
+    @BindView(R.id.retry_card)
+    ConstraintLayout retry_card;
+    @BindView(R.id.retry_msg)
+    TextView retry_msg;
+
+    /**************************************** Click Listeners *************************************/
+    @OnClick(R.id.retry)
+    public void retry(){
+        hideRetryCard();
+        mRefresh.setRefreshing(true);
+        mPresenter.updateRecyclerView(mPresenter.getMode());
+    }
+
+    /**************************************** Essential Methods ***********************************/
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //Initialize Dagger For Application
@@ -92,7 +111,10 @@ public class ImagesActivity extends AppCompatActivity implements ImagesContract.
                 getIntent().getStringExtra("name"));
 
         //Pull To Refresh Listener
-        mRefresh.setOnRefreshListener(() -> mPresenter.updateRecyclerView(getIntent().getStringExtra("name")));
+        mRefresh.setOnRefreshListener(() -> {
+            hideRetryCard();
+            mPresenter.updateRecyclerView(getIntent().getStringExtra("name"));
+        });
     }
 
     @Override
@@ -107,7 +129,7 @@ public class ImagesActivity extends AppCompatActivity implements ImagesContract.
         return mvpComponent;
     }
 
-    //Methods
+    /**************************************** Methods *********************************************/
     @Override
     public void setToolbar() {
         Log.d(TAG, "setToolbar: Setting the Toolbar.");
@@ -132,7 +154,7 @@ public class ImagesActivity extends AppCompatActivity implements ImagesContract.
 
     @Override
     public void setPageName(String mode, String name) {
-        Log.d(TAG, "setPageName: Setting Page Name : "+ name);
+        Log.d(TAG, "setPageName: Setting Page Name : " + name);
         if (mode.equals("search"))
             Objects.requireNonNull(getSupportActionBar()).setTitle("Search: " + name);
         else Objects.requireNonNull(getSupportActionBar()).setTitle(name);
@@ -151,6 +173,12 @@ public class ImagesActivity extends AppCompatActivity implements ImagesContract.
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.addItemDecoration(new ImagesActivity.MyItemDecoration());
         mRecyclerView.setAdapter(mAdapter);
+    }
+
+    @Override
+    public void initRetrySheet(){
+        retry_behavior = BottomSheetBehavior.from(retry_card);
+        hideRetryCard();
     }
 
     @Override
@@ -185,6 +213,17 @@ public class ImagesActivity extends AppCompatActivity implements ImagesContract.
 
         mRecyclerView.setVisibility(View.VISIBLE);
         noNetworkLayout.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void showRetryCard(String message){
+        retry_msg.setText(message);
+        retry_behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+    }
+
+    @Override
+    public void hideRetryCard(){
+        retry_behavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
     }
 
     @Override

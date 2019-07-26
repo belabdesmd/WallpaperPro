@@ -23,6 +23,8 @@ public interface ExploreContract {
         ArrayList<Image> getFeatured();
 
         String listToString(ArrayList<Image> images);
+
+        String getMode();
     }
 
     interface View extends BaseView {
@@ -40,6 +42,8 @@ public interface ExploreContract {
         void disableAllFilters();
 
         void goToWallpaperActivity(int position,ArrayList<Image> images);
+
+        void refresh();
     }
 
 }

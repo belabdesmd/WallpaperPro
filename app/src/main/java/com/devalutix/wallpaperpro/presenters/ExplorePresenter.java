@@ -11,6 +11,7 @@ import com.devalutix.wallpaperpro.di.annotations.ApplicationContext;
 import com.devalutix.wallpaperpro.pojo.CategoryS;
 import com.devalutix.wallpaperpro.pojo.Image;
 import com.devalutix.wallpaperpro.pojo.ImageS;
+import com.devalutix.wallpaperpro.ui.activities.MainActivity;
 import com.devalutix.wallpaperpro.ui.fragments.ExploreFragment;
 import com.devalutix.wallpaperpro.utils.ApiEndpointInterface;
 import com.google.gson.Gson;
@@ -33,6 +34,7 @@ public class ExplorePresenter implements ExploreContract.Presenter {
     private Context mContext;
     private Gson gson;
     private ApiEndpointInterface apiService;
+    private String mode = "recent";
 
     /***************************************** Constructor ****************************************/
     public ExplorePresenter(@ApplicationContext Context mContext, Gson gson, ApiEndpointInterface apiService) {
@@ -58,6 +60,7 @@ public class ExplorePresenter implements ExploreContract.Presenter {
     }
 
     /***************************************** Methods ********************************************/
+    //TODO: Remove
     @Override
     public boolean hasInternetAccess() {
         ConnectivityManager conMgr = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -71,6 +74,29 @@ public class ExplorePresenter implements ExploreContract.Presenter {
         Log.d(TAG, "initRecyclerView: Initialising Recycler View");
 
         ArrayList<Image> images = getRecent();
+        Call<ArrayList<ImageS>> call = apiService.getRecentImages();
+        call.enqueue(new Callback<ArrayList<ImageS>>() {
+            @Override
+            public void onResponse(Call<ArrayList<ImageS>> call, Response<ArrayList<ImageS>> response) {
+                Toast.makeText(mView.getActivity(), "Code: " + response.code(), Toast.LENGTH_SHORT).show();
+                if (response.isSuccessful()){
+                //mView.initRecyclerView(response.body());
+                //mView.showPicturesList();
+                }else{
+                //mView.initRecyclerView(null);
+                //mView.showNoNetwork();
+                ((MainActivity) mView.getActivity()).showRetryCard("Server Problem");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<ImageS>> call, Throwable t) {
+                Toast.makeText(mView.getActivity(), "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                //mView.initRecyclerView(null);
+                //mView.showNoNetwork();
+                ((MainActivity) mView.getActivity()).showRetryCard("Internet Connection Problem");
+            }
+        });
 
         //Init Recycler View
         mView.initRecyclerView(images);
@@ -83,19 +109,50 @@ public class ExplorePresenter implements ExploreContract.Presenter {
     @Override
     public void updateRecyclerView(String mode) {
         Log.d(TAG, "updateRecyclerView: Updating Recycler View");
-
+        this.mode = mode;
         ArrayList<Image> images = null;
+        Call<ArrayList<ImageS>> call = null;
+
         switch (mode) {
-            case "popular":
+            case "popular": {
                 images = getPopular();
-                break;
-            case "recent":
+                call = apiService.getPopularImages();
+            }
+            break;
+            case "recent": {
                 images = getRecent();
-                break;
-            case "featured":
+                call = apiService.getRecentImages();
+            }
+            break;
+            case "featured": {
                 images = getFeatured();
-                break;
+                call = apiService.getFeaturedImages();
+            }
+            break;
         }
+
+        call.enqueue(new Callback<ArrayList<ImageS>>() {
+            @Override
+            public void onResponse(Call<ArrayList<ImageS>> call, Response<ArrayList<ImageS>> response) {
+                Toast.makeText(mView.getActivity(), "Code: " + response.code(), Toast.LENGTH_SHORT).show();
+                if (response.isSuccessful()){
+                //mView.updateRecyclerView(response.body());
+                //mView.showPicturesList();
+                }else{
+                //mView.updateRecyclerView(null);
+                //mView.showNoNetwork();
+                ((MainActivity) mView.getActivity()).showRetryCard("Server Problem");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<ImageS>> call, Throwable t) {
+                Toast.makeText(mView.getActivity(), "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                //mView.updateRecyclerView(null);
+                //mView.showNoNetwork();
+                ((MainActivity) mView.getActivity()).showRetryCard("Internet Connection Problem");
+            }
+        });
 
         //Update Recycler View
         mView.updateRecyclerView(images);
@@ -109,69 +166,17 @@ public class ExplorePresenter implements ExploreContract.Presenter {
 
     @Override
     public ArrayList<Image> getRecent() {
-
-        ArrayList<ImageS> wallpapers;
-        Call<ArrayList<ImageS>> call = apiService.getRecentImages();
-
-        call.enqueue(new Callback<ArrayList<ImageS>>() {
-            @Override
-            public void onResponse(Call<ArrayList<ImageS>> call, Response<ArrayList<ImageS>> response) {
-                //TODO: Get Response
-                Toast.makeText(mView.getActivity(), "Code: " + response.code(), Toast.LENGTH_LONG).show();
-                Toast.makeText(mView.getActivity(), "Message: " + response.message(), Toast.LENGTH_LONG).show();
-            }
-
-            @Override
-            public void onFailure(Call<ArrayList<ImageS>> call, Throwable t) {
-                Toast.makeText(mView.getActivity(), "Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
-            }
-        });
-
         Image[] collectionItem = gson.fromJson(readJSONFromAsset(), Image[].class);
         return new ArrayList<>(Arrays.asList(collectionItem));
     }
 
     @Override
     public ArrayList<Image> getPopular() {
-        ArrayList<ImageS> wallpapers;
-        Call<ArrayList<ImageS>> call = apiService.getPopularImages();
-
-        call.enqueue(new Callback<ArrayList<ImageS>>() {
-            @Override
-            public void onResponse(Call<ArrayList<ImageS>> call, Response<ArrayList<ImageS>> response) {
-                //TODO: Get Response
-                Toast.makeText(mView.getActivity(), "Code: " + response.code(), Toast.LENGTH_LONG).show();
-                Toast.makeText(mView.getActivity(), "Message: " + response.message(), Toast.LENGTH_LONG).show();
-            }
-
-            @Override
-            public void onFailure(Call<ArrayList<ImageS>> call, Throwable t) {
-                Toast.makeText(mView.getActivity(), "Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
-            }
-        });
-
         return getRecent();
     }
 
     @Override
     public ArrayList<Image> getFeatured() {
-        ArrayList<ImageS> wallpapers;
-        Call<ArrayList<ImageS>> call = apiService.getFeaturedImages();
-
-        call.enqueue(new Callback<ArrayList<ImageS>>() {
-            @Override
-            public void onResponse(Call<ArrayList<ImageS>> call, Response<ArrayList<ImageS>> response) {
-                //TODO: Get Response
-                Toast.makeText(mView.getActivity(), "Code: " + response.code(), Toast.LENGTH_LONG).show();
-                Toast.makeText(mView.getActivity(), "Message: " + response.message(), Toast.LENGTH_LONG).show();
-            }
-
-            @Override
-            public void onFailure(Call<ArrayList<ImageS>> call, Throwable t) {
-                Toast.makeText(mView.getActivity(), "Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
-            }
-        });
-
         return getRecent();
     }
 
@@ -180,6 +185,12 @@ public class ExplorePresenter implements ExploreContract.Presenter {
         return gson.toJson(images);
     }
 
+    @Override
+    public String getMode() {
+        return mode;
+    }
+
+    //TODO: Remove
     private String readJSONFromAsset() {
         String json;
         try {
