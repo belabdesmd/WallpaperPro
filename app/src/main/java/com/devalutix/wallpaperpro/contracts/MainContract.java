@@ -2,7 +2,6 @@ package com.devalutix.wallpaperpro.contracts;
 
 import com.devalutix.wallpaperpro.base.BasePresenter;
 import com.devalutix.wallpaperpro.base.BaseView;
-import com.devalutix.wallpaperpro.utils.GDPR;
 import com.google.android.gms.ads.AdView;
 
 public interface MainContract {
@@ -28,17 +27,11 @@ public interface MainContract {
 
         void initSearchBar();
 
-        void initRetrySheet();
-
         void darkModeListener();
 
         void showSearchBar();
 
         void showAddCollection();
-
-        void showRetryCard(String message);
-
-        void hideRetryCard();
 
         void hideAll();
 

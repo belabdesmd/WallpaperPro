@@ -2,12 +2,11 @@ package com.devalutix.wallpaperpro.presenters;
 
 import android.content.Context;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.devalutix.wallpaperpro.contracts.FavoritesContract;
 import com.devalutix.wallpaperpro.models.SharedPreferencesHelper;
 import com.devalutix.wallpaperpro.pojo.Collection;
-import com.devalutix.wallpaperpro.pojo.Image;
+import com.devalutix.wallpaperpro.pojo.Wallpaper;
 import com.devalutix.wallpaperpro.ui.fragments.FavoritesFragment;
 import com.devalutix.wallpaperpro.utils.Config;
 
@@ -118,8 +117,8 @@ public class FavoritesPresenter implements FavoritesContract.Presenter {
     }
 
     @Override
-    public void addImageToCollection(String collectionName, Image image) {
-        Log.d(TAG, "addImageToCollection: Addign Image To Collection");
+    public void addImageToCollection(String collectionName, Wallpaper image) {
+        Log.d(TAG, "addImageToCollection: Adding Image To Collection");
 
         //Get All Collections
         ArrayList<Collection> collections = getCollectionsList();
@@ -136,7 +135,5 @@ public class FavoritesPresenter implements FavoritesContract.Presenter {
         }
 
         mSharedPrefsHelper.saveCollections(collections);
-
-        Toast.makeText(mContext, image.getImageTitle() + " Added to " + collectionName, Toast.LENGTH_SHORT).show();
     }
 }

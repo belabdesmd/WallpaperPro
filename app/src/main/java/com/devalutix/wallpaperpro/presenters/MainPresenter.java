@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.util.Log;
 
+import com.devalutix.wallpaperpro.R;
 import com.devalutix.wallpaperpro.contracts.MainContract;
 import com.devalutix.wallpaperpro.models.SharedPreferencesHelper;
 import com.devalutix.wallpaperpro.ui.activities.ImagesActivity;
@@ -96,10 +97,10 @@ public class MainPresenter implements MainContract.Presenter {
                             }
                         };
                         new AlertDialog.Builder(mView)
-                                .setMessage("You need this Permission to download the wallpapers")
-                                .setTitle("Needs Permission")
-                                .setPositiveButton("Alright", listener)
-                                .setNegativeButton("No", listener)
+                                .setMessage(mView.getResources().getString(R.string.permission_msg))
+                                .setTitle(mView.getResources().getString(R.string.permission_title))
+                                .setPositiveButton(mView.getResources().getString(R.string.permission_positive), listener)
+                                .setNegativeButton(mView.getResources().getString(R.string.permission_negative), listener)
                                 .create()
                                 .show();
                         //show a dialog explaining permission and then request permission

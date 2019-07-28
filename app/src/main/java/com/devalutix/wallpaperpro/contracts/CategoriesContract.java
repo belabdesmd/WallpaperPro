@@ -10,13 +10,9 @@ public interface CategoriesContract {
 
     interface Presenter extends BasePresenter<View> {
 
-        boolean hasInternetConnection();
-
         void initRecyclerView();
 
         void updateRecyclerView();
-
-        ArrayList<Category> getCategories();
     }
 
     interface View extends BaseView {
@@ -25,9 +21,15 @@ public interface CategoriesContract {
 
         void updateRecyclerView(ArrayList<Category> categories);
 
+        void initRetrySheet();
+
         void showNoNetwork();
 
         void showCategoriesList();
+
+        void showRetryCard(String message);
+
+        void hideRetryCard();
 
         void goToImages(String categoryName);
 

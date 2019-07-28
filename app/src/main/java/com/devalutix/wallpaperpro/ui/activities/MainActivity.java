@@ -1,10 +1,8 @@
 package com.devalutix.wallpaperpro.ui.activities;
 
-import androidx.annotation.ColorInt;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.SearchView;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.view.MenuItemCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
@@ -16,8 +14,13 @@ import butterknife.OnClick;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.TypedValue;
@@ -67,7 +70,6 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     private ExploreFragment explore;
     private CategoriesFragment categories;
     private FavoritesFragment favorites;
-    private BottomSheetBehavior retry_behavior;
 
     /**************************************** View Declarations ***********************************/
     //Drawer Menu
@@ -86,12 +88,6 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     @BindView(R.id.tab_layout_main)
     TabLayout mTab;
 
-    //Retry
-    @BindView(R.id.retry_card)
-    ConstraintLayout retry_card;
-    @BindView(R.id.retry_msg)
-    TextView retry_msg;
-
     //Actions
     @BindView(R.id.add_collection)
     ImageView add_collection;
@@ -106,17 +102,6 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         favorites.showAddCollectionPopUp();
     }
 
-    @OnClick(R.id.retry)
-    public void retry(){
-        switch (mViewPager.getCurrentItem()){
-            case 0:
-                explore.refresh();
-                break;
-            case 1:
-                categories.refresh();
-                break;
-        }
-    }
 
     /**************************************** Essential Methods ***********************************/
     @Override
@@ -171,13 +156,26 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         //Init Dark Mode
         darkModeListener();
 
-        //Init Retry
-        initRetrySheet();
-
         //Navigation Menu OnClickListener
+        mNavigationView.setItemIconTintList(null);
         mNavigationView.setNavigationItemSelectedListener(item -> {
 
-            //TODO: Add Drawer Menu Actions
+            int id = item.getItemId();
+
+            switch(id){
+                case R.id.our_apps_menu:
+                    ourApps();
+                    break;
+                case R.id.rate_app_menu:
+                    rateApp();
+                    break;
+                case R.id.share_app_menu:
+                    shareApp();
+                    break;
+                case R.id.send_feedback_menu:
+                    sendFeedback();
+                    break;
+            }
 
             // close drawer when item is tapped
             mDrawerLayout.closeDrawers();
@@ -253,12 +251,8 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     public void initSearchBar() {
         Log.d(TAG, "initSearchBar: Init Search Bar");
         EditText searchEditText = search.findViewById(R.id.search_src_text);
-        TypedValue typedValue = new TypedValue();
-        Resources.Theme theme = this.getTheme();
-        theme.resolveAttribute(R.attr.primaryTextColor, typedValue, true);
-        @ColorInt int color = typedValue.data;
-        searchEditText.setTextColor(color);
-        searchEditText.setHintTextColor(color);
+        searchEditText.setTextColor(getResources().getColor(R.color.colorAccent));
+        searchEditText.setHintTextColor(getResources().getColor(R.color.colorAccent));
 
         search.setOnSearchClickListener(v -> title.setVisibility(View.INVISIBLE));
 
@@ -347,12 +341,6 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     }
 
     @Override
-    public void initRetrySheet(){
-        retry_behavior = BottomSheetBehavior.from(retry_card);
-        hideRetryCard();
-    }
-
-    @Override
     public void showSearchBar() {
         hideAll();
         search.setVisibility(VISIBLE);
@@ -362,17 +350,6 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     public void showAddCollection() {
         hideAll();
         add_collection.setVisibility(VISIBLE);
-    }
-
-    @Override
-    public void showRetryCard(String message){
-        retry_msg.setText(message);
-        retry_behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-    }
-
-    @Override
-    public void hideRetryCard(){
-        retry_behavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
     }
 
     @Override
@@ -418,5 +395,73 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     public void restartApp() {
         startActivity(new Intent(getApplicationContext(), MainActivity.class));
         finish();
+    }
+
+    /**************************************** Menu Actions ****************************************/
+    private void ourApps() {
+        String developerName = getResources().getString(R.string.developer_name);
+        try {
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://search?q=" + developerName)));
+        } catch (ActivityNotFoundException anfe) {
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/search?q=" + developerName + "&hl=en")));
+        }
+    }
+
+    private void rateApp() {
+        Uri uri = Uri.parse("market://details?id=" + getPackageName());
+
+        Intent goToMarket = new Intent(Intent.ACTION_VIEW, uri);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            goToMarket.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY |
+                    Intent.FLAG_ACTIVITY_NEW_DOCUMENT |
+                    Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
+        }
+        try {
+            startActivity(goToMarket);
+        } catch (ActivityNotFoundException e) {
+            startActivity(new Intent(Intent.ACTION_VIEW,
+                    Uri.parse("http://play.google.com/store/apps/details?id=" + getPackageName())));
+        }
+    }
+
+    private void shareApp() {
+        Intent i = new Intent(Intent.ACTION_SEND);
+        i.setType("text/plain");
+        i.putExtra(Intent.EXTRA_SUBJECT, getResources().getString(R.string.app_name));
+        String sAux = getString(R.string.share_app_message) + "\n";
+        sAux = sAux + "https://play.google.com/store/apps/details?id=" + getPackageName();
+        i.putExtra(Intent.EXTRA_TEXT, sAux);
+        startActivity(Intent.createChooser(i, "choose one"));
+    }
+
+    private void sendFeedback() {
+        String[] TO = {getResources().getString(R.string.developer_mail)};
+        Intent emailIntent = new Intent(Intent.ACTION_SEND);
+        emailIntent.setData(Uri.parse("mailto:"));
+        emailIntent.setType("text/plain");
+
+        emailIntent.putExtra(Intent.EXTRA_EMAIL, TO);
+        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Feedback For " + getResources().getString(R.string.app_name));
+        String message = "Message:\n\n---\n";
+        try {
+            PackageInfo pInfo = this.getPackageManager().getPackageInfo(getPackageName(), 0);
+            String version = pInfo.versionName;
+            message = message + "App Version : " + version + "\n";
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        message = message + "Android Version : " + android.os.Build.VERSION.SDK_INT + "\n";
+        message = message + "Device Brand : " + Build.MANUFACTURER + "\n";
+        message = message + "Device Model : " + Build.MODEL;
+
+        emailIntent.putExtra(Intent.EXTRA_TEXT, message);
+
+        try {
+            startActivity(Intent.createChooser(emailIntent, "Send mail..."));
+        } catch (android.content.ActivityNotFoundException ex) {
+            Toast.makeText(MainActivity.this,
+                    "There is no email client installed.", Toast.LENGTH_SHORT).show();
+        }
     }
 }

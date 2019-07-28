@@ -3,15 +3,22 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/dark_mode"
-        android:title="Dark Mode"
+        android:title="@string/dark_mode_action"
         app:actionLayout="@layout/dark_mode_switch" />
     <item
-        android:id="@+id/rateApp_menu"
-        android:title="Rate Our App" />
+        android:id="@+id/our_apps_menu"
+        android:title="@string/our_apps_action"
+        android:icon="@drawable/our_apps_action"/>
     <item
-        android:id="@+id/shareApp_menu"
-        android:title="Share App" />
+        android:id="@+id/rate_app_menu"
+        android:title="@string/rate_action"
+        android:icon="@drawable/rate_action"/>
     <item
-        android:id="@+id/privacy_policy"
-        android:title="Privacy Policy" />
+        android:id="@+id/share_app_menu"
+        android:title="@string/share_action"
+        android:icon="@drawable/share_action"/>
+    <item
+        android:id="@+id/send_feedback_menu"
+        android:title="@string/feedback_action"
+        android:icon="@drawable/feedback_action"/>
 </menu>

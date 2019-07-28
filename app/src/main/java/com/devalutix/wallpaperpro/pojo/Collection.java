@@ -6,10 +6,10 @@ import java.util.Objects;
 public class Collection {
 
     private String collectionName;
-    private ArrayList<Image> collectionPictures;
+    private ArrayList<Wallpaper> collectionPictures;
 
     //Constructor
-    public Collection(String collectionName, ArrayList<Image> collectionPictures) {
+    public Collection(String collectionName, ArrayList<Wallpaper> collectionPictures) {
         this.collectionName = collectionName;
         this.collectionPictures = collectionPictures;
     }
@@ -18,7 +18,7 @@ public class Collection {
         return collectionName;
     }
 
-    public ArrayList<Image> getCollectionPictures() {
+    public ArrayList<Wallpaper> getCollectionPictures() {
         return collectionPictures;
     }
 

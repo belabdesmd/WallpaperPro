@@ -3,7 +3,7 @@ package com.devalutix.wallpaperpro.contracts;
 import com.devalutix.wallpaperpro.base.BasePresenter;
 import com.devalutix.wallpaperpro.base.BaseView;
 import com.devalutix.wallpaperpro.pojo.Collection;
-import com.devalutix.wallpaperpro.pojo.Image;
+import com.devalutix.wallpaperpro.pojo.Wallpaper;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
 
@@ -13,21 +13,25 @@ public interface WallpaperContract {
 
     interface Presenter extends BasePresenter<WallpaperContract.View> {
 
-        void savePicture(Image image);
+        void savePicture(Wallpaper image, int position);
 
         void openAddToFavoritesPopUp();
 
-        void sharePicture(Image image);
+        void sharePicture(Wallpaper image);
 
-        void setAsWallpaper(Image image);
+        void setAsWallpaper(Wallpaper image);
 
-        ArrayList<Image> getImages(String images);
+        void setImages(String images);
+
+        ArrayList<Wallpaper> getImages();
 
         ArrayList<Collection> getCollections();
 
         void loadInterstitialAd(InterstitialAd mInterstitialAd);
 
         void loadAd(AdView ad);
+
+        Wallpaper getImage(int currentItem);
     }
 
     interface View extends BaseView {

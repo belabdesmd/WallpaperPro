@@ -30,7 +30,7 @@ import com.devalutix.wallpaperpro.di.components.DaggerMVPComponent;
 import com.devalutix.wallpaperpro.di.components.MVPComponent;
 import com.devalutix.wallpaperpro.di.modules.ApplicationModule;
 import com.devalutix.wallpaperpro.di.modules.MVPModule;
-import com.devalutix.wallpaperpro.pojo.Image;
+import com.devalutix.wallpaperpro.pojo.Wallpaper;
 import com.devalutix.wallpaperpro.presenters.ImagesPresenter;
 import com.devalutix.wallpaperpro.ui.adapters.ImagesAdapter;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
@@ -47,7 +47,7 @@ public class ImagesActivity extends AppCompatActivity implements ImagesContract.
     /**************************************** Declarations ****************************************/
     private MVPComponent mvpComponent;
     private ImagesAdapter mAdapter;
-    private ArrayList<Image> images;
+    private ArrayList<Wallpaper> images;
     @Inject
     ImagesPresenter mPresenter;
     private BottomSheetBehavior retry_behavior;
@@ -61,6 +61,8 @@ public class ImagesActivity extends AppCompatActivity implements ImagesContract.
     SwipeRefreshLayout mRefresh;
     @BindView(R.id.no_network_images1)
     ImageView noNetworkLayout;
+    @BindView(R.id.empty_collection)
+    TextView emptyCollectionLayout;
 
     //Retry
     @BindView(R.id.retry_card)
@@ -101,6 +103,9 @@ public class ImagesActivity extends AppCompatActivity implements ImagesContract.
 
         //Set Toolbar
         setToolbar();
+
+        //Init Retry Sheet
+        initRetrySheet();
 
         //Set Page Name
         setPageName(getIntent().getStringExtra("mode"), getIntent().getStringExtra("name"));
@@ -156,12 +161,12 @@ public class ImagesActivity extends AppCompatActivity implements ImagesContract.
     public void setPageName(String mode, String name) {
         Log.d(TAG, "setPageName: Setting Page Name : " + name);
         if (mode.equals("search"))
-            Objects.requireNonNull(getSupportActionBar()).setTitle("Search: " + name);
+            Objects.requireNonNull(getSupportActionBar()).setTitle(getResources().getString(R.string.search_toolbar) + name);
         else Objects.requireNonNull(getSupportActionBar()).setTitle(name);
     }
 
     @Override
-    public void initRecyclerView(ArrayList<Image> images) {
+    public void initRecyclerView(ArrayList<Wallpaper> images) {
 
         //Set the List
         this.images = images;
@@ -182,7 +187,7 @@ public class ImagesActivity extends AppCompatActivity implements ImagesContract.
     }
 
     @Override
-    public void updateRecyclerView(ArrayList<Image> images) {
+    public void updateRecyclerView(ArrayList<Wallpaper> images) {
 
         this.images = images;
 
@@ -204,6 +209,7 @@ public class ImagesActivity extends AppCompatActivity implements ImagesContract.
 
         mRecyclerView.setVisibility(View.GONE);
         noNetworkLayout.setVisibility(View.VISIBLE);
+        emptyCollectionLayout.setVisibility(View.GONE);
 
     }
 
@@ -213,6 +219,16 @@ public class ImagesActivity extends AppCompatActivity implements ImagesContract.
 
         mRecyclerView.setVisibility(View.VISIBLE);
         noNetworkLayout.setVisibility(View.GONE);
+        emptyCollectionLayout.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void showEmptyCollection() {
+        mRefresh.setRefreshing(false);
+
+        mRecyclerView.setVisibility(View.GONE);
+        noNetworkLayout.setVisibility(View.GONE);
+        emptyCollectionLayout.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -227,7 +243,7 @@ public class ImagesActivity extends AppCompatActivity implements ImagesContract.
     }
 
     @Override
-    public void goToWallpaperActivity(int position, ArrayList<Image> images) {
+    public void goToWallpaperActivity(int position, ArrayList<Wallpaper> images) {
         if (!mRefresh.isRefreshing()) {
             Intent goToWallpaper = new Intent(this, WallpaperActivity.class);
 

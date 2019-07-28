@@ -3,10 +3,9 @@ package com.devalutix.wallpaperpro.pojo;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
-public class ImageS {
+public class Wallpaper {
 
     @SerializedName("pk")
     @Expose
@@ -17,9 +16,12 @@ public class ImageS {
     @SerializedName("image")
     @Expose
     private String image;
+    @SerializedName("date_added")
+    @Expose
+    private String dateAdded;
     @SerializedName("categories")
     @Expose
-    private ArrayList<CategoryS> categories;
+    private ArrayList<Category> categories;
     @SerializedName("downloads")
     @Expose
     private int downloads;
@@ -48,11 +50,11 @@ public class ImageS {
         this.image = image;
     }
 
-    public ArrayList<CategoryS> getCategories() {
+    public ArrayList<Category> getCategories() {
         return categories;
     }
 
-    public void setCategories(ArrayList<CategoryS> categories) {
+    public void setCategories(ArrayList<Category> categories) {
         this.categories = categories;
     }
 
@@ -64,4 +66,11 @@ public class ImageS {
         this.downloads = downloads;
     }
 
+    public String getDateAdded() {
+        return dateAdded;
+    }
+
+    public void setDateAdded(String dateAdded) {
+        this.dateAdded = dateAdded;
+    }
 }

@@ -38,7 +38,7 @@ import com.devalutix.wallpaperpro.di.components.DaggerMVPComponent;
 import com.devalutix.wallpaperpro.di.components.MVPComponent;
 import com.devalutix.wallpaperpro.di.modules.ApplicationModule;
 import com.devalutix.wallpaperpro.di.modules.MVPModule;
-import com.devalutix.wallpaperpro.pojo.Image;
+import com.devalutix.wallpaperpro.pojo.Wallpaper;
 import com.devalutix.wallpaperpro.presenters.FavoritesPresenter;
 import com.devalutix.wallpaperpro.presenters.WallpaperPresenter;
 import com.devalutix.wallpaperpro.ui.adapters.FavoritesAdapter;
@@ -62,7 +62,6 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
 
     /**************************************** Declarations ****************************************/
     private MVPComponent mvpComponent;
-    private ArrayList<Image> images;
     private InterstitialAd mInterstitialAd;
     private FavoritesAdapter mAdapter;
     private BottomSheetBehavior info_popup_behavior;
@@ -106,18 +105,19 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
     /**************************************** Click Listeners *************************************/
     @OnClick(R.id.share_action)
     public void share() {
-        mPresenter.sharePicture(images.get(mViewPager.getCurrentItem()));
+        mPresenter.sharePicture(mPresenter.getImages().get(mViewPager.getCurrentItem()));
         hideInfos();
     }
 
     @OnClick(R.id.download_wrapper)
     public void download() {
-        mPresenter.savePicture(images.get(mViewPager.getCurrentItem()));
+        int position = mViewPager.getCurrentItem();
+        mPresenter.savePicture(mPresenter.getImages().get(position), position);
     }
 
     @OnClick(R.id.set_as_wallpaper)
     public void set_wallpaper() {
-        mPresenter.setAsWallpaper(images.get(mViewPager.getCurrentItem()));
+        mPresenter.setAsWallpaper(mPresenter.getImages().get(mViewPager.getCurrentItem()));
         hideInfos();
     }
 
@@ -255,7 +255,7 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
     public void initInterstitialAd() {
         mInterstitialAd = new InterstitialAd(this);
         //TODO: Add Client's Ad Unit ID
-        mInterstitialAd.setAdUnitId("ca-app-pub-3940256099942544/1033173712");
+        mInterstitialAd.setAdUnitId(getResources().getString(R.string.ADMOB_INTERSTITIAL_AD_ID));
         mPresenter.loadInterstitialAd(mInterstitialAd);
     }
 
@@ -267,13 +267,13 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
         /*
          * Transferring the Extra From The Images Activity Into A List (String -> List)
          */
-        images = mPresenter.getImages(getIntent().getStringExtra("images"));
+        mPresenter.setImages(getIntent().getStringExtra("images"));
 
         //Creating the Fragments and Adding Them
-        for (Image image :
-                images) {
+        for (Wallpaper image :
+                mPresenter.getImages()) {
             //Creating New Fragment With a Picture
-            WallpaperFragment frag = WallpaperFragment.newInstance(image.getImageUrl());
+            WallpaperFragment frag = WallpaperFragment.newInstance(image.getImage());
             frag.setPresenter(mPresenter);
             adapter.addFrag(frag);
         }
@@ -331,6 +331,8 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
     @Override
     public void initInfos(int position) {
 
+        ArrayList<Wallpaper> images = mPresenter.getImages();
+
         //TODO: Visual Polish
 
         //Declarations
@@ -339,8 +341,8 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
         String topicText;
 
         //Adding Date
-        topic = "Title: ";
-        topicInfo = new StringBuilder(images.get(position).getImageTitle());
+        topic = getResources().getString(R.string.title_infos);
+        topicInfo = new StringBuilder(images.get(position).getTitle());
 
         topicText = topic + topicInfo;
 
@@ -350,8 +352,8 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
         titleTextView.setText(spannable, TextView.BufferType.SPANNABLE);
 
         //Adding Date
-        topic = "Date Added: ";
-        topicInfo = new StringBuilder(images.get(position).getImageDateAdded());
+        topic = getResources().getString(R.string.date_added_infos);
+        topicInfo = new StringBuilder(images.get(position).getDateAdded());
 
         topicText = topic + topicInfo;
 
@@ -361,16 +363,16 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
         dateTextView.setText(spannable1, TextView.BufferType.SPANNABLE);
 
         //Adding Downloads
-        topicInfo = new StringBuilder(String.valueOf(images.get(position).getImageDownloads()));
+        topicInfo = new StringBuilder(String.valueOf(images.get(position).getDownloads()));
         downloadsTextView.setText(topicInfo.toString());
 
         //Adding Categories
-        topic = "Categories: ";
+        topic = getResources().getString(R.string.categories_infos);
         topicInfo = new StringBuilder();
-        for (int i = 0; i < images.get(position).getImageCategories().size(); i++) {
-            if (i != images.get(position).getImageCategories().size() - 1)
-                topicInfo.append(images.get(position).getImageCategories().get(i)).append(", ");
-            else topicInfo.append(images.get(position).getImageCategories().get(i));
+        for (int i = 0; i < images.get(position).getCategories().size(); i++) {
+            if (i != images.get(position).getCategories().size() - 1)
+                topicInfo.append(images.get(position).getCategories().get(i).getName()).append(", ");
+            else topicInfo.append(images.get(position).getCategories().get(i).getName());
         }
 
         topicText = topic + topicInfo;
@@ -410,7 +412,7 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
     public void showFavorite() {
         Log.d(TAG, "showFavorite: Shows Favorites");
         add_to_favorite_popup_behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-        favoritePresenter.addImageToCollection(Config.MY_FAVORITES_COLLECTION_NAME, getImage());
+        favoritePresenter.addImageToCollection(Config.MY_FAVORITES_COLLECTION_NAME, mPresenter.getImage(mViewPager.getCurrentItem()));
     }
 
     @Override
@@ -425,8 +427,8 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
             mInterstitialAd.show();
     }
 
-    public Image getImage() {
-        return images.get(mViewPager.getCurrentItem());
+    public Wallpaper getImage() {
+        return mPresenter.getImage(mViewPager.getCurrentItem());
     }
 
     public class MyItemDecoration extends RecyclerView.ItemDecoration {

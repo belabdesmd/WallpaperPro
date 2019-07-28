@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.devalutix.wallpaperpro.R;
-import com.devalutix.wallpaperpro.pojo.Image;
+import com.devalutix.wallpaperpro.pojo.Wallpaper;
 import com.devalutix.wallpaperpro.ui.activities.ImagesActivity;
 import com.devalutix.wallpaperpro.ui.fragments.ExploreFragment;
 
@@ -22,17 +22,17 @@ public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ViewHolder
     private static final String TAG = "ImagesAdapter";
 
     /*************************************** Declarations *****************************************/
-    private ArrayList<Image> mImages;
+    private ArrayList<Wallpaper> mImages;
     private ExploreFragment mView = null;
     private ImagesActivity mView1 = null;
 
     /*************************************** Constructor ******************************************/
-    public ImagesAdapter(ArrayList<Image> mImages, ExploreFragment mView) {
+    public ImagesAdapter(ArrayList<Wallpaper> mImages, ExploreFragment mView) {
         this.mImages = mImages;
         this.mView = mView;
     }
 
-    public ImagesAdapter(ArrayList<Image> mImages, ImagesActivity mView1) {
+    public ImagesAdapter(ArrayList<Wallpaper> mImages, ImagesActivity mView1) {
         this.mImages = mImages;
         this.mView1 = mView1;
     }
@@ -61,13 +61,13 @@ public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ViewHolder
         //Loading the Image
         if (mView == null)
             Glide.with(mView1)
-                    .load(mImages.get(position).getImageUrl())
+                    .load(mImages.get(position).getImage())
                     .fitCenter()
                     //.placeholder(R.drawable.loading_spinner)
                     .into(holder.image);
         else if (mView1 == null)
             Glide.with(mView)
-                    .load(mImages.get(position).getImageUrl())
+                    .load(mImages.get(position).getImage())
                     .fitCenter()
                     //.placeholder(R.drawable.loading_spinner)
                     .into(holder.image);
@@ -94,7 +94,7 @@ public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ViewHolder
         notifyDataSetChanged();
     }
 
-    public void addAll(ArrayList<Image> categories) {
+    public void addAll(ArrayList<Wallpaper> categories) {
         mImages = categories;
         notifyDataSetChanged();
     }

@@ -44,7 +44,6 @@ public class Config {
      */
     public static final String FACEBOOK_PAGE = "https://www.facebook.com/FacebookAfrica";
 
-
     /**
      * Youtube Channel
      */
@@ -54,8 +53,9 @@ public class Config {
     public static final String MY_FAVORITES_COLLECTION_NAME = "My Favorites";
 
 
-    public static final String BASE_API_URL = "https://apidemotest.herokuapp.com/api/";
+    public static final String BASE_API_URL = "https://wallpaperprodemo.herokuapp.com/api/";
 
+    public static final String TOKEN = "Token 7b5387fc9738d77146f05dc62e728f29331dc55e";
 
     public static String[] tabTitles = {"Explore", "Categories", "Favorites"};
 

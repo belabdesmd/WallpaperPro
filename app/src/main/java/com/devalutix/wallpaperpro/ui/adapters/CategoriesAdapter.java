@@ -52,17 +52,17 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Vi
 
         //Loading the Image
         Glide.with(mView)
-                .load(mCategories.get(position).getCategoryIconUrl())
+                .load(mCategories.get(position).getImage())
                 .fitCenter()
                 //.placeholder(R.drawable.loading_spinner)
                 .into(holder.image);
 
         //Set Category Name
-        holder.name.setText(mCategories.get(position).getCategoryName());
+        holder.name.setText(mCategories.get(position).getName());
 
         //Click Listener
         final int finalPosition = position;
-        holder.container.setOnClickListener(v -> mView.goToImages(mCategories.get(finalPosition).getCategoryName()));
+        holder.container.setOnClickListener(v -> mView.goToImages(mCategories.get(finalPosition).getName()));
     }
 
     @Override

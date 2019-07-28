@@ -62,8 +62,8 @@ public class MVPModule {
 
     @Provides
     @Singleton
-    WallpaperPresenter providesWallpaperPresenter(Gson gson, SharedPreferencesHelper mSharedPrefsHelper, GDPR gdpr) {
-        return new WallpaperPresenter(gson, mSharedPrefsHelper, gdpr);
+    WallpaperPresenter providesWallpaperPresenter(Gson gson, SharedPreferencesHelper mSharedPrefsHelper, GDPR gdpr, ApiEndpointInterface apiService) {
+        return new WallpaperPresenter(gson, mSharedPrefsHelper, gdpr, apiService);
     }
 
     @Provides

@@ -11,7 +11,6 @@ import android.os.Bundle;
 
 import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
-import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
@@ -38,7 +37,7 @@ import com.devalutix.wallpaperpro.di.components.MVPComponent;
 import com.devalutix.wallpaperpro.di.modules.ApplicationModule;
 import com.devalutix.wallpaperpro.di.modules.MVPModule;
 import com.devalutix.wallpaperpro.pojo.Collection;
-import com.devalutix.wallpaperpro.pojo.Image;
+import com.devalutix.wallpaperpro.pojo.Wallpaper;
 import com.devalutix.wallpaperpro.presenters.FavoritesPresenter;
 import com.devalutix.wallpaperpro.ui.activities.ImagesActivity;
 import com.devalutix.wallpaperpro.ui.activities.MainActivity;
@@ -173,7 +172,7 @@ public class FavoritesFragment extends Fragment implements FavoritesContract.Vie
 
         //Listeners
         add_collection.setOnClickListener(view -> {
-            mPresenter.addCollection(new Collection(get_collection_name.getText().toString(), new ArrayList<Image>()));
+            mPresenter.addCollection(new Collection(get_collection_name.getText().toString(), new ArrayList<Wallpaper>()));
             hideAddCollectionPopUp();
             get_collection_name.getText().clear();
             ((MainActivity) getActivity()).hideKeyboard();

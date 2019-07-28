@@ -2,7 +2,7 @@ package com.devalutix.wallpaperpro.contracts;
 
 import com.devalutix.wallpaperpro.base.BasePresenter;
 import com.devalutix.wallpaperpro.base.BaseView;
-import com.devalutix.wallpaperpro.pojo.Image;
+import com.devalutix.wallpaperpro.pojo.Wallpaper;
 
 import java.util.ArrayList;
 
@@ -10,21 +10,13 @@ public interface ImagesContract {
 
     interface Presenter extends BasePresenter<ImagesContract.View> {
 
-        boolean hasInternetNetwork();
-
         void initRecyclerView(String mode, String name);
 
         void updateRecyclerView(String name);
 
-        ArrayList<Image> getImagesFromCollection(String name);
+        ArrayList<Wallpaper> getImagesFromCollection(String name);
 
-        ArrayList<Image> getImageFromCategory(String name);
-
-        ArrayList<Image> getSearchResults(String name);
-
-        String listToString(ArrayList<Image> images);
-
-        String getThumbnail(String mode, String name);
+        String listToString(ArrayList<Wallpaper> images);
 
         String getMode();
     }
@@ -35,17 +27,19 @@ public interface ImagesContract {
 
         void setPageName(String mode, String name);
 
-        void initRecyclerView(ArrayList<Image> images);
+        void initRecyclerView(ArrayList<Wallpaper> images);
 
         void initRetrySheet();
 
-        void updateRecyclerView(ArrayList<Image> images);
+        void updateRecyclerView(ArrayList<Wallpaper> images);
 
-        void goToWallpaperActivity(int position, ArrayList<Image> images);
+        void goToWallpaperActivity(int position, ArrayList<Wallpaper> images);
 
         void showNoNetwork();
 
         void showPicturesList();
+
+        void showEmptyCollection();
 
         void showRetryCard(String message);
 

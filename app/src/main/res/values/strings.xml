@@ -1,9 +1,4 @@
 <resources>
-    <string name="app_name">Wallpaper Pro</string>
-    <string name="title_activity_settings">Settings</string>
-
-    <!-- Strings related to Settings -->
-
     <!-- Example General settings -->
     <string name="pref_header_general">General</string>
 
@@ -74,14 +69,95 @@
 
     <string name="pref_title_vibrate">Vibrate</string>
 
-
+    <!--
+        Init
+    -->
+    <string name="app_name">Wallpaper Pro</string>
     <string name="ADMOB_AD_BANNER_ID">test</string>
     <string name="ADMOB_INTERSTITIAL_AD_ID">test</string>
+    <string name="developer_name">Devalutix</string>
+    <string name="developer_mail">devalutix@gmail.com</string>
+
+    <!--
+        Menu Actions
+    -->
+    <string name="rate_action">Rate Our App</string>
+    <string name="our_apps_action">Our Apps</string>
+    <string name="share_action">Share App</string>
+    <string name="share_msg_1">Hey Check This Image Out</string>
+    <string name="share_msg_2">on</string>
+    <string name="share_app_message">Check This App Out</string>
+    <string name="feedback_action">Send Feedback</string>
+    <string name="dark_mode_action">Dark Mode</string>
+
+    <!--
+        Pages Title
+     -->
     <string name="popular">Popular</string>
     <string name="recent">Recent</string>
     <string name="featured">Featured</string>
-    <string name="saved_add_to_collection">The Wallpaper Is Saved, Add it To a Collection</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <!--
+        Infos Card
+    -->
+    <string name="title_infos">Title:</string>
+    <string name="date_added_infos">Date Added:</string>
+    <string name="categories_infos">Categories:</string>
+
+    <!--
+        Server Responses
+    -->
+    <string name="server_prblm_retry">Server Problem</string>
+    <string name="net_prblm_retry">Internet Connection Problem</string>
+
+    <!--
+        Permission Request
+    -->
+    <string name="permission_msg">You need this Permission to download the wallpapers</string>
+    <string name="permission_title">Needs Permission</string>
+    <string name="permission_positive">Alright</string>
+    <string name="permission_negative">No</string>
+
+    <!--
+        Downloading
+    -->
+    <string name="downloading">Downloading...</string>
+    <string name="downloaded">Wallpaper Downloaded</string>
+    <string name="error_download">Error Occurred, Can\'t Download the Wallpaper</string>
+    <string name="error_download_permission">Can\'t Download Wallpaper, Go To App Preferences and Give Permission to The App</string>
+
+    <!--
+        Set Wallpaper
+    -->
+    <string name="set_wallpaper_btn">Set Wallpaper</string>
+    <string name="set_wallpaper">Wallpaper Set Successfully</string>
+    <string name="set_wallpaper_error">Problem Occurred, Can\'t Set Wallpaper</string>
+
+    <!--
+        Toolbar Text
+    -->
+    <string name="search_toolbar">Search:</string>
+
+    <!--
+        Collections
+    -->
+    <string name="go_to_collections">Go To Collections</string>
+    <string name="create_collection">Create Collection</string>
+    <string name="edit_collection">Edit Collection</string>
+    <string name="empty_collection">This Collection is empty.</string>
+    <string name="collection_name">Collection Name</string>
+
+    <!--
+        Wallpaper Added To Favorites Message
+    -->
+    <string name="saved_to_my_favorites">Saved To My Favorites</string>
+    <string name="wallpaper_added_msg">Wallpaper Added To</string>
+
+    <!--
+       Others
+   -->
+    <string name="done">Done</string>
+    <string name="name">Name:</string>
+    <string name="retry">Retry</string>
 </resources>
+

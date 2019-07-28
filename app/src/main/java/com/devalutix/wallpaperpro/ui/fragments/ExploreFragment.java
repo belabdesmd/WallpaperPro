@@ -5,6 +5,7 @@ import android.graphics.Rect;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
@@ -19,6 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.devalutix.wallpaperpro.R;
 import com.devalutix.wallpaperpro.contracts.ExploreContract;
@@ -26,9 +28,8 @@ import com.devalutix.wallpaperpro.di.components.DaggerMVPComponent;
 import com.devalutix.wallpaperpro.di.components.MVPComponent;
 import com.devalutix.wallpaperpro.di.modules.ApplicationModule;
 import com.devalutix.wallpaperpro.di.modules.MVPModule;
-import com.devalutix.wallpaperpro.pojo.Image;
+import com.devalutix.wallpaperpro.pojo.Wallpaper;
 import com.devalutix.wallpaperpro.presenters.ExplorePresenter;
-import com.devalutix.wallpaperpro.ui.activities.MainActivity;
 import com.devalutix.wallpaperpro.ui.activities.WallpaperActivity;
 import com.devalutix.wallpaperpro.ui.adapters.ImagesAdapter;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
@@ -45,10 +46,11 @@ public class ExploreFragment extends Fragment implements ExploreContract.View {
     /****************************************** Declarations **************************************/
     private MVPComponent mvpComponent;
     private ImagesAdapter mAdapter;
-    private ArrayList<Image> images;
+    private ArrayList<Wallpaper> images;
     private String mode = null;
     @Inject
     ExplorePresenter mPresenter;
+    private BottomSheetBehavior retry_behavior;
 
     /****************************************** View Declarations *********************************/
     @BindView(R.id.explore_recyclerview)
@@ -64,6 +66,13 @@ public class ExploreFragment extends Fragment implements ExploreContract.View {
     Button popular;
     @BindView(R.id.featured_filter)
     Button featured;
+
+    //Retry
+    @BindView(R.id.retry_card)
+    ConstraintLayout retry_card;
+    @BindView(R.id.retry_msg)
+    TextView retry_msg;
+
 
     /****************************************** Click Listeners ***********************************/
     @OnClick(R.id.popular_filter)
@@ -88,6 +97,11 @@ public class ExploreFragment extends Fragment implements ExploreContract.View {
         enableFilter(2);
         mode = "featured";
         mPresenter.updateRecyclerView("featured");
+    }
+
+    @OnClick(R.id.retry)
+    public void retry() {
+        refresh();
     }
 
     /****************************************** Constructor ***************************************/
@@ -120,9 +134,12 @@ public class ExploreFragment extends Fragment implements ExploreContract.View {
         mRefresh.setRefreshing(true);
         mPresenter.initRecyclerView();
 
+        //Init Retry
+        initRetrySheet();
+
         //When Pulling To Refresh Listener
         mRefresh.setOnRefreshListener(() -> {
-            ((MainActivity) getActivity()).hideRetryCard();
+            hideRetryCard();
             mPresenter.updateRecyclerView(mode);
         });
 
@@ -143,7 +160,7 @@ public class ExploreFragment extends Fragment implements ExploreContract.View {
 
     /****************************************** Methods *******************************************/
     @Override
-    public void initRecyclerView(ArrayList<Image> images) {
+    public void initRecyclerView(ArrayList<Wallpaper> images) {
 
         //Set the List
         this.images = images;
@@ -158,7 +175,7 @@ public class ExploreFragment extends Fragment implements ExploreContract.View {
     }
 
     @Override
-    public void updateRecyclerView(ArrayList<Image> images) {
+    public void updateRecyclerView(ArrayList<Wallpaper> images) {
 
         this.images = images;
 
@@ -172,6 +189,12 @@ public class ExploreFragment extends Fragment implements ExploreContract.View {
          * Stop Refreshing the Animations
          */
         mRefresh.setRefreshing(false);
+    }
+
+    @Override
+    public void initRetrySheet(){
+        retry_behavior = BottomSheetBehavior.from(retry_card);
+        hideRetryCard();
     }
 
     @Override
@@ -189,6 +212,17 @@ public class ExploreFragment extends Fragment implements ExploreContract.View {
 
         mRecyclerView.setVisibility(View.VISIBLE);
         noNetworkLayout.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void showRetryCard(String message){
+        retry_msg.setText(message);
+        retry_behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+    }
+
+    @Override
+    public void hideRetryCard(){
+        retry_behavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
     }
 
     @Override
@@ -228,7 +262,7 @@ public class ExploreFragment extends Fragment implements ExploreContract.View {
     }
 
     @Override
-    public void goToWallpaperActivity(int position, ArrayList<Image> images) {
+    public void goToWallpaperActivity(int position, ArrayList<Wallpaper> images) {
         if (!mRefresh.isRefreshing()) {
             Intent goToWallpaper = new Intent(getActivity(), WallpaperActivity.class);
 
@@ -245,7 +279,7 @@ public class ExploreFragment extends Fragment implements ExploreContract.View {
 
     @Override
     public void refresh() {
-        ((MainActivity) getActivity()).hideRetryCard();
+        hideRetryCard();
         mRefresh.setRefreshing(true);
         mPresenter.updateRecyclerView(mPresenter.getMode());
     }

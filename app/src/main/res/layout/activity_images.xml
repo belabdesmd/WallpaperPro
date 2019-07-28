@@ -20,6 +20,19 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <TextView
+            android:id="@+id/empty_collection"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/empty_collection"
+            android:textColor="?attr/primaryTextColor"
+            android:textSize="18sp"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/images_toolbar" />
+
         <ImageView
             android:id="@+id/no_network_images1"
             android:layout_width="50dp"
@@ -49,6 +62,6 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <include layout="@layout/retry_card"/>
+    <include layout="@layout/retry_card" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

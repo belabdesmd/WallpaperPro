@@ -63,14 +63,14 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.View
         if (mView != null) {
             if (!mCollections.get(position).getCollectionPictures().isEmpty())
                 Glide.with(mView)
-                        .load(mCollections.get(position).getCollectionPictures().get(0).getImageUrl())
+                        .load(mCollections.get(position).getCollectionPictures().get(0).getImage())
                         .fitCenter()
                         //.placeholder(R.drawable.loading_spinner)
                         .into(holder.thumbnail);
         } else if (mView1 != null) {
             if (!mCollections.get(position).getCollectionPictures().isEmpty())
                 Glide.with(mView1)
-                        .load(mCollections.get(position).getCollectionPictures().get(0).getImageUrl())
+                        .load(mCollections.get(position).getCollectionPictures().get(0).getImage())
                         .fitCenter()
                         //.placeholder(R.drawable.loading_spinner)
                         .into(holder.thumbnail);
@@ -86,7 +86,7 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.View
         holder.container.setOnClickListener(v -> {
             if (mView1 != null) {
                 mPresenter.addImageToCollection(mCollections.get(finalPosition).getCollectionName(), mView1.getImage());
-                Toast.makeText(mView1, "Wallpaper Added To " + mCollections.get(finalPosition).getCollectionName(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(mView1, mView1.getResources().getString(R.string.wallpaper_added_msg) + mCollections.get(finalPosition).getCollectionName(), Toast.LENGTH_SHORT).show();
                 mView1.hideFavorite();
             } else if (mView != null)
                 mView.goToImages(mCollections.get(finalPosition).getCollectionName());

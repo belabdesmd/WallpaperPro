@@ -1,7 +1,7 @@
 package com.devalutix.wallpaperpro.utils;
 
-import com.devalutix.wallpaperpro.pojo.CategoryS;
-import com.devalutix.wallpaperpro.pojo.ImageS;
+import com.devalutix.wallpaperpro.pojo.Category;
+import com.devalutix.wallpaperpro.pojo.Wallpaper;
 
 import java.util.ArrayList;
 
@@ -9,31 +9,32 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
 import retrofit2.http.PUT;
 import retrofit2.http.Path;
 
 public interface ApiEndpointInterface {
 
     @GET("wallpapers/type=recent")
-    Call<ArrayList<ImageS>> getRecentImages();
+    Call<ArrayList<Wallpaper>> getRecentImages(@Header("Authorization") String auth);
 
     @GET("wallpapers/type=popular")
-    Call<ArrayList<ImageS>> getPopularImages();
+    Call<ArrayList<Wallpaper>> getPopularImages(@Header("Authorization") String auth);
 
     @GET("wallpapers/type=featured")
-    Call<ArrayList<ImageS>> getFeaturedImages();
+    Call<ArrayList<Wallpaper>> getFeaturedImages(@Header("Authorization") String auth);
 
     @GET("categories")
-    Call<ArrayList<CategoryS>> getCategories();
+    Call<ArrayList<Category>> getCategories(@Header("Authorization") String auth);
 
     @GET("wallpapers/category={category}")
-    Call<ArrayList<ImageS>> getCategoryWallpapers(@Path("category") String category);
+    Call<ArrayList<Wallpaper>> getCategoryWallpapers(@Header("Authorization") String auth, @Path("category") String category);
 
     @GET("search={query}")
-    Call<ArrayList<ImageS>> searchWallpapers(@Path("query") String query);
+    Call<ArrayList<Wallpaper>> searchWallpapers(@Header("Authorization") String auth, @Path("query") String query);
 
     //TODO: Use Headers
     @PUT("wallpapers/update-downloads/{pk}")
-    Call<ResponseBody> updateDownloads(@Path("query") int pk, @Body ImageS image);
+    Call<Wallpaper> updateDownloads(@Header("Authorization") String auth, @Path("query") int pk);
 
 }

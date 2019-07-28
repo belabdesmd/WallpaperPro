@@ -1,36 +1,40 @@
 package com.devalutix.wallpaperpro.pojo;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 public class Category {
+    @SerializedName("id")
+    @Expose
+    private int id;
+    @SerializedName("name")
+    @Expose
+    private String name;
+    @SerializedName("image")
+    @Expose
+    private String image;
 
-    private String categoryName;
-    private String categoryIconUrl;
-    private String categoryThumbnailUrl;
-
-    //Constructor
-    public Category(String categoryName, String categoryImageUrl, String categoryThumbnailUrl) {
-        this.categoryName = categoryName;
-        this.categoryIconUrl = categoryImageUrl;
-        this.categoryThumbnailUrl = categoryThumbnailUrl;
+    public int getId() {
+        return id;
     }
 
-    public String getCategoryName() {
-        return categoryName;
+    public void setId(int id) {
+        this.id = id;
     }
 
-    public String getCategoryIconUrl() {
-        return categoryIconUrl;
+    public String getName() {
+        return name;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Category category = (Category) o;
-        return categoryName.equals(category.categoryName);
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getCategoryThumbnailUrl() {
-        return categoryThumbnailUrl;
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 }
