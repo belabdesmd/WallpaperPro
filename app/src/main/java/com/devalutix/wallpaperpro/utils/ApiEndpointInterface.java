@@ -35,6 +35,6 @@ public interface ApiEndpointInterface {
 
     //TODO: Use Headers
     @PUT("wallpapers/update-downloads/{pk}")
-    Call<Wallpaper> updateDownloads(@Header("Authorization") String auth, @Path("query") int pk);
+    Call<Wallpaper> updateDownloads(@Header("Authorization") String auth, @Path("pk") int pk);
 
 }

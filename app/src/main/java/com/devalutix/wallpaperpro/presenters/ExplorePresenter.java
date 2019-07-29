@@ -66,6 +66,10 @@ public class ExplorePresenter implements ExploreContract.Presenter {
                 if (response.isSuccessful()) {
                     mView.initRecyclerView(response.body());
                     mView.showPicturesList();
+
+                    assert response.body() != null;
+                    if (response.body().size() > 0) mView.showPicturesList();
+                    else mView.showEmptyCollection(mView.getResources().getString(R.string.empty_images));
                 } else {
                     mView.initRecyclerView(null);
                     mView.showNoNetwork();
@@ -112,6 +116,10 @@ public class ExplorePresenter implements ExploreContract.Presenter {
                 if (response.isSuccessful()) {
                     mView.updateRecyclerView(response.body());
                     mView.showPicturesList();
+
+                    assert response.body() != null;
+                    if (response.body().size() > 0) mView.showPicturesList();
+                    else mView.showEmptyCollection(mView.getResources().getString(R.string.empty_images));
                 } else {
                     mView.updateRecyclerView(null);
                     mView.showNoNetwork();

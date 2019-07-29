@@ -39,7 +39,7 @@ public interface ImagesContract {
 
         void showPicturesList();
 
-        void showEmptyCollection();
+        void showEmptyCollection(String message);
 
         void showRetryCard(String message);
 

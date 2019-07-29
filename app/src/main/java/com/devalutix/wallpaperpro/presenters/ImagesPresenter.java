@@ -74,7 +74,7 @@ public class ImagesPresenter implements ImagesContract.Presenter {
                 mView.initRecyclerView(images);
 
                 if (images.size() > 0) mView.showPicturesList();
-                else mView.showEmptyCollection();
+                else mView.showEmptyCollection(mView.getResources().getString(R.string.empty_collection));
             }
             break;
             case "category": {
@@ -95,6 +95,14 @@ public class ImagesPresenter implements ImagesContract.Presenter {
                     if (response.isSuccessful()) {
                         mView.initRecyclerView(response.body());
                         mView.showPicturesList();
+
+                        assert response.body() != null;
+                        if (response.body().size() > 0) mView.showPicturesList();
+                        else {
+                            if (mode.equals("search"))
+                                mView.showEmptyCollection(mView.getResources().getString(R.string.empty_search));
+                            else mView.showEmptyCollection(mView.getResources().getString(R.string.empty_category));
+                        }
                     } else {
                         mView.initRecyclerView(null);
                         mView.showNoNetwork();
@@ -123,7 +131,7 @@ public class ImagesPresenter implements ImagesContract.Presenter {
                 mView.updateRecyclerView(images);
 
                 if (images.size() > 0) mView.showPicturesList();
-                else mView.showEmptyCollection();
+                else mView.showEmptyCollection(mView.getResources().getString(R.string.empty_collection));
             }
             break;
             case "category": {
@@ -145,6 +153,14 @@ public class ImagesPresenter implements ImagesContract.Presenter {
                     if (response.isSuccessful()) {
                         mView.updateRecyclerView(response.body());
                         mView.showPicturesList();
+
+                        assert response.body() != null;
+                        if (response.body().size() > 0) mView.showPicturesList();
+                        else {
+                            if (mode.equals("search"))
+                                mView.showEmptyCollection(mView.getResources().getString(R.string.empty_search));
+                            else mView.showEmptyCollection(mView.getResources().getString(R.string.empty_category));
+                        }
                     } else {
                         mView.updateRecyclerView(null);
                         mView.showNoNetwork();

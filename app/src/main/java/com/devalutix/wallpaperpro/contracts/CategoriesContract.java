@@ -27,6 +27,8 @@ public interface CategoriesContract {
 
         void showCategoriesList();
 
+        void showEmptyCollection(String message);
+
         void showRetryCard(String message);
 
         void hideRetryCard();

@@ -75,6 +75,10 @@ public class CategoriesPresenter implements CategoriesContract.Presenter {
                 if (response.isSuccessful()) {
                     mView.initRecyclerView(response.body());
                     mView.showCategoriesList();
+
+                    assert response.body() != null;
+                    if (response.body().size() > 0) mView.showCategoriesList();
+                    else mView.showEmptyCollection(mView.getResources().getString(R.string.empty_category));
                 } else {
                     mView.initRecyclerView(null);
                     mView.showNoNetwork();
@@ -95,15 +99,19 @@ public class CategoriesPresenter implements CategoriesContract.Presenter {
     public void updateRecyclerView() {
         Log.d(TAG, "updateRecyclerView: Updating Recycler View");
 
-        Call<ArrayList<Category>> call = apiService.getCategories(Config.TOKEN);
+        Call<ArrayList<Category>> call1 = apiService.getCategories(Config.TOKEN);
 
-        call.enqueue(new Callback<ArrayList<Category>>() {
+        call1.enqueue(new Callback<ArrayList<Category>>() {
             @Override
             public void onResponse(@NonNull Call<ArrayList<Category>> call,
                                    @NonNull Response<ArrayList<Category>> response) {
                 if (response.isSuccessful()) {
                     mView.updateRecyclerView(response.body());
                     mView.showCategoriesList();
+
+                    assert response.body() != null;
+                    if (response.body().size() > 0) mView.showCategoriesList();
+                    else mView.showEmptyCollection(mView.getResources().getString(R.string.empty_category));
                 } else {
                     mView.updateRecyclerView(null);
                     mView.showNoNetwork();

@@ -61,7 +61,7 @@ public class ImagesActivity extends AppCompatActivity implements ImagesContract.
     SwipeRefreshLayout mRefresh;
     @BindView(R.id.no_network_images1)
     ImageView noNetworkLayout;
-    @BindView(R.id.empty_collection)
+    @BindView(R.id.empty)
     TextView emptyCollectionLayout;
 
     //Retry
@@ -161,7 +161,7 @@ public class ImagesActivity extends AppCompatActivity implements ImagesContract.
     public void setPageName(String mode, String name) {
         Log.d(TAG, "setPageName: Setting Page Name : " + name);
         if (mode.equals("search"))
-            Objects.requireNonNull(getSupportActionBar()).setTitle(getResources().getString(R.string.search_toolbar) + name);
+            Objects.requireNonNull(getSupportActionBar()).setTitle(getResources().getString(R.string.search_toolbar) + " " + name);
         else Objects.requireNonNull(getSupportActionBar()).setTitle(name);
     }
 
@@ -223,11 +223,13 @@ public class ImagesActivity extends AppCompatActivity implements ImagesContract.
     }
 
     @Override
-    public void showEmptyCollection() {
+    public void showEmptyCollection(String message) {
         mRefresh.setRefreshing(false);
 
         mRecyclerView.setVisibility(View.GONE);
         noNetworkLayout.setVisibility(View.GONE);
+
+        emptyCollectionLayout.setText(message);
         emptyCollectionLayout.setVisibility(View.VISIBLE);
     }
 

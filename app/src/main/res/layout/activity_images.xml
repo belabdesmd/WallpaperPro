@@ -21,11 +21,10 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/empty_collection"
+            android:id="@+id/empty"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="@string/empty_collection"
             android:textColor="?attr/primaryTextColor"
             android:textSize="18sp"
             android:visibility="gone"

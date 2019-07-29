@@ -32,6 +32,7 @@ import com.devalutix.wallpaperpro.pojo.Category;
 import com.devalutix.wallpaperpro.presenters.CategoriesPresenter;
 import com.devalutix.wallpaperpro.ui.activities.ImagesActivity;
 import com.devalutix.wallpaperpro.ui.adapters.CategoriesAdapter;
+import com.google.android.gms.ads.AdActivity;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
 import java.util.ArrayList;
@@ -57,6 +58,8 @@ public class CategoriesFragment extends Fragment implements CategoriesContract.V
     SwipeRefreshLayout mRefresh;
     @BindView(R.id.no_network_category)
     ImageView noNetworkLayout;
+    @BindView(R.id.empty_categories)
+    TextView emptyCollectionLayout;
 
     //Retry
     @BindView(R.id.retry_card)
@@ -149,12 +152,13 @@ public class CategoriesFragment extends Fragment implements CategoriesContract.V
     public void updateRecyclerView(ArrayList<Category> categories) {
         this.categories = categories;
 
-        //Deleting the List of the Categories
-        mAdapter.clearAll();
+        if (mAdapter != null) {
+            //Deleting the List of the Categories
+            mAdapter.clearAll();
 
-        // Adding The New List of Categories
-        mAdapter.addAll(categories);
-
+            // Adding The New List of Categories
+            mAdapter.addAll(categories);
+        }
         /*
          * Stop Refreshing the Animations
          */
@@ -183,6 +187,17 @@ public class CategoriesFragment extends Fragment implements CategoriesContract.V
         mRecyclerView.setVisibility(View.VISIBLE);
         noNetworkLayout.setVisibility(View.GONE);
 
+    }
+
+    @Override
+    public void showEmptyCollection(String message) {
+        mRefresh.setRefreshing(false);
+
+        mRecyclerView.setVisibility(View.GONE);
+        noNetworkLayout.setVisibility(View.GONE);
+
+        emptyCollectionLayout.setText(message);
+        emptyCollectionLayout.setVisibility(View.VISIBLE);
     }
 
     @Override

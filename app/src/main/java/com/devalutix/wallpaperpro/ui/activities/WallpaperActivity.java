@@ -341,7 +341,7 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
         String topicText;
 
         //Adding Date
-        topic = getResources().getString(R.string.title_infos);
+        topic = getResources().getString(R.string.title_infos) + " ";
         topicInfo = new StringBuilder(images.get(position).getTitle());
 
         topicText = topic + topicInfo;
@@ -352,7 +352,7 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
         titleTextView.setText(spannable, TextView.BufferType.SPANNABLE);
 
         //Adding Date
-        topic = getResources().getString(R.string.date_added_infos);
+        topic = getResources().getString(R.string.date_added_infos) + " ";
         topicInfo = new StringBuilder(images.get(position).getDateAdded());
 
         topicText = topic + topicInfo;
@@ -367,7 +367,7 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
         downloadsTextView.setText(topicInfo.toString());
 
         //Adding Categories
-        topic = getResources().getString(R.string.categories_infos);
+        topic = getResources().getString(R.string.categories_infos) + " ";
         topicInfo = new StringBuilder();
         for (int i = 0; i < images.get(position).getCategories().size(); i++) {
             if (i != images.get(position).getCategories().size() - 1)

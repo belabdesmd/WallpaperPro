@@ -100,9 +100,9 @@
     <!--
         Infos Card
     -->
-    <string name="title_infos">Title:</string>
-    <string name="date_added_infos">Date Added:</string>
-    <string name="categories_infos">Categories:</string>
+    <string name="title_infos">Title: </string>
+    <string name="date_added_infos">Date Added: </string>
+    <string name="categories_infos">Categories: </string>
 
     <!--
         Server Responses
@@ -159,5 +159,9 @@
     <string name="done">Done</string>
     <string name="name">Name:</string>
     <string name="retry">Retry</string>
+
+    <string name="empty_category">Empty Category</string>
+    <string name="empty_search">No Results</string>
+    <string name="empty_images">No Images</string>
 </resources>
 

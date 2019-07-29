@@ -31,6 +31,8 @@ public interface ExploreContract {
 
         void showPicturesList();
 
+        void showEmptyCollection(String message);
+
         void showRetryCard(String message);
 
         void hideRetryCard();
