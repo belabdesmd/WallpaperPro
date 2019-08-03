@@ -30,7 +30,7 @@ public class Category {
         this.name = name;
     }
 
-    public String getImage() {
+    public String getWallpaper() {
         return image;
     }
 

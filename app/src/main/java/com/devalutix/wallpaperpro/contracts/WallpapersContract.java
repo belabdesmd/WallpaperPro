@@ -6,17 +6,17 @@ import com.devalutix.wallpaperpro.pojo.Wallpaper;
 
 import java.util.ArrayList;
 
-public interface ImagesContract {
+public interface WallpapersContract {
 
-    interface Presenter extends BasePresenter<ImagesContract.View> {
+    interface Presenter extends BasePresenter<WallpapersContract.View> {
 
         void initRecyclerView(String mode, String name);
 
         void updateRecyclerView(String name);
 
-        ArrayList<Wallpaper> getImagesFromCollection(String name);
+        ArrayList<Wallpaper> getWallpapersFromCollection(String name);
 
-        String listToString(ArrayList<Wallpaper> images);
+        String listToString(ArrayList<Wallpaper> wallpapers);
 
         String getMode();
     }
@@ -27,13 +27,11 @@ public interface ImagesContract {
 
         void setPageName(String mode, String name);
 
-        void initRecyclerView(ArrayList<Wallpaper> images);
+        void initRecyclerView(ArrayList<Wallpaper> wallpapers);
+
+        void updateRecyclerView(ArrayList<Wallpaper> wallpapers);
 
         void initRetrySheet();
-
-        void updateRecyclerView(ArrayList<Wallpaper> images);
-
-        void goToWallpaperActivity(int position, ArrayList<Wallpaper> images);
 
         void showNoNetwork();
 
@@ -44,5 +42,7 @@ public interface ImagesContract {
         void showRetryCard(String message);
 
         void hideRetryCard();
+
+        void goToWallpaperActivity(int position, ArrayList<Wallpaper> wallpapers);
     }
 }

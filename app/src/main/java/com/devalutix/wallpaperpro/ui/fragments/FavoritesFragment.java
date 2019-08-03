@@ -11,7 +11,6 @@ import android.os.Bundle;
 
 import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
-import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
@@ -27,7 +26,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import com.devalutix.wallpaperpro.R;
@@ -37,9 +35,8 @@ import com.devalutix.wallpaperpro.di.components.MVPComponent;
 import com.devalutix.wallpaperpro.di.modules.ApplicationModule;
 import com.devalutix.wallpaperpro.di.modules.MVPModule;
 import com.devalutix.wallpaperpro.pojo.Collection;
-import com.devalutix.wallpaperpro.pojo.Wallpaper;
 import com.devalutix.wallpaperpro.presenters.FavoritesPresenter;
-import com.devalutix.wallpaperpro.ui.activities.ImagesActivity;
+import com.devalutix.wallpaperpro.ui.activities.WallpapersActivity;
 import com.devalutix.wallpaperpro.ui.activities.MainActivity;
 import com.devalutix.wallpaperpro.ui.adapters.FavoritesAdapter;
 
@@ -51,13 +48,11 @@ import javax.inject.Inject;
 import static android.content.Context.LAYOUT_INFLATER_SERVICE;
 
 public class FavoritesFragment extends Fragment implements FavoritesContract.View {
-    private static String TAG = "FavoritesFragment";
     private static final int COL_NUM = 2;
 
     /****************************************** Declarations **************************************/
     private MVPComponent mvpComponent;
     private FavoritesAdapter mAdapter;
-    private ArrayList<Collection> collections;
 
     private AlertDialog mDialogAdd;
     private AlertDialog mDialogEdit;
@@ -66,7 +61,7 @@ public class FavoritesFragment extends Fragment implements FavoritesContract.Vie
     FavoritesPresenter mPresenter;
 
     /****************************************** View Declarations *********************************/
-    @BindView(R.id.favorites_recyclerview)
+    @BindView(R.id.favorites_recycler_view)
     RecyclerView mRecyclerView;
 
     private EditText get_collection_name;
@@ -87,8 +82,6 @@ public class FavoritesFragment extends Fragment implements FavoritesContract.Vie
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_favorite, container, false);
-
-        FrameLayout activity_container = view.findViewById(R.id.favorites_container);
 
         //Init ButterKnife
         ButterKnife.bind(this, view);
@@ -128,11 +121,9 @@ public class FavoritesFragment extends Fragment implements FavoritesContract.Vie
     @Override
     public void initRecyclerView(ArrayList<Collection> collections) {
 
-        //Set the List
-        this.collections = collections;
-
         //Declarations
-        StaggeredGridLayoutManager mLayoutManager = new StaggeredGridLayoutManager(COL_NUM, StaggeredGridLayoutManager.VERTICAL);
+        StaggeredGridLayoutManager mLayoutManager = new StaggeredGridLayoutManager(COL_NUM,
+                StaggeredGridLayoutManager.VERTICAL);
         mAdapter = new FavoritesAdapter(mPresenter, collections, this);
 
         mRecyclerView.setLayoutManager(mLayoutManager);
@@ -142,10 +133,12 @@ public class FavoritesFragment extends Fragment implements FavoritesContract.Vie
 
     @Override
     public void initAddCollectionPopUp() {
-        LayoutInflater inflater = (LayoutInflater) Objects.requireNonNull(getActivity()).getSystemService(LAYOUT_INFLATER_SERVICE);
+        LayoutInflater inflater = (LayoutInflater) Objects.requireNonNull(getActivity())
+                .getSystemService(LAYOUT_INFLATER_SERVICE);
 
         // Inflate the custom layout/view
-        @SuppressLint("InflateParams") View customView = inflater.inflate(R.layout.add_collection_popup, null);
+        @SuppressLint("InflateParams") View customView = inflater.inflate(R.layout.add_collection_popup,
+                null);
 
         //Create the Alert Dialog
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
@@ -156,7 +149,6 @@ public class FavoritesFragment extends Fragment implements FavoritesContract.Vie
         Objects.requireNonNull(mDialogAdd.getWindow()).setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
         //Init Views
-        CardView add_collection_popup = customView.findViewById(R.id.add_collection_popup);
         get_collection_name = customView.findViewById(R.id.add_collection_name);
         add_collection = customView.findViewById(R.id.done_adding);
 
@@ -172,7 +164,8 @@ public class FavoritesFragment extends Fragment implements FavoritesContract.Vie
 
         //Listeners
         add_collection.setOnClickListener(view -> {
-            mPresenter.addCollection(new Collection(get_collection_name.getText().toString(), new ArrayList<Wallpaper>()));
+            mPresenter.addCollection(new Collection(get_collection_name.getText().toString(),
+                    new ArrayList<>()));
             hideAddCollectionPopUp();
             get_collection_name.getText().clear();
             ((MainActivity) getActivity()).hideKeyboard();
@@ -209,10 +202,12 @@ public class FavoritesFragment extends Fragment implements FavoritesContract.Vie
 
     @Override
     public void initEditCollectionPopUp() {
-        LayoutInflater inflater = (LayoutInflater) Objects.requireNonNull(getActivity()).getSystemService(LAYOUT_INFLATER_SERVICE);
+        LayoutInflater inflater = (LayoutInflater) Objects.requireNonNull(getActivity())
+                .getSystemService(LAYOUT_INFLATER_SERVICE);
 
         // Inflate the custom layout/view
-        @SuppressLint("InflateParams") View customView = inflater.inflate(R.layout.edit_collection_popup, null);
+        @SuppressLint("InflateParams") View customView = inflater.inflate(R.layout.edit_collection_popup,
+                null);
 
         //Create the Alert Dialog
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
@@ -220,10 +215,10 @@ public class FavoritesFragment extends Fragment implements FavoritesContract.Vie
         alertDialogBuilder.setView(customView);
         mDialogEdit = alertDialogBuilder.create();
 
-        Objects.requireNonNull(mDialogEdit.getWindow()).setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        Objects.requireNonNull(mDialogEdit.getWindow())
+                .setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
         //Init Views
-        CardView edit_collection_popup = customView.findViewById(R.id.edit_collection_popup);
         get_collection_name_edit = customView.findViewById(R.id.edit_collection_name);
         edit_collection = customView.findViewById(R.id.done_editing);
         remove_collection = customView.findViewById(R.id.remove_collection);
@@ -269,7 +264,6 @@ public class FavoritesFragment extends Fragment implements FavoritesContract.Vie
 
     @Override
     public void updateRecyclerView(ArrayList<Collection> collections) {
-        this.collections = collections;
 
         //Deleting the List of the Categories
         mAdapter.clearAll();
@@ -279,13 +273,13 @@ public class FavoritesFragment extends Fragment implements FavoritesContract.Vie
     }
 
     @Override
-    public void goToImages(String collectionName) {
-        Intent goToImages = new Intent(getActivity(), ImagesActivity.class);
+    public void goToWallpapers(String collectionName) {
+        Intent goToWallpapers = new Intent(getActivity(), WallpapersActivity.class);
 
-        goToImages.putExtra("name", collectionName);
-        goToImages.putExtra("mode", "collection");
-        goToImages.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(goToImages);
+        goToWallpapers.putExtra("name", collectionName);
+        goToWallpapers.putExtra("mode", "collection");
+        goToWallpapers.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(goToWallpapers);
     }
 
     @Override

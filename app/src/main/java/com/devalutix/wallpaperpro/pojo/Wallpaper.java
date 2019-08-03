@@ -42,7 +42,7 @@ public class Wallpaper {
         this.title = title;
     }
 
-    public String getImage() {
+    public String getWallpapers() {
         return image;
     }
 

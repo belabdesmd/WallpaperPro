@@ -37,9 +37,7 @@
             app:layout_constraintBottom_toBottomOf="@id/page_title"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/page_title"
-            app:srcCompat="@drawable/add"
-            android:contentDescription="Add Collection"
-            tools:ignore="HardcodedText" />
+            app:srcCompat="@drawable/add" />
 
         <androidx.appcompat.widget.SearchView
             android:id="@+id/search"
@@ -80,6 +78,7 @@
             android:layout_width="match_parent"
             android:layout_height="64dp"
             android:background="?attr/backgroundColor"
+            android:elevation="16dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

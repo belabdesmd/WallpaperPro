@@ -6,22 +6,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
 import com.devalutix.wallpaperpro.R;
-import com.devalutix.wallpaperpro.presenters.WallpaperPresenter;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class WallpaperFragment extends Fragment {
     public static final String TAG = "WallpaperFragment";
-
-    /****************************************** Declarations **************************************/
-    private String wallpaperImageUrl;
-    private WallpaperPresenter mPresenter;
 
     /****************************************** View Declarations *********************************/
     @BindView(R.id.wallpaper)
@@ -33,18 +30,14 @@ public class WallpaperFragment extends Fragment {
     }
 
     /****************************************** Essential Methods *********************************/
-    public static WallpaperFragment newInstance(String image) {
+    public static WallpaperFragment newInstance(String wallpaper) {
 
         Bundle args = new Bundle();
 
         WallpaperFragment fragment = new WallpaperFragment();
-        args.putString("image", image);
+        args.putString("image", wallpaper);
         fragment.setArguments(args);
         return fragment;
-    }
-
-    public void setPresenter(WallpaperPresenter mPresenter) {
-        this.mPresenter = mPresenter;
     }
 
     @Nullable
@@ -56,9 +49,9 @@ public class WallpaperFragment extends Fragment {
         ButterKnife.bind(this, view);
 
         assert getArguments() != null;
-        wallpaperImageUrl = getArguments().getString("image");
+        String wallpaperImageUrl = getArguments().getString("image");
 
-        //Loading the Image
+        //Loading the Wallpaper
         Glide.with(this)
                 .load(wallpaperImageUrl)
                 .fitCenter()

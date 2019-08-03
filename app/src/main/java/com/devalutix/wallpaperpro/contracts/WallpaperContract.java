@@ -13,30 +13,28 @@ public interface WallpaperContract {
 
     interface Presenter extends BasePresenter<WallpaperContract.View> {
 
-        void savePicture(Wallpaper image, int position);
+        void savePicture(Wallpaper wallpaper, int position);
 
-        void openAddToFavoritesPopUp();
+        void sharePicture(Wallpaper wallpaper);
 
-        void sharePicture(Wallpaper image);
-
-        void setAsWallpaper(Wallpaper image);
-
-        void setImages(String images);
-
-        ArrayList<Wallpaper> getImages();
-
-        ArrayList<Collection> getCollections();
+        void setAsWallpaper(Wallpaper wallpaper);
 
         void loadInterstitialAd(InterstitialAd mInterstitialAd);
 
         void loadAd(AdView ad);
 
-        Wallpaper getImage(int currentItem);
+        void openAddToFavoritesPopUp();
+
+        void setWallpapers(String wallpapers);
+
+        ArrayList<Wallpaper> getWallpapers();
+
+        Wallpaper getWallpapers(int currentItem);
+
+        ArrayList<Collection> getCollections();
     }
 
     interface View extends BaseView {
-
-        void initAdBanner();
 
         void setToolbar();
 
@@ -50,15 +48,17 @@ public interface WallpaperContract {
 
         void initInterstitialAd();
 
-        void showInfos();
+        void initAdBanner();
 
-        void hideInfos();
+        void showInfos();
 
         void showFavorite();
 
-        void hideFavorite();
-
         void showInterstitialAd();
+
+        void hideInfos();
+
+        void hideFavorite();
     }
 
 }

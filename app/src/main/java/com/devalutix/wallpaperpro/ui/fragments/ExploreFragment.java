@@ -1,6 +1,5 @@
 package com.devalutix.wallpaperpro.ui.fragments;
 
-import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
 
@@ -30,8 +29,7 @@ import com.devalutix.wallpaperpro.di.modules.ApplicationModule;
 import com.devalutix.wallpaperpro.di.modules.MVPModule;
 import com.devalutix.wallpaperpro.pojo.Wallpaper;
 import com.devalutix.wallpaperpro.presenters.ExplorePresenter;
-import com.devalutix.wallpaperpro.ui.activities.WallpaperActivity;
-import com.devalutix.wallpaperpro.ui.adapters.ImagesAdapter;
+import com.devalutix.wallpaperpro.ui.adapters.WallpapersAdapter;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
 import java.util.ArrayList;
@@ -40,13 +38,11 @@ import java.util.Objects;
 import javax.inject.Inject;
 
 public class ExploreFragment extends Fragment implements ExploreContract.View {
-    private static String TAG = "ExploreFragment";
     private static final int COL_NUM = 3;
 
     /****************************************** Declarations **************************************/
     private MVPComponent mvpComponent;
-    private ImagesAdapter mAdapter;
-    private ArrayList<Wallpaper> images;
+    private WallpapersAdapter mAdapter;
     private String mode = null;
     @Inject
     ExplorePresenter mPresenter;
@@ -82,7 +78,7 @@ public class ExploreFragment extends Fragment implements ExploreContract.View {
         mRefresh.setRefreshing(true);
         enableFilter(0);
         mode = "popular";
-        mPresenter.updateRecyclerView("popular");
+        mPresenter.updateRecyclerView(mode);
     }
 
     @OnClick(R.id.recent_filter)
@@ -90,7 +86,7 @@ public class ExploreFragment extends Fragment implements ExploreContract.View {
         mRefresh.setRefreshing(true);
         enableFilter(1);
         mode = "recent";
-        mPresenter.updateRecyclerView("recent");
+        mPresenter.updateRecyclerView(mode);
     }
 
     @OnClick(R.id.featured_filter)
@@ -98,11 +94,11 @@ public class ExploreFragment extends Fragment implements ExploreContract.View {
         mRefresh.setRefreshing(true);
         enableFilter(2);
         mode = "featured";
-        mPresenter.updateRecyclerView("featured");
+        mPresenter.updateRecyclerView(mode);
     }
 
     @OnClick(R.id.retry)
-    public void retry() {
+    void retry() {
         refresh();
     }
 
@@ -162,14 +158,11 @@ public class ExploreFragment extends Fragment implements ExploreContract.View {
 
     /****************************************** Methods *******************************************/
     @Override
-    public void initRecyclerView(ArrayList<Wallpaper> images) {
-
-        //Set the List
-        this.images = images;
+    public void initRecyclerView(ArrayList<Wallpaper> wallpapers) {
 
         //Declarations
         StaggeredGridLayoutManager mLayoutManager = new StaggeredGridLayoutManager(COL_NUM, StaggeredGridLayoutManager.VERTICAL);
-        mAdapter = new ImagesAdapter(images, this);
+        mAdapter = new WallpapersAdapter(wallpapers, this);
 
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.addItemDecoration(new MyItemDecoration());
@@ -177,15 +170,13 @@ public class ExploreFragment extends Fragment implements ExploreContract.View {
     }
 
     @Override
-    public void updateRecyclerView(ArrayList<Wallpaper> images) {
-
-        this.images = images;
+    public void updateRecyclerView(ArrayList<Wallpaper> wallpapers) {
 
         //Deleting the List of the Categories
         mAdapter.clearAll();
 
         // Adding The New List of Categories
-        mAdapter.addAll(images);
+        mAdapter.addAll(wallpapers);
 
         /*
          * Stop Refreshing the Animations
@@ -209,7 +200,7 @@ public class ExploreFragment extends Fragment implements ExploreContract.View {
     }
 
     @Override
-    public void showPicturesList() {
+    public void showWallpapersList() {
         mRefresh.setRefreshing(false);
 
         mRecyclerView.setVisibility(View.VISIBLE);
@@ -275,26 +266,20 @@ public class ExploreFragment extends Fragment implements ExploreContract.View {
     }
 
     @Override
-    public void goToWallpaperActivity(int position, ArrayList<Wallpaper> images) {
-        if (!mRefresh.isRefreshing()) {
-            Intent goToWallpaper = new Intent(getActivity(), WallpaperActivity.class);
-
-            //Transferring the List
-            String jsonImages = mPresenter.listToString(images);
-
-            //Putting the Extras
-            goToWallpaper.putExtra("current", position);
-            goToWallpaper.putExtra("images", jsonImages);
-            goToWallpaper.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(goToWallpaper);
-        }
-    }
-
-    @Override
     public void refresh() {
         hideRetryCard();
         mRefresh.setRefreshing(true);
         mPresenter.updateRecyclerView(mPresenter.getMode());
+    }
+
+    @Override
+    public boolean isRefreshing() {
+        return mRefresh.isRefreshing();
+    }
+
+    @Override
+    public ExplorePresenter getPresenter() {
+        return mPresenter;
     }
 
     public class MyItemDecoration extends RecyclerView.ItemDecoration {

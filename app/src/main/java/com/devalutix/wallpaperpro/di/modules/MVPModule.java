@@ -4,12 +4,11 @@ import android.app.Activity;
 import android.content.Context;
 
 import com.devalutix.wallpaperpro.di.annotations.ActivityContext;
-import com.devalutix.wallpaperpro.di.annotations.ApplicationContext;
 import com.devalutix.wallpaperpro.models.SharedPreferencesHelper;
 import com.devalutix.wallpaperpro.presenters.CategoriesPresenter;
 import com.devalutix.wallpaperpro.presenters.ExplorePresenter;
 import com.devalutix.wallpaperpro.presenters.FavoritesPresenter;
-import com.devalutix.wallpaperpro.presenters.ImagesPresenter;
+import com.devalutix.wallpaperpro.presenters.WallpapersPresenter;
 import com.devalutix.wallpaperpro.presenters.MainPresenter;
 import com.devalutix.wallpaperpro.presenters.WallpaperPresenter;
 import com.devalutix.wallpaperpro.utils.ApiEndpointInterface;
@@ -55,9 +54,9 @@ public class MVPModule {
 
     @Provides
     @Singleton
-    ImagesPresenter providesImagesPresenter(Gson gson, @ApplicationContext Context mContext,
-                                            SharedPreferencesHelper mSharedPrefsHelper, ApiEndpointInterface apiService) {
-        return new ImagesPresenter(mContext, gson, mSharedPrefsHelper, apiService);
+    WallpapersPresenter providesImagesPresenter(Gson gson, SharedPreferencesHelper mSharedPrefsHelper,
+                                                ApiEndpointInterface apiService) {
+        return new WallpapersPresenter(gson, mSharedPrefsHelper, apiService);
     }
 
     @Provides
@@ -68,20 +67,19 @@ public class MVPModule {
 
     @Provides
     @Singleton
-    ExplorePresenter providesExplorePresenter(@ApplicationContext Context context, Gson gson, ApiEndpointInterface apiService) {
-        return new ExplorePresenter(context, gson, apiService);
+    ExplorePresenter providesExplorePresenter(Gson gson, ApiEndpointInterface apiService) {
+        return new ExplorePresenter(gson, apiService);
     }
 
     @Provides
     @Singleton
-    CategoriesPresenter providesCategoriesPresenter(@ApplicationContext Context mContext, SharedPreferencesHelper mSharedPrefsHelper
-            , ApiEndpointInterface apiService) {
-        return new CategoriesPresenter(mContext, mSharedPrefsHelper, apiService);
+    CategoriesPresenter providesCategoriesPresenter(ApiEndpointInterface apiService) {
+        return new CategoriesPresenter(apiService);
     }
 
     @Provides
     @Singleton
-    FavoritesPresenter providesFavoritesPresenter(@ApplicationContext Context mContext, SharedPreferencesHelper sharedPreferencesHelper) {
-        return new FavoritesPresenter(mContext, sharedPreferencesHelper);
+    FavoritesPresenter providesFavoritesPresenter(SharedPreferencesHelper sharedPreferencesHelper) {
+        return new FavoritesPresenter(sharedPreferencesHelper);
     }
 }

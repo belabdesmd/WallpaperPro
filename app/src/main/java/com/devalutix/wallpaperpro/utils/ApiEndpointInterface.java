@@ -16,13 +16,13 @@ import retrofit2.http.Path;
 public interface ApiEndpointInterface {
 
     @GET("wallpapers/type=recent")
-    Call<ArrayList<Wallpaper>> getRecentImages(@Header("Authorization") String auth);
+    Call<ArrayList<Wallpaper>> getRecentWallpapers(@Header("Authorization") String auth);
 
     @GET("wallpapers/type=popular")
-    Call<ArrayList<Wallpaper>> getPopularImages(@Header("Authorization") String auth);
+    Call<ArrayList<Wallpaper>> getPopularWallpapers(@Header("Authorization") String auth);
 
     @GET("wallpapers/type=featured")
-    Call<ArrayList<Wallpaper>> getFeaturedImages(@Header("Authorization") String auth);
+    Call<ArrayList<Wallpaper>> getFeaturedWallpapers(@Header("Authorization") String auth);
 
     @GET("categories")
     Call<ArrayList<Category>> getCategories(@Header("Authorization") String auth);
@@ -33,7 +33,6 @@ public interface ApiEndpointInterface {
     @GET("search={query}")
     Call<ArrayList<Wallpaper>> searchWallpapers(@Header("Authorization") String auth, @Path("query") String query);
 
-    //TODO: Use Headers
     @PUT("wallpapers/update-downloads/{pk}")
     Call<Wallpaper> updateDownloads(@Header("Authorization") String auth, @Path("pk") int pk);
 

@@ -14,7 +14,7 @@ public interface MainContract {
 
         void loadAd(AdView ad);
 
-        void searchImages(String query);
+        void searchWallpapers(String query);
 
         void enableDarkMode(boolean isChecked);
 
@@ -22,6 +22,10 @@ public interface MainContract {
     }
 
     interface View extends BaseView {
+
+        void initViewPager();
+
+        void initTabLayout();
 
         void initAdBanner();
 
@@ -36,10 +40,6 @@ public interface MainContract {
         void hideAll();
 
         void enableTabAt(int i);
-
-        void initViewPager();
-
-        void initTabLayout();
 
         void hideKeyboard();
 

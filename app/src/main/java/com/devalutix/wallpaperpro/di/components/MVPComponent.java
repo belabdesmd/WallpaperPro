@@ -6,7 +6,7 @@ import android.content.Context;
 import com.devalutix.wallpaperpro.di.annotations.ActivityContext;
 import com.devalutix.wallpaperpro.di.modules.ApplicationModule;
 import com.devalutix.wallpaperpro.di.modules.MVPModule;
-import com.devalutix.wallpaperpro.ui.activities.ImagesActivity;
+import com.devalutix.wallpaperpro.ui.activities.WallpapersActivity;
 import com.devalutix.wallpaperpro.ui.activities.MainActivity;
 import com.devalutix.wallpaperpro.ui.activities.WallpaperActivity;
 import com.devalutix.wallpaperpro.ui.fragments.CategoriesFragment;
@@ -24,7 +24,7 @@ public interface MVPComponent {
     //Inject in Activities
     void inject(MainActivity mainActivity);
     void inject(WallpaperActivity wallpaperActivity);
-    void inject(ImagesActivity imagesActivity);
+    void inject(WallpapersActivity wallpapersActivity);
 
     //Inject in Fragments
     void inject(FavoritesFragment favorites);

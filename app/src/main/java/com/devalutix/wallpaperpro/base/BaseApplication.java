@@ -5,7 +5,6 @@ import com.devalutix.wallpaperpro.di.components.DaggerApplicationComponent;
 import com.devalutix.wallpaperpro.di.modules.ApplicationModule;
 import androidx.multidex.MultiDexApplication;
 
-
 public class BaseApplication extends MultiDexApplication {
     ApplicationComponent appComponent;
 

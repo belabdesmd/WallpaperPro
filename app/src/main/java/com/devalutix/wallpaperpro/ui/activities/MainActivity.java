@@ -18,12 +18,10 @@ import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -46,7 +44,6 @@ import com.devalutix.wallpaperpro.ui.fragments.ExploreFragment;
 import com.devalutix.wallpaperpro.ui.fragments.FavoritesFragment;
 import com.devalutix.wallpaperpro.utils.Config;
 import com.google.android.gms.ads.AdView;
-import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
 
@@ -264,7 +261,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                mPresenter.searchImages(query);
+                mPresenter.searchWallpapers(query);
                 return false;
             }
 

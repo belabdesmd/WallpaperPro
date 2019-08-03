@@ -63,7 +63,6 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
     /**************************************** Declarations ****************************************/
     private MVPComponent mvpComponent;
     private InterstitialAd mInterstitialAd;
-    private FavoritesAdapter mAdapter;
     private BottomSheetBehavior info_popup_behavior;
     private BottomSheetBehavior add_to_favorite_popup_behavior;
 
@@ -86,7 +85,7 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
     ImageView index;
     @BindView(R.id.add_to_favorites_popup)
     CardView add_to_favorites_popup;
-    @BindView(R.id.collections_recyclerview)
+    @BindView(R.id.collections_recycler_view)
     RecyclerView mRecyclerView;
 
     @BindView(R.id.image_title)
@@ -105,19 +104,19 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
     /**************************************** Click Listeners *************************************/
     @OnClick(R.id.share_action)
     public void share() {
-        mPresenter.sharePicture(mPresenter.getImages().get(mViewPager.getCurrentItem()));
+        mPresenter.sharePicture(mPresenter.getWallpapers().get(mViewPager.getCurrentItem()));
         hideInfos();
     }
 
     @OnClick(R.id.download_wrapper)
     public void download() {
         int position = mViewPager.getCurrentItem();
-        mPresenter.savePicture(mPresenter.getImages().get(position), position);
+        mPresenter.savePicture(mPresenter.getWallpapers().get(position), position);
     }
 
     @OnClick(R.id.set_as_wallpaper)
     public void set_wallpaper() {
-        mPresenter.setAsWallpaper(mPresenter.getImages().get(mViewPager.getCurrentItem()));
+        mPresenter.setAsWallpaper(mPresenter.getWallpapers().get(mViewPager.getCurrentItem()));
         hideInfos();
     }
 
@@ -254,7 +253,6 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
     @Override
     public void initInterstitialAd() {
         mInterstitialAd = new InterstitialAd(this);
-        //TODO: Add Client's Ad Unit ID
         mInterstitialAd.setAdUnitId(getResources().getString(R.string.ADMOB_INTERSTITIAL_AD_ID));
         mPresenter.loadInterstitialAd(mInterstitialAd);
     }
@@ -267,14 +265,13 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
         /*
          * Transferring the Extra From The Images Activity Into A List (String -> List)
          */
-        mPresenter.setImages(getIntent().getStringExtra("images"));
+        mPresenter.setWallpapers(getIntent().getStringExtra("images"));
 
         //Creating the Fragments and Adding Them
         for (Wallpaper image :
-                mPresenter.getImages()) {
+                mPresenter.getWallpapers()) {
             //Creating New Fragment With a Picture
-            WallpaperFragment frag = WallpaperFragment.newInstance(image.getImage());
-            frag.setPresenter(mPresenter);
+            WallpaperFragment frag = WallpaperFragment.newInstance(image.getWallpapers());
             adapter.addFrag(frag);
         }
 
@@ -331,9 +328,7 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
     @Override
     public void initInfos(int position) {
 
-        ArrayList<Wallpaper> images = mPresenter.getImages();
-
-        //TODO: Visual Polish
+        ArrayList<Wallpaper> images = mPresenter.getWallpapers();
 
         //Declarations
         String topic;
@@ -389,7 +384,7 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
 
         //Declarations
         StaggeredGridLayoutManager mLayoutManager = new StaggeredGridLayoutManager(COL_NUM, StaggeredGridLayoutManager.VERTICAL);
-        mAdapter = new FavoritesAdapter(favoritePresenter, mPresenter.getCollections(), this);
+        FavoritesAdapter mAdapter = new FavoritesAdapter(favoritePresenter, mPresenter.getCollections(), this);
 
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.addItemDecoration(new WallpaperActivity.MyItemDecoration());
@@ -412,7 +407,7 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
     public void showFavorite() {
         Log.d(TAG, "showFavorite: Shows Favorites");
         add_to_favorite_popup_behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-        favoritePresenter.addImageToCollection(Config.MY_FAVORITES_COLLECTION_NAME, mPresenter.getImage(mViewPager.getCurrentItem()));
+        favoritePresenter.addWallpaperToCollection(Config.MY_FAVORITES_COLLECTION_NAME, mPresenter.getWallpapers(mViewPager.getCurrentItem()));
     }
 
     @Override
@@ -428,7 +423,7 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
     }
 
     public Wallpaper getImage() {
-        return mPresenter.getImage(mViewPager.getCurrentItem());
+        return mPresenter.getWallpapers(mViewPager.getCurrentItem());
     }
 
     public class MyItemDecoration extends RecyclerView.ItemDecoration {

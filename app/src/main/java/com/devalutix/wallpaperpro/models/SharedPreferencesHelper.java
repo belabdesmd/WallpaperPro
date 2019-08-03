@@ -35,13 +35,6 @@ public class SharedPreferencesHelper {
     }
 
     //Categories
-    public void saveCategories(ArrayList<Category> categories) {
-        String jsonToString = gson.toJson(categories);
-        SharedPreferences.Editor editor;
-        editor = sharedPref.edit();
-        editor.putString(CATEGORIES, jsonToString).apply();
-    }
-
     public ArrayList<Category> getCategories() {
         if (isEmpty(CATEGORIES)) return null;
         else {
@@ -72,14 +65,12 @@ public class SharedPreferencesHelper {
 
     //Permissions
     public void firstTimeAskingPermission(String permission) {
-        Log.d(TAG, "firstTimeAskingPermission: check");
         SharedPreferences.Editor editor;
         editor = sharedPref.edit();
         editor.putBoolean(permission, false).apply();
     }
 
     public boolean isFirstTimeAskingPermission(String permission) {
-        Log.d(TAG, "isFirstTimeAskingPermission.");
         return sharedPref != null && sharedPref.getBoolean(permission, true);
     }
 

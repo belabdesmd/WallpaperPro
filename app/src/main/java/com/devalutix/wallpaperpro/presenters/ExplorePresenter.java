@@ -1,14 +1,13 @@
 package com.devalutix.wallpaperpro.presenters;
 
-import android.content.Context;
-import android.util.Log;
+import android.content.Intent;
 
 import androidx.annotation.NonNull;
 
 import com.devalutix.wallpaperpro.R;
 import com.devalutix.wallpaperpro.contracts.ExploreContract;
-import com.devalutix.wallpaperpro.di.annotations.ApplicationContext;
 import com.devalutix.wallpaperpro.pojo.Wallpaper;
+import com.devalutix.wallpaperpro.ui.activities.WallpaperActivity;
 import com.devalutix.wallpaperpro.ui.fragments.ExploreFragment;
 import com.devalutix.wallpaperpro.utils.ApiEndpointInterface;
 import com.devalutix.wallpaperpro.utils.Config;
@@ -21,18 +20,15 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class ExplorePresenter implements ExploreContract.Presenter {
-    private static String TAG = "ExplorePresenter";
 
     /***************************************** Declarations ***************************************/
     private ExploreFragment mView;
-    private Context mContext;
     private Gson gson;
     private ApiEndpointInterface apiService;
     private String mode = "recent";
 
     /***************************************** Constructor ****************************************/
-    public ExplorePresenter(@ApplicationContext Context mContext, Gson gson, ApiEndpointInterface apiService) {
-        this.mContext = mContext;
+    public ExplorePresenter(Gson gson, ApiEndpointInterface apiService) {
         this.gson = gson;
         this.apiService = apiService;
     }
@@ -56,19 +52,19 @@ public class ExplorePresenter implements ExploreContract.Presenter {
     /***************************************** Methods ********************************************/
     @Override
     public void initRecyclerView() {
-        Log.d(TAG, "initRecyclerView: Initialising Recycler View");
 
-        Call<ArrayList<Wallpaper>> call = apiService.getRecentImages(Config.TOKEN);
+        Call<ArrayList<Wallpaper>> call = apiService.getRecentWallpapers(Config.TOKEN);
+
         call.enqueue(new Callback<ArrayList<Wallpaper>>() {
             @Override
             public void onResponse(@NonNull Call<ArrayList<Wallpaper>> call,
                                    @NonNull Response<ArrayList<Wallpaper>> response) {
                 if (response.isSuccessful()) {
                     mView.initRecyclerView(response.body());
-                    mView.showPicturesList();
+                    mView.showWallpapersList();
 
                     assert response.body() != null;
-                    if (response.body().size() > 0) mView.showPicturesList();
+                    if (response.body().size() > 0) mView.showWallpapersList();
                     else mView.showEmptyCollection(mView.getResources().getString(R.string.empty_images));
                 } else {
                     mView.initRecyclerView(null);
@@ -88,22 +84,21 @@ public class ExplorePresenter implements ExploreContract.Presenter {
 
     @Override
     public void updateRecyclerView(String mode) {
-        Log.d(TAG, "updateRecyclerView: Updating Recycler View");
 
         this.mode = mode;
         Call<ArrayList<Wallpaper>> call = null;
 
         switch (mode) {
             case "popular": {
-                call = apiService.getPopularImages(Config.TOKEN);
+                call = apiService.getPopularWallpapers(Config.TOKEN);
             }
             break;
             case "recent": {
-                call = apiService.getRecentImages(Config.TOKEN);
+                call = apiService.getRecentWallpapers(Config.TOKEN);
             }
             break;
             case "featured": {
-                call = apiService.getFeaturedImages(Config.TOKEN);
+                call = apiService.getFeaturedWallpapers(Config.TOKEN);
             }
             break;
         }
@@ -115,10 +110,10 @@ public class ExplorePresenter implements ExploreContract.Presenter {
                                    @NonNull Response<ArrayList<Wallpaper>> response) {
                 if (response.isSuccessful()) {
                     mView.updateRecyclerView(response.body());
-                    mView.showPicturesList();
+                    mView.showWallpapersList();
 
                     assert response.body() != null;
-                    if (response.body().size() > 0) mView.showPicturesList();
+                    if (response.body().size() > 0) mView.showWallpapersList();
                     else mView.showEmptyCollection(mView.getResources().getString(R.string.empty_images));
                 } else {
                     mView.updateRecyclerView(null);
@@ -137,12 +132,28 @@ public class ExplorePresenter implements ExploreContract.Presenter {
     }
 
     @Override
-    public String listToString(ArrayList<Wallpaper> images) {
-        return gson.toJson(images);
+    public String listToString(ArrayList<Wallpaper> wallpapers) {
+        return gson.toJson(wallpapers);
     }
 
     @Override
     public String getMode() {
         return mode;
+    }
+
+    @Override
+    public void goToWallpaperActivity(int position, ArrayList<Wallpaper> wallpapers) {
+        if (!mView.isRefreshing()) {
+            Intent goToWallpaper = new Intent(mView.getActivity(), WallpaperActivity.class);
+
+            //Transferring the List
+            String jsonWallpapers = listToString(wallpapers);
+
+            //Putting the Extras
+            goToWallpaper.putExtra("current", position);
+            goToWallpaper.putExtra("wallpapers", jsonWallpapers);
+            goToWallpaper.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            mView.startActivity(goToWallpaper);
+        }
     }
 }

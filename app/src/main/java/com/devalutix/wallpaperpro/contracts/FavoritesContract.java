@@ -21,35 +21,34 @@ public interface FavoritesContract {
 
         void removeCollection(String collectionName);
 
+        void addWallpaperToCollection(String name, Wallpaper wallpaper);
+
         ArrayList<Collection> getCollectionsList();
-
-        void addImageToCollection(String name, Wallpaper image);
-
     }
 
     interface View extends BaseView {
 
         void initRecyclerView(ArrayList<Collection> collections);
 
+        void updateRecyclerView(ArrayList<Collection> collections);
+
         void initAddCollectionPopUp();
 
         void initEditCollectionPopUp();
 
-        void updateRecyclerView(ArrayList<Collection> collections);
-
-        void goToImages(String collectionName);
-
         void showAddCollectionPopUp();
 
-        void hideAddCollectionPopUp();
-
         void showEditCollectionPopUp(String collectionName);
+
+        void hideAddCollectionPopUp();
 
         void hideEditCollectionPopUp();
 
         void enableDoneButton();
 
         void disableDoneButton();
+
+        void goToWallpapers(String collectionName);
     }
 
 }

@@ -1,47 +1,31 @@
 package com.devalutix.wallpaperpro.presenters;
 
-import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.util.Log;
-import android.widget.Toast;
+import android.content.Intent;
 
 import androidx.annotation.NonNull;
 
 import com.devalutix.wallpaperpro.R;
 import com.devalutix.wallpaperpro.contracts.CategoriesContract;
-import com.devalutix.wallpaperpro.di.annotations.ApplicationContext;
-import com.devalutix.wallpaperpro.models.SharedPreferencesHelper;
 import com.devalutix.wallpaperpro.pojo.Category;
+import com.devalutix.wallpaperpro.ui.activities.WallpapersActivity;
 import com.devalutix.wallpaperpro.ui.fragments.CategoriesFragment;
 import com.devalutix.wallpaperpro.utils.ApiEndpointInterface;
 import com.devalutix.wallpaperpro.utils.Config;
-import com.google.gson.Gson;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class CategoriesPresenter implements CategoriesContract.Presenter {
-    private static String TAG = "CategoriesPresenter";
 
     /***************************************** Declarations ***************************************/
     private CategoriesFragment mView;
-    private Context mContext;
-    private SharedPreferencesHelper mSharedPrefsHelper;
     private ApiEndpointInterface apiService;
 
     /***************************************** Constructor ****************************************/
-    public CategoriesPresenter(@ApplicationContext Context mContext, SharedPreferencesHelper mSharedPrefsHelper,
-                               ApiEndpointInterface apiService) {
-        this.mContext = mContext;
-        this.mSharedPrefsHelper = mSharedPrefsHelper;
+    public CategoriesPresenter(ApiEndpointInterface apiService) {
         this.apiService = apiService;
     }
 
@@ -64,7 +48,6 @@ public class CategoriesPresenter implements CategoriesContract.Presenter {
     /***************************************** Methods ********************************************/
     @Override
     public void initRecyclerView() {
-        Log.d(TAG, "initRecyclerView: Initialising Recycler View");
 
         Call<ArrayList<Category>> call = apiService.getCategories(Config.TOKEN);
 
@@ -73,13 +56,12 @@ public class CategoriesPresenter implements CategoriesContract.Presenter {
             public void onResponse(@NonNull Call<ArrayList<Category>> call,
                                    @NonNull Response<ArrayList<Category>> response) {
                 if (response.isSuccessful()) {
+                    //Init Categories List and Show It
                     mView.initRecyclerView(response.body());
                     mView.showCategoriesList();
 
-                    assert response.body() != null;
-                    if (response.body().size() > 0) mView.showCategoriesList();
-                    else mView.showEmptyCollection(mView.getResources().getString(R.string.empty_category));
                 } else {
+                    //Init Recycler View With Null and Show No Network + The Problem
                     mView.initRecyclerView(null);
                     mView.showNoNetwork();
                     mView.showRetryCard(mView.getResources().getString(R.string.server_prblm_retry));
@@ -87,7 +69,8 @@ public class CategoriesPresenter implements CategoriesContract.Presenter {
             }
 
             @Override
-            public void onFailure(Call<ArrayList<Category>> call, Throwable t) {
+            public void onFailure(@NonNull Call<ArrayList<Category>> call, @NonNull Throwable t) {
+                //Init Recycler View With Null and Show No Network + The Problem
                 mView.initRecyclerView(null);
                 mView.showNoNetwork();
                 mView.showRetryCard(mView.getResources().getString(R.string.net_prblm_retry));
@@ -97,7 +80,6 @@ public class CategoriesPresenter implements CategoriesContract.Presenter {
 
     @Override
     public void updateRecyclerView() {
-        Log.d(TAG, "updateRecyclerView: Updating Recycler View");
 
         Call<ArrayList<Category>> call1 = apiService.getCategories(Config.TOKEN);
 
@@ -106,13 +88,11 @@ public class CategoriesPresenter implements CategoriesContract.Presenter {
             public void onResponse(@NonNull Call<ArrayList<Category>> call,
                                    @NonNull Response<ArrayList<Category>> response) {
                 if (response.isSuccessful()) {
+                    //Init Categories List and Show It
                     mView.updateRecyclerView(response.body());
                     mView.showCategoriesList();
-
-                    assert response.body() != null;
-                    if (response.body().size() > 0) mView.showCategoriesList();
-                    else mView.showEmptyCollection(mView.getResources().getString(R.string.empty_category));
                 } else {
+                    //Init Recycler View With Null and Show No Network + The Problem
                     mView.updateRecyclerView(null);
                     mView.showNoNetwork();
                     mView.showRetryCard(mView.getResources().getString(R.string.server_prblm_retry));
@@ -121,10 +101,22 @@ public class CategoriesPresenter implements CategoriesContract.Presenter {
 
             @Override
             public void onFailure(@NonNull Call<ArrayList<Category>> call, @NonNull Throwable t) {
+                //Init Recycler View With Null and Show No Network + The Problem
                 mView.updateRecyclerView(null);
                 mView.showNoNetwork();
                 mView.showRetryCard(mView.getResources().getString(R.string.net_prblm_retry));
             }
         });
+    }
+
+    @Override
+    public void goToWallpapers(String categoryName) {
+        Intent goToWallpaper = new Intent(mView.getActivity(), WallpapersActivity.class);
+
+        //Putting the Extras
+        goToWallpaper.putExtra("name", categoryName);
+        goToWallpaper.putExtra("mode", "category");
+        goToWallpaper.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        mView.startActivity(goToWallpaper);
     }
 }

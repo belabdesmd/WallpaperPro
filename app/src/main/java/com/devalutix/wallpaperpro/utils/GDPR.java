@@ -82,7 +82,6 @@ public class GDPR {
         Log.d(TAG, "requestConsent: Requesting Consent");
         URL privacyUrl = null;
         try {
-            // TODO: Replace with your app's privacy policy URL.
             privacyUrl = new URL("your privacy link");
         } catch (MalformedURLException e) {
             e.printStackTrace();

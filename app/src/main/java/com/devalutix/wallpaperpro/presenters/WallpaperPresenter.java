@@ -5,10 +5,8 @@ import android.content.ContextWrapper;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Environment;
 import android.os.Handler;
-import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -43,7 +41,6 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class WallpaperPresenter implements WallpaperContract.Presenter {
-    private static String TAG = "WallpaperPresenter";
 
     /***************************************** Declarations ***************************************/
     private WallpaperActivity mView;
@@ -51,7 +48,7 @@ public class WallpaperPresenter implements WallpaperContract.Presenter {
     private SharedPreferencesHelper mSharedPrefsHelper;
     private ApiEndpointInterface apiService;
     private GDPR gdpr;
-    private ArrayList<Wallpaper> images;
+    private ArrayList<Wallpaper> wallpapers;
 
     /***************************************** Constructor ****************************************/
     public WallpaperPresenter(Gson gson, SharedPreferencesHelper sharedPreferencesHelper, GDPR gdpr, ApiEndpointInterface apiService) {
@@ -98,36 +95,36 @@ public class WallpaperPresenter implements WallpaperContract.Presenter {
     }
 
     @Override
-    public Wallpaper getImage(int currentItem) {
-        return images.get(currentItem);
+    public Wallpaper getWallpapers(int currentItem) {
+        return wallpapers.get(currentItem);
     }
 
     @Override
-    public void savePicture(Wallpaper image, int position) {
+    public void savePicture(Wallpaper wallpaper, int position) {
         if (mSharedPrefsHelper.isDownloadEnable())
             Glide.with(mView)
                     .asBitmap()
-                    .load(image.getImage())
+                    .load(wallpaper.getWallpapers())
                     .into(new CustomTarget<Bitmap>() {
                         @Override
                         public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
                             mView.hideInfos();
-                            apiService.updateDownloads(Config.TOKEN, image.getPk()).enqueue(new Callback<Wallpaper>() {
+                            apiService.updateDownloads(Config.TOKEN, wallpaper.getPk()).enqueue(new Callback<Wallpaper>() {
                                 @Override
-                                public void onResponse(Call<Wallpaper> call, Response<Wallpaper> response) {
+                                public void onResponse(@NonNull Call<Wallpaper> call, @NonNull Response<Wallpaper> response) {
                                     if (response.isSuccessful()){
-                                        images.set(position, response.body());
+                                        wallpapers.set(position, response.body());
                                         mView.initInfos(position);
                                     }
                                 }
 
                                 @Override
-                                public void onFailure(Call<Wallpaper> call, Throwable t) {
+                                public void onFailure(@NonNull Call<Wallpaper> call, @NonNull Throwable t) {
 
                                 }
                             });
                             Toast.makeText(mView, mView.getResources().getString(R.string.downloading), Toast.LENGTH_SHORT).show();
-                            saveImageToInternalStorage(resource);
+                            saveWallpaperToInternalStorage(resource);
                         }
 
                         @Override
@@ -145,11 +142,11 @@ public class WallpaperPresenter implements WallpaperContract.Presenter {
     }
 
     @Override
-    public void sharePicture(Wallpaper image) {
+    public void sharePicture(Wallpaper wallpaper) {
         Intent i = new Intent(Intent.ACTION_SEND);
         i.setType("text/plain");
         i.putExtra(Intent.EXTRA_SUBJECT, mView.getResources().getString(R.string.app_name));
-        String sAux = mView.getResources().getString(R.string.share_msg_1) + image.getTitle()
+        String sAux = mView.getResources().getString(R.string.share_msg_1) + wallpaper.getTitle()
                 + mView.getResources().getString(R.string.share_msg_2)
                 + mView.getResources().getString(R.string.app_name);
         i.putExtra(Intent.EXTRA_TEXT, sAux);
@@ -157,10 +154,10 @@ public class WallpaperPresenter implements WallpaperContract.Presenter {
     }
 
     @Override
-    public void setAsWallpaper(Wallpaper image) {
+    public void setAsWallpaper(Wallpaper wallpaper) {
         Glide.with(mView)
                 .asBitmap()
-                .load(image.getImage())
+                .load(wallpaper.getWallpapers())
                 .into(new CustomTarget<Bitmap>() {
                     @Override
                     public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
@@ -196,14 +193,14 @@ public class WallpaperPresenter implements WallpaperContract.Presenter {
     }
 
     @Override
-    public void setImages(String images) {
-        Wallpaper[] imageUrlsArray = gson.fromJson(images, Wallpaper[].class);
-        this.images = new ArrayList<>(Arrays.asList(imageUrlsArray));
+    public void setWallpapers(String wallpapers) {
+        Wallpaper[] wallpaperUrlsArray = gson.fromJson(wallpapers, Wallpaper[].class);
+        this.wallpapers = new ArrayList<>(Arrays.asList(wallpaperUrlsArray));
     }
 
     @Override
-    public ArrayList<Wallpaper> getImages() {
-        return images;
+    public ArrayList<Wallpaper> getWallpapers() {
+        return wallpapers;
     }
 
     @Override
@@ -218,7 +215,7 @@ public class WallpaperPresenter implements WallpaperContract.Presenter {
         return collections;
     }
 
-    private void saveImageToInternalStorage(Bitmap bitmap) {
+    private void saveWallpaperToInternalStorage(Bitmap bitmap) {
 
         // Initialize ContextWrapper
         ContextWrapper wrapper = new ContextWrapper(mView);
@@ -231,9 +228,9 @@ public class WallpaperPresenter implements WallpaperContract.Presenter {
         Random generator = new Random();
         int n = 10000;
         n = generator.nextInt(n);
-        String f_name = mView.getResources().getString(R.string.app_name) + "_Image-" + n + ".jpg";
+        String f_name = mView.getResources().getString(R.string.app_name) + "_Wallpaper-" + n + ".jpg";
 
-        // Create a file to save the image
+        // Create a file to save the wallpaper
         File file = new File(myDir, f_name);
 
         try {
@@ -258,12 +255,6 @@ public class WallpaperPresenter implements WallpaperContract.Presenter {
         {
             e.printStackTrace();
         }
-
-        // Parse the gallery image url to uri
-        Uri savedImageURI = Uri.parse(file.getAbsolutePath());
-
-        // Return the saved image Uri
-        Log.d(TAG, "saveImageToInternalStorage: " + savedImageURI);
 
         mView.showInterstitialAd();
     }

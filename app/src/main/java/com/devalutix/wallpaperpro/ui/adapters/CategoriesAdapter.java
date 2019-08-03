@@ -50,9 +50,9 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Vi
     public void onBindViewHolder(@NonNull CategoriesAdapter.ViewHolder holder, int position) {
         Log.d(TAG, "onBindViewHolder: Setting Views.");
 
-        //Loading the Image
+        //Loading the Wallpaper
         Glide.with(mView)
-                .load(mCategories.get(position).getImage())
+                .load(mCategories.get(position).getWallpaper())
                 .fitCenter()
                 //.placeholder(R.drawable.loading_spinner)
                 .into(holder.image);
@@ -62,7 +62,7 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Vi
 
         //Click Listener
         final int finalPosition = position;
-        holder.container.setOnClickListener(v -> mView.goToImages(mCategories.get(finalPosition).getName()));
+        holder.container.setOnClickListener(v -> mPresenter.goToWallpapers(mCategories.get(finalPosition).getName()));
     }
 
     @Override

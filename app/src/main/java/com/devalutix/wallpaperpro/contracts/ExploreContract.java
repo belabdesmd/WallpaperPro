@@ -3,6 +3,7 @@ package com.devalutix.wallpaperpro.contracts;
 import com.devalutix.wallpaperpro.base.BasePresenter;
 import com.devalutix.wallpaperpro.base.BaseView;
 import com.devalutix.wallpaperpro.pojo.Wallpaper;
+import com.devalutix.wallpaperpro.presenters.ExplorePresenter;
 
 import java.util.ArrayList;
 
@@ -14,22 +15,24 @@ public interface ExploreContract {
 
         void updateRecyclerView(String mode);
 
-        String listToString(ArrayList<Wallpaper> images);
+        String listToString(ArrayList<Wallpaper> wallpapers);
 
         String getMode();
+
+        void goToWallpaperActivity(int position,ArrayList<Wallpaper> wallpapers);
     }
 
     interface View extends BaseView {
 
-        void initRecyclerView(ArrayList<Wallpaper> images);
+        void initRecyclerView(ArrayList<Wallpaper> wallpapers);
 
-        void updateRecyclerView(ArrayList<Wallpaper> images);
+        void updateRecyclerView(ArrayList<Wallpaper> wallpapers);
 
         void initRetrySheet();
 
         void showNoNetwork();
 
-        void showPicturesList();
+        void showWallpapersList();
 
         void showEmptyCollection(String message);
 
@@ -41,9 +44,11 @@ public interface ExploreContract {
 
         void disableAllFilters();
 
-        void goToWallpaperActivity(int position,ArrayList<Wallpaper> images);
-
         void refresh();
+
+        boolean isRefreshing();
+
+        ExplorePresenter getPresenter();
     }
 
 }

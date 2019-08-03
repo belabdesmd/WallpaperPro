@@ -30,7 +30,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.activities.ImagesActivity"
+            android:name=".ui.activities.WallpapersActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activities.WallpaperActivity"

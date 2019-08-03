@@ -1,19 +1,13 @@
 package com.devalutix.wallpaperpro.presenters;
 
-import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.util.Log;
-
 import androidx.annotation.NonNull;
 
 import com.devalutix.wallpaperpro.R;
-import com.devalutix.wallpaperpro.contracts.ImagesContract;
-import com.devalutix.wallpaperpro.di.annotations.ApplicationContext;
+import com.devalutix.wallpaperpro.contracts.WallpapersContract;
 import com.devalutix.wallpaperpro.models.SharedPreferencesHelper;
 import com.devalutix.wallpaperpro.pojo.Collection;
 import com.devalutix.wallpaperpro.pojo.Wallpaper;
-import com.devalutix.wallpaperpro.ui.activities.ImagesActivity;
+import com.devalutix.wallpaperpro.ui.activities.WallpapersActivity;
 import com.devalutix.wallpaperpro.utils.ApiEndpointInterface;
 import com.devalutix.wallpaperpro.utils.Config;
 import com.google.gson.Gson;
@@ -23,30 +17,27 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class ImagesPresenter implements ImagesContract.Presenter {
-    private static String TAG = "ImagesPresenter";
+public class WallpapersPresenter implements WallpapersContract.Presenter {
 
     /***************************************** Declarations ***************************************/
-    private ImagesActivity mView;
+    private WallpapersActivity mView;
     private Gson gson;
-    private Context mContext;
     private String mode;
     private SharedPreferencesHelper mSharedPrefsHelper;
     private ApiEndpointInterface apiService;
 
     /***************************************** Constructor ****************************************/
-    public ImagesPresenter(@ApplicationContext Context mContext, Gson gson, SharedPreferencesHelper mSharedPrefsHelper
+    public WallpapersPresenter(Gson gson, SharedPreferencesHelper mSharedPrefsHelper
             , ApiEndpointInterface apiService) {
         this.gson = gson;
-        this.mContext = mContext;
         this.mSharedPrefsHelper = mSharedPrefsHelper;
         this.apiService = apiService;
     }
 
     /***************************************** Essential Methods **********************************/
     @Override
-    public void attach(ImagesContract.View view) {
-        mView = (ImagesActivity) view;
+    public void attach(WallpapersContract.View view) {
+        mView = (WallpapersActivity) view;
     }
 
     @Override
@@ -62,18 +53,16 @@ public class ImagesPresenter implements ImagesContract.Presenter {
     /***************************************** Methods ********************************************/
     @Override
     public void initRecyclerView(String mode, String name) {
-        Log.d(TAG, "initRecyclerView: Initializing Recycler View");
-
         this.mode = mode;
 
         Call<ArrayList<Wallpaper>> call = null;
 
         switch (mode) {
             case "collection": {
-                ArrayList<Wallpaper> images = getImagesFromCollection(name);
-                mView.initRecyclerView(images);
+                ArrayList<Wallpaper> wallpapers = getWallpapersFromCollection(name);
+                mView.initRecyclerView(wallpapers);
 
-                if (images.size() > 0) mView.showPicturesList();
+                if (wallpapers.size() > 0) mView.showPicturesList();
                 else mView.showEmptyCollection(mView.getResources().getString(R.string.empty_collection));
             }
             break;
@@ -121,16 +110,14 @@ public class ImagesPresenter implements ImagesContract.Presenter {
 
     @Override
     public void updateRecyclerView(String name) {
-        Log.d(TAG, "updateRecyclerView: Updating Recycler View");
-
         Call<ArrayList<Wallpaper>> call = null;
 
         switch (mode) {
             case "collection": {
-                ArrayList<Wallpaper> images = getImagesFromCollection(name);
-                mView.updateRecyclerView(images);
+                ArrayList<Wallpaper> wallpapers = getWallpapersFromCollection(name);
+                mView.updateRecyclerView(wallpapers);
 
-                if (images.size() > 0) mView.showPicturesList();
+                if (wallpapers.size() > 0) mView.showPicturesList();
                 else mView.showEmptyCollection(mView.getResources().getString(R.string.empty_collection));
             }
             break;
@@ -179,23 +166,22 @@ public class ImagesPresenter implements ImagesContract.Presenter {
     }
 
     @Override
-    public ArrayList<Wallpaper> getImagesFromCollection(String name) {
-        Log.d(TAG, "getImagesFromCollection: Getting Images From Collection");
+    public ArrayList<Wallpaper> getWallpapersFromCollection(String name) {
 
         ArrayList<Collection> allCollections = mSharedPrefsHelper.getCollections();
-        ArrayList<Wallpaper> images = new ArrayList<>();
+        ArrayList<Wallpaper> wallpapers = new ArrayList<>();
 
         boolean found = false;
         int i = 0;
 
         while (!found && i < allCollections.size()) {
             if (allCollections.get(i).getCollectionName().equals(name)) {
-                images = allCollections.get(i).getCollectionPictures();
+                wallpapers = allCollections.get(i).getCollectionPictures();
                 found = true;
             } else i++;
         }
 
-        return images;
+        return wallpapers;
     }
 
     @Override
@@ -204,7 +190,7 @@ public class ImagesPresenter implements ImagesContract.Presenter {
     }
 
     @Override
-    public String listToString(ArrayList<Wallpaper> images) {
-        return gson.toJson(images);
+    public String listToString(ArrayList<Wallpaper> wallpapers) {
+        return gson.toJson(wallpapers);
     }
 }

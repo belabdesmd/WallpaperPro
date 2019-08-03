@@ -1,6 +1,5 @@
 package com.devalutix.wallpaperpro.ui.fragments;
 
-import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
 
@@ -15,7 +14,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,9 +28,7 @@ import com.devalutix.wallpaperpro.di.modules.ApplicationModule;
 import com.devalutix.wallpaperpro.di.modules.MVPModule;
 import com.devalutix.wallpaperpro.pojo.Category;
 import com.devalutix.wallpaperpro.presenters.CategoriesPresenter;
-import com.devalutix.wallpaperpro.ui.activities.ImagesActivity;
 import com.devalutix.wallpaperpro.ui.adapters.CategoriesAdapter;
-import com.google.android.gms.ads.AdActivity;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
 import java.util.ArrayList;
@@ -41,12 +37,10 @@ import java.util.Objects;
 import javax.inject.Inject;
 
 public class CategoriesFragment extends Fragment implements CategoriesContract.View {
-    private static String TAG = "CategoriesFragment";
 
     /****************************************** Declarations **************************************/
     private MVPComponent mvpComponent;
     private CategoriesAdapter mAdapter;
-    private ArrayList<Category> categories;
     @Inject
     CategoriesPresenter mPresenter;
     private BottomSheetBehavior retry_behavior;
@@ -58,8 +52,6 @@ public class CategoriesFragment extends Fragment implements CategoriesContract.V
     SwipeRefreshLayout mRefresh;
     @BindView(R.id.no_network_category)
     ImageView noNetworkLayout;
-    @BindView(R.id.empty_categories)
-    TextView emptyCollectionLayout;
 
     //Retry
     @BindView(R.id.retry_card)
@@ -69,7 +61,7 @@ public class CategoriesFragment extends Fragment implements CategoriesContract.V
 
     /**************************************** Click Listeners *************************************/
     @OnClick(R.id.retry)
-    public void retry() {
+    void retry() {
         refresh();
     }
 
@@ -134,10 +126,6 @@ public class CategoriesFragment extends Fragment implements CategoriesContract.V
     /****************************************** Methods *******************************************/
     @Override
     public void initRecyclerView(ArrayList<Category> categories) {
-        Log.d(TAG, "initRecyclerView: init Adapter");
-
-        //Set the List
-        this.categories = categories;
 
         //Declarations
         StaggeredGridLayoutManager mLayoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL);
@@ -150,7 +138,6 @@ public class CategoriesFragment extends Fragment implements CategoriesContract.V
 
     @Override
     public void updateRecyclerView(ArrayList<Category> categories) {
-        this.categories = categories;
 
         if (mAdapter != null) {
             //Deleting the List of the Categories
@@ -190,17 +177,6 @@ public class CategoriesFragment extends Fragment implements CategoriesContract.V
     }
 
     @Override
-    public void showEmptyCollection(String message) {
-        mRefresh.setRefreshing(false);
-
-        mRecyclerView.setVisibility(View.GONE);
-        noNetworkLayout.setVisibility(View.GONE);
-
-        emptyCollectionLayout.setText(message);
-        emptyCollectionLayout.setVisibility(View.VISIBLE);
-    }
-
-    @Override
     public void showRetryCard(String message){
         retry_msg.setText(message);
         retry_behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
@@ -209,17 +185,6 @@ public class CategoriesFragment extends Fragment implements CategoriesContract.V
     @Override
     public void hideRetryCard(){
         retry_behavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-    }
-
-    @Override
-    public void goToImages(String categoryName) {
-        Intent goToWallpaper = new Intent(getActivity(), ImagesActivity.class);
-
-        //Putting the Extras
-        goToWallpaper.putExtra("name", categoryName);
-        goToWallpaper.putExtra("mode", "category");
-        goToWallpaper.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(goToWallpaper);
     }
 
     @Override

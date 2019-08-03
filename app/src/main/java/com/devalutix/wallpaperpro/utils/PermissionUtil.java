@@ -9,12 +9,6 @@ import com.devalutix.wallpaperpro.ui.activities.MainActivity;
 
 import androidx.core.app.ActivityCompat;
 
-import javax.inject.Inject;
-
-/**********************************
- © 2018 Sam Dev
- ALL RIGHTS RESERVED
- ***********************************/
 public class PermissionUtil {
 
     private SharedPreferencesHelper sharedPreferencesHelper;
@@ -34,9 +28,7 @@ public class PermissionUtil {
     private boolean shouldAskPermission(Context context, String permission) {
         if (shouldAskPermission()) {
             int permissionResult = ActivityCompat.checkSelfPermission(context, permission);
-            if (permissionResult != PackageManager.PERMISSION_GRANTED) {
-                return true;
-            }
+            return permissionResult != PackageManager.PERMISSION_GRANTED;
         }
         return false;
     }
@@ -75,6 +67,7 @@ public class PermissionUtil {
             listener.onPermissionGranted();
         }
     }
+
     /*
      * Callback on various cases on checking permission
      *

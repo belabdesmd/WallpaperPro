@@ -13,26 +13,23 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.devalutix.wallpaperpro.R;
-import com.devalutix.wallpaperpro.contracts.ImagesContract;
+import com.devalutix.wallpaperpro.contracts.WallpapersContract;
 import com.devalutix.wallpaperpro.di.components.DaggerMVPComponent;
 import com.devalutix.wallpaperpro.di.components.MVPComponent;
 import com.devalutix.wallpaperpro.di.modules.ApplicationModule;
 import com.devalutix.wallpaperpro.di.modules.MVPModule;
 import com.devalutix.wallpaperpro.pojo.Wallpaper;
-import com.devalutix.wallpaperpro.presenters.ImagesPresenter;
-import com.devalutix.wallpaperpro.ui.adapters.ImagesAdapter;
+import com.devalutix.wallpaperpro.presenters.WallpapersPresenter;
+import com.devalutix.wallpaperpro.ui.adapters.WallpapersAdapter;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
 import java.util.ArrayList;
@@ -40,26 +37,24 @@ import java.util.Objects;
 
 import javax.inject.Inject;
 
-public class ImagesActivity extends AppCompatActivity implements ImagesContract.View {
-    private static String TAG = "ImagesActivity";
+public class WallpapersActivity extends AppCompatActivity implements WallpapersContract.View {
     private static final int COL_NUM = 3;
 
     /**************************************** Declarations ****************************************/
     private MVPComponent mvpComponent;
-    private ImagesAdapter mAdapter;
-    private ArrayList<Wallpaper> images;
+    private WallpapersAdapter mAdapter;
     @Inject
-    ImagesPresenter mPresenter;
+    WallpapersPresenter mPresenter;
     private BottomSheetBehavior retry_behavior;
 
     /**************************************** View Declarations ***********************************/
-    @BindView(R.id.images_toolbar)
+    @BindView(R.id.wallpapers_toolbar)
     Toolbar mToolbar;
-    @BindView(R.id.images_recyclerview)
+    @BindView(R.id.wallpapers_recycler_view)
     RecyclerView mRecyclerView;
-    @BindView(R.id.swipe_to_refresh_images)
+    @BindView(R.id.swipe_to_refresh_wallpapers)
     SwipeRefreshLayout mRefresh;
-    @BindView(R.id.no_network_images1)
+    @BindView(R.id.no_network_wallpapers)
     ImageView noNetworkLayout;
     @BindView(R.id.empty)
     TextView emptyCollectionLayout;
@@ -137,8 +132,6 @@ public class ImagesActivity extends AppCompatActivity implements ImagesContract.
     /**************************************** Methods *********************************************/
     @Override
     public void setToolbar() {
-        Log.d(TAG, "setToolbar: Setting the Toolbar.");
-
         setSupportActionBar(mToolbar);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.back);
@@ -146,7 +139,6 @@ public class ImagesActivity extends AppCompatActivity implements ImagesContract.
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Log.d(TAG, "onOptionsItemSelected: User Clicks on Options Item.");
         if (item.getItemId() == android.R.id.home) {
             onBackPressed();
             return true;
@@ -159,24 +151,20 @@ public class ImagesActivity extends AppCompatActivity implements ImagesContract.
 
     @Override
     public void setPageName(String mode, String name) {
-        Log.d(TAG, "setPageName: Setting Page Name : " + name);
         if (mode.equals("search"))
             Objects.requireNonNull(getSupportActionBar()).setTitle(getResources().getString(R.string.search_toolbar) + " " + name);
         else Objects.requireNonNull(getSupportActionBar()).setTitle(name);
     }
 
     @Override
-    public void initRecyclerView(ArrayList<Wallpaper> images) {
-
-        //Set the List
-        this.images = images;
+    public void initRecyclerView(ArrayList<Wallpaper> wallpapers) {
 
         //Declarations
         StaggeredGridLayoutManager mLayoutManager = new StaggeredGridLayoutManager(COL_NUM, StaggeredGridLayoutManager.VERTICAL);
-        mAdapter = new ImagesAdapter(images, this);
+        mAdapter = new WallpapersAdapter(wallpapers, this);
 
         mRecyclerView.setLayoutManager(mLayoutManager);
-        mRecyclerView.addItemDecoration(new ImagesActivity.MyItemDecoration());
+        mRecyclerView.addItemDecoration(new WallpapersActivity.MyItemDecoration());
         mRecyclerView.setAdapter(mAdapter);
     }
 
@@ -187,15 +175,13 @@ public class ImagesActivity extends AppCompatActivity implements ImagesContract.
     }
 
     @Override
-    public void updateRecyclerView(ArrayList<Wallpaper> images) {
-
-        this.images = images;
+    public void updateRecyclerView(ArrayList<Wallpaper> wallpapers) {
 
         //Deleting the List of the Categories
         mAdapter.clearAll();
 
         // Adding The New List of Categories
-        mAdapter.addAll(images);
+        mAdapter.addAll(wallpapers);
 
         /*
          * Stop Refreshing the Animations
@@ -245,12 +231,12 @@ public class ImagesActivity extends AppCompatActivity implements ImagesContract.
     }
 
     @Override
-    public void goToWallpaperActivity(int position, ArrayList<Wallpaper> images) {
+    public void goToWallpaperActivity(int position, ArrayList<Wallpaper> wallpapers) {
         if (!mRefresh.isRefreshing()) {
             Intent goToWallpaper = new Intent(this, WallpaperActivity.class);
 
             //Transferring the List
-            String jsonImages = mPresenter.listToString(images);
+            String jsonImages = mPresenter.listToString(wallpapers);
 
             //Putting the Extras
             goToWallpaper.putExtra("current", position);
@@ -258,17 +244,6 @@ public class ImagesActivity extends AppCompatActivity implements ImagesContract.
             goToWallpaper.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(goToWallpaper);
         }
-    }
-
-    public void hideKeyboard() {
-        InputMethodManager imm = (InputMethodManager) this.getSystemService(Activity.INPUT_METHOD_SERVICE);
-        //Find the currently focused view, so we can grab the correct window token from it.
-        View view = this.getCurrentFocus();
-        //If no view currently has focus, create a new one, just so we can grab a window token from it
-        if (view == null) {
-            view = new View(this);
-        }
-        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
     public class MyItemDecoration extends RecyclerView.ItemDecoration {

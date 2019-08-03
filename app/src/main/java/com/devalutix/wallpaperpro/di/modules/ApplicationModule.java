@@ -6,12 +6,6 @@ import android.content.SharedPreferences;
 
 import com.devalutix.wallpaperpro.di.annotations.ApplicationContext;
 import com.devalutix.wallpaperpro.models.SharedPreferencesHelper;
-import com.devalutix.wallpaperpro.presenters.CategoriesPresenter;
-import com.devalutix.wallpaperpro.presenters.ExplorePresenter;
-import com.devalutix.wallpaperpro.presenters.FavoritesPresenter;
-import com.devalutix.wallpaperpro.presenters.ImagesPresenter;
-import com.devalutix.wallpaperpro.presenters.MainPresenter;
-import com.devalutix.wallpaperpro.presenters.WallpaperPresenter;
 import com.devalutix.wallpaperpro.utils.ApiEndpointInterface;
 import com.devalutix.wallpaperpro.utils.Config;
 import com.devalutix.wallpaperpro.utils.GDPR;
@@ -26,11 +20,6 @@ import dagger.Provides;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-/**********************************
- © 2018 Sam Dev
- ALL RIGHTS RESERVED
- ***********************************/
-
 @Module
 public class ApplicationModule {
 
@@ -42,10 +31,6 @@ public class ApplicationModule {
     public ApplicationModule(Application mApplication) {
         this.mApplication = mApplication;
     }
-
-    /*
-        Here We Provide The Dependencies
-     */
 
     //Context
     @Provides
@@ -100,6 +85,7 @@ public class ApplicationModule {
     /*
         Utils
      */
+
     @Provides
     @Singleton
     GDPR providesGDPR(SharedPreferencesHelper sharedPreferencesHelper){

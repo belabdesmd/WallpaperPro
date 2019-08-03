@@ -13,6 +13,8 @@ public interface CategoriesContract {
         void initRecyclerView();
 
         void updateRecyclerView();
+
+        void goToWallpapers(String categoryName);
     }
 
     interface View extends BaseView {
@@ -27,13 +29,9 @@ public interface CategoriesContract {
 
         void showCategoriesList();
 
-        void showEmptyCollection(String message);
-
         void showRetryCard(String message);
 
         void hideRetryCard();
-
-        void goToImages(String categoryName);
 
         void refresh();
     }

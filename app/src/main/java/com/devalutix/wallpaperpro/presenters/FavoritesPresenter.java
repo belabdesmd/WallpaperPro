@@ -1,6 +1,5 @@
 package com.devalutix.wallpaperpro.presenters;
 
-import android.content.Context;
 import android.util.Log;
 
 import com.devalutix.wallpaperpro.contracts.FavoritesContract;
@@ -18,12 +17,10 @@ public class FavoritesPresenter implements FavoritesContract.Presenter {
     /***************************************** Declarations ***************************************/
     private FavoritesFragment mView;
     private SharedPreferencesHelper mSharedPrefsHelper;
-    private Context mContext;
 
     /***************************************** Constructor ****************************************/
-    public FavoritesPresenter(Context mContext, SharedPreferencesHelper sharedPreferencesHelper) {
+    public FavoritesPresenter(SharedPreferencesHelper sharedPreferencesHelper) {
         mSharedPrefsHelper = sharedPreferencesHelper;
-        this.mContext = mContext;
     }
 
     /***************************************** Essential Methods **********************************/
@@ -117,8 +114,7 @@ public class FavoritesPresenter implements FavoritesContract.Presenter {
     }
 
     @Override
-    public void addImageToCollection(String collectionName, Wallpaper image) {
-        Log.d(TAG, "addImageToCollection: Adding Image To Collection");
+    public void addWallpaperToCollection(String collectionName, Wallpaper wallpaper) {
 
         //Get All Collections
         ArrayList<Collection> collections = getCollectionsList();
@@ -128,8 +124,8 @@ public class FavoritesPresenter implements FavoritesContract.Presenter {
 
         while (i < collections.size() && !found) {
             if (collections.get(i).getCollectionName().equals(collectionName)) {
-                if (!collections.get(i).getCollectionPictures().contains(image))
-                    collections.get(i).getCollectionPictures().add(image);
+                if (!collections.get(i).getCollectionPictures().contains(wallpaper))
+                    collections.get(i).getCollectionPictures().add(wallpaper);
                 found = true;
             } else i++;
         }
