@@ -136,10 +136,7 @@ public class ExploreFragment extends Fragment implements ExploreContract.View {
         initRetrySheet();
 
         //When Pulling To Refresh Listener
-        mRefresh.setOnRefreshListener(() -> {
-            hideRetryCard();
-            mPresenter.updateRecyclerView(mode);
-        });
+        mRefresh.setOnRefreshListener(this::refresh);
 
         return view;
     }
@@ -185,7 +182,7 @@ public class ExploreFragment extends Fragment implements ExploreContract.View {
     }
 
     @Override
-    public void initRetrySheet(){
+    public void initRetrySheet() {
         retry_behavior = BottomSheetBehavior.from(retry_card);
         hideRetryCard();
     }
@@ -219,13 +216,13 @@ public class ExploreFragment extends Fragment implements ExploreContract.View {
     }
 
     @Override
-    public void showRetryCard(String message){
+    public void showRetryCard(String message) {
         retry_msg.setText(message);
         retry_behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
     }
 
     @Override
-    public void hideRetryCard(){
+    public void hideRetryCard() {
         retry_behavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
     }
 

@@ -97,10 +97,7 @@ public class CategoriesFragment extends Fragment implements CategoriesContract.V
         initRetrySheet();
 
         //When Pulling To Refresh Listener
-        mRefresh.setOnRefreshListener(() -> {
-            hideRetryCard();
-            mPresenter.updateRecyclerView();
-        });
+        mRefresh.setOnRefreshListener(this::refresh);
 
         return view;
     }
@@ -153,7 +150,7 @@ public class CategoriesFragment extends Fragment implements CategoriesContract.V
     }
 
     @Override
-    public void initRetrySheet(){
+    public void initRetrySheet() {
         retry_behavior = BottomSheetBehavior.from(retry_card);
         hideRetryCard();
     }
@@ -177,13 +174,13 @@ public class CategoriesFragment extends Fragment implements CategoriesContract.V
     }
 
     @Override
-    public void showRetryCard(String message){
+    public void showRetryCard(String message) {
         retry_msg.setText(message);
         retry_behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
     }
 
     @Override
-    public void hideRetryCard(){
+    public void hideRetryCard() {
         retry_behavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
     }
 

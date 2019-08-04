@@ -9,6 +9,13 @@
     app:cardCornerRadius="16dp"
     app:cardElevation="0dp">
 
+    <ProgressBar
+        android:id="@+id/load"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        />
+
     <ImageView
         android:id="@+id/wallpaper_item"
         android:layout_width="match_parent"

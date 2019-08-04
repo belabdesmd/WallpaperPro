@@ -1,19 +1,28 @@
 package com.devalutix.wallpaperpro.ui.adapters;
 
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.devalutix.wallpaperpro.R;
 import com.devalutix.wallpaperpro.pojo.Wallpaper;
 import com.devalutix.wallpaperpro.ui.activities.WallpapersActivity;
 import com.devalutix.wallpaperpro.ui.fragments.ExploreFragment;
+import com.github.ybq.android.spinkit.sprite.Sprite;
+import com.github.ybq.android.spinkit.style.ChasingDots;
 
 import java.util.ArrayList;
 
@@ -53,19 +62,48 @@ public class WallpapersAdapter extends RecyclerView.Adapter<WallpapersAdapter.Vi
 
     @Override
     public void onBindViewHolder(@NonNull WallpapersAdapter.ViewHolder holder, int position) {
+        Sprite chasingDots = new ChasingDots();
+        chasingDots.setColor(R.color.colorAccent);
+        holder.loading.setIndeterminateDrawable(chasingDots);
 
         //Loading the Wallpaper
         if (mView == null)
             Glide.with(mView1)
                     .load(mWallpapers.get(position).getWallpapers())
                     .fitCenter()
-                    //.placeholder(R.drawable.loading_spinner)
+                    .error(R.drawable.error)
+                    .listener(new RequestListener<Drawable>() {
+                        @Override
+                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                            holder.loading.setVisibility(View.GONE);
+                            return false;
+                        }
+
+                        @Override
+                        public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                            holder.loading.setVisibility(View.GONE);
+                            return false;
+                        }
+                    })
                     .into(holder.wallpaper);
         else if (mView1 == null)
             Glide.with(mView)
                     .load(mWallpapers.get(position).getWallpapers())
                     .fitCenter()
-                    //.placeholder(R.drawable.loading_spinner)
+                    .error(R.drawable.error)
+                    .listener(new RequestListener<Drawable>() {
+                        @Override
+                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                            holder.loading.setVisibility(View.GONE);
+                            return false;
+                        }
+
+                        @Override
+                        public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                            holder.loading.setVisibility(View.GONE);
+                            return false;
+                        }
+                    })
                     .into(holder.wallpaper);
 
         //Click Listener
@@ -98,12 +136,14 @@ public class WallpapersAdapter extends RecyclerView.Adapter<WallpapersAdapter.Vi
     static class ViewHolder extends RecyclerView.ViewHolder {
         CardView container;
         ImageView wallpaper;
+        ProgressBar loading;
 
         ViewHolder(View v) {
             super(v);
 
             container = v.findViewById(R.id.wallpaper_item_container);
             wallpaper = v.findViewById(R.id.wallpaper_item);
+            loading = v.findViewById(R.id.load);
         }
     }
 }

@@ -21,7 +21,7 @@ public interface FavoritesContract {
 
         void removeCollection(String collectionName);
 
-        void addWallpaperToCollection(String name, Wallpaper wallpaper);
+        void add_removeWallpaper(String name, Wallpaper wallpaper);
 
         ArrayList<Collection> getCollectionsList();
     }

@@ -68,9 +68,7 @@ public class WallpapersActivity extends AppCompatActivity implements WallpapersC
     /**************************************** Click Listeners *************************************/
     @OnClick(R.id.retry)
     public void retry(){
-        hideRetryCard();
-        mRefresh.setRefreshing(true);
-        mPresenter.updateRecyclerView(mPresenter.getMode());
+        refresh();
     }
 
     /**************************************** Essential Methods ***********************************/
@@ -88,7 +86,7 @@ public class WallpapersActivity extends AppCompatActivity implements WallpapersC
         else setTheme(R.style.AppLightTheme);
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_images);
+        setContentView(R.layout.activity_wallpapers);
 
         //Set ButterKnife
         ButterKnife.bind(this);
@@ -111,10 +109,7 @@ public class WallpapersActivity extends AppCompatActivity implements WallpapersC
                 getIntent().getStringExtra("name"));
 
         //Pull To Refresh Listener
-        mRefresh.setOnRefreshListener(() -> {
-            hideRetryCard();
-            mPresenter.updateRecyclerView(getIntent().getStringExtra("name"));
-        });
+        mRefresh.setOnRefreshListener(this::refresh);
     }
 
     @Override
@@ -244,6 +239,13 @@ public class WallpapersActivity extends AppCompatActivity implements WallpapersC
             goToWallpaper.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(goToWallpaper);
         }
+    }
+
+    @Override
+    public void refresh() {
+        hideRetryCard();
+        mRefresh.setRefreshing(false);
+        mPresenter.updateRecyclerView(mPresenter.getMode());
     }
 
     public class MyItemDecoration extends RecyclerView.ItemDecoration {

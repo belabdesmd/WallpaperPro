@@ -176,7 +176,7 @@ public class WallpapersPresenter implements WallpapersContract.Presenter {
 
         while (!found && i < allCollections.size()) {
             if (allCollections.get(i).getCollectionName().equals(name)) {
-                wallpapers = allCollections.get(i).getCollectionPictures();
+                wallpapers = allCollections.get(i).getCollectionWallpapers();
                 found = true;
             } else i++;
         }

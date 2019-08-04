@@ -96,5 +96,7 @@
     <string name="empty_category">Empty Category</string>
     <string name="empty_search">No Results</string>
     <string name="empty_images">No Images</string>
+    <string name="no_collections_msg">No Collections, Go To Collections and Add One</string>
+    <string name="collection_exists">Collection Already Exists</string>
 </resources>
 

@@ -61,18 +61,16 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.View
         Log.d(TAG, "onBindViewHolder: Setting Views.");
 
         if (mView != null) {
-            if (!mCollections.get(position).getCollectionPictures().isEmpty())
+            if (!mCollections.get(position).getCollectionWallpapers().isEmpty())
                 Glide.with(mView)
-                        .load(mCollections.get(position).getCollectionPictures().get(0).getWallpapers())
+                        .load(mCollections.get(position).getCollectionWallpapers().get(0).getWallpapers())
                         .fitCenter()
-                        //.placeholder(R.drawable.loading_spinner)
                         .into(holder.thumbnail);
         } else if (mView1 != null) {
-            if (!mCollections.get(position).getCollectionPictures().isEmpty())
+            if (!mCollections.get(position).getCollectionWallpapers().isEmpty())
                 Glide.with(mView1)
-                        .load(mCollections.get(position).getCollectionPictures().get(0).getWallpapers())
+                        .load(mCollections.get(position).getCollectionWallpapers().get(0).getWallpapers())
                         .fitCenter()
-                        //.placeholder(R.drawable.loading_spinner)
                         .into(holder.thumbnail);
         }
 
@@ -85,7 +83,7 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.View
         final int finalPosition = position;
         holder.container.setOnClickListener(v -> {
             if (mView1 != null) {
-                mPresenter.addWallpaperToCollection(mCollections.get(finalPosition).getCollectionName(), mView1.getImage());
+                mPresenter.add_removeWallpaper(mCollections.get(finalPosition).getCollectionName(), mView1.getImage());
                 Toast.makeText(mView1, mView1.getResources().getString(R.string.wallpaper_added_msg) + mCollections.get(finalPosition).getCollectionName(), Toast.LENGTH_SHORT).show();
                 mView1.hideFavorite();
             } else if (mView != null)
@@ -100,6 +98,7 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.View
             return true;
         });
     }
+
 
     @Override
     public int getItemCount() {

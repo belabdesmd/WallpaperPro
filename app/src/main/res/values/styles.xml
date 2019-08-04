@@ -37,4 +37,9 @@
         <item name="android:textSize">22sp</item>
     </style>
 
+    <style name="CustomNavigationView">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
 </resources>

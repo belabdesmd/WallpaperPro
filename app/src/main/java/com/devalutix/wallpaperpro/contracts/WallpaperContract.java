@@ -56,6 +56,8 @@ public interface WallpaperContract {
 
         void showInterstitialAd();
 
+        void showEmptyCollection();
+
         void hideInfos();
 
         void hideFavorite();

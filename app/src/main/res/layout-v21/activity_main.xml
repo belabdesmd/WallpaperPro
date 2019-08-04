@@ -96,6 +96,7 @@
         android:layout_gravity="start"
         android:background="?attr/backgroundColor"
         android:fitsSystemWindows="true"
+        style="@style/CustomNavigationView"
         app:headerLayout="@layout/nav_header"
         app:itemTextColor="?attr/primaryTextColor"
         app:menu="@menu/navigation_menu" />

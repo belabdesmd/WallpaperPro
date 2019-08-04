@@ -21,6 +21,7 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -67,6 +68,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     private ExploreFragment explore;
     private CategoriesFragment categories;
     private FavoritesFragment favorites;
+    private boolean doubleBackToExitPressedOnce = false;
 
     /**************************************** View Declarations ***********************************/
     //Drawer Menu
@@ -159,7 +161,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
 
             int id = item.getItemId();
 
-            switch(id){
+            switch (id) {
                 case R.id.our_apps_menu:
                     ourApps();
                     break;
@@ -195,6 +197,19 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
                     .build();
         }
         return mvpComponent;
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (doubleBackToExitPressedOnce) {
+            super.onBackPressed();
+            return;
+        }
+
+        this.doubleBackToExitPressedOnce = true;
+        Toast.makeText(this, "Please click BACK again to exit", Toast.LENGTH_SHORT).show();
+
+        new Handler().postDelayed(() -> doubleBackToExitPressedOnce = false, 2000);
     }
 
     @Override
@@ -286,6 +301,30 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
 
         mAdapter = new MainPagerAdapter(getSupportFragmentManager(), fragments, MainActivity.this);
         mViewPager.setAdapter(mAdapter);
+
+        mViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                switch (position) {
+                    case 0:
+                        explore.refresh();
+                        break;
+                    case 1:
+                        categories.refresh();
+                        break;
+                }
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
     }
 
     @Override

@@ -1,7 +1,9 @@
 package com.devalutix.wallpaperpro.presenters;
 
 import android.util.Log;
+import android.widget.Toast;
 
+import com.devalutix.wallpaperpro.R;
 import com.devalutix.wallpaperpro.contracts.FavoritesContract;
 import com.devalutix.wallpaperpro.models.SharedPreferencesHelper;
 import com.devalutix.wallpaperpro.pojo.Collection;
@@ -73,7 +75,10 @@ public class FavoritesPresenter implements FavoritesContract.Presenter {
         Log.d(TAG, "addCollection: Adding Collection");
 
         ArrayList<Collection> collections = getCollectionsList();
-        collections.add(collection);
+        if (!collections.contains(collection))
+            collections.add(collection);
+        else
+            Toast.makeText(mView.getActivity(), mView.getResources().getString(R.string.collection_exists), Toast.LENGTH_SHORT).show();
         mSharedPrefsHelper.saveCollections(collections);
 
         //Update Recycler View
@@ -114,7 +119,7 @@ public class FavoritesPresenter implements FavoritesContract.Presenter {
     }
 
     @Override
-    public void addWallpaperToCollection(String collectionName, Wallpaper wallpaper) {
+    public void add_removeWallpaper(String collectionName, Wallpaper wallpaper) {
 
         //Get All Collections
         ArrayList<Collection> collections = getCollectionsList();
@@ -124,8 +129,9 @@ public class FavoritesPresenter implements FavoritesContract.Presenter {
 
         while (i < collections.size() && !found) {
             if (collections.get(i).getCollectionName().equals(collectionName)) {
-                if (!collections.get(i).getCollectionPictures().contains(wallpaper))
-                    collections.get(i).getCollectionPictures().add(wallpaper);
+                if (!collections.get(i).getCollectionWallpapers().contains(wallpaper))
+                    collections.get(i).getCollectionWallpapers().add(wallpaper);
+                else collections.get(i).getCollectionWallpapers().remove(wallpaper);
                 found = true;
             } else i++;
         }

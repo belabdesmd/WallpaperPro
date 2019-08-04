@@ -18,7 +18,7 @@ public class Collection {
         return collectionName;
     }
 
-    public ArrayList<Wallpaper> getCollectionPictures() {
+    public ArrayList<Wallpaper> getCollectionWallpapers() {
         return collectionPictures;
     }
 

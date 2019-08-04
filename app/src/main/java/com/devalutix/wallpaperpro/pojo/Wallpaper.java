@@ -4,6 +4,7 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class Wallpaper {
 
@@ -72,5 +73,14 @@ public class Wallpaper {
 
     public void setDateAdded(String dateAdded) {
         this.dateAdded = dateAdded;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Wallpaper wallpaper = (Wallpaper) o;
+        return pk == wallpaper.pk &&
+                title.equals(wallpaper.title);
     }
 }

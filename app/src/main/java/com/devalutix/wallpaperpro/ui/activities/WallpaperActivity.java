@@ -38,6 +38,7 @@ import com.devalutix.wallpaperpro.di.components.DaggerMVPComponent;
 import com.devalutix.wallpaperpro.di.components.MVPComponent;
 import com.devalutix.wallpaperpro.di.modules.ApplicationModule;
 import com.devalutix.wallpaperpro.di.modules.MVPModule;
+import com.devalutix.wallpaperpro.pojo.Collection;
 import com.devalutix.wallpaperpro.pojo.Wallpaper;
 import com.devalutix.wallpaperpro.presenters.FavoritesPresenter;
 import com.devalutix.wallpaperpro.presenters.WallpaperPresenter;
@@ -87,6 +88,8 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
     CardView add_to_favorites_popup;
     @BindView(R.id.collections_recycler_view)
     RecyclerView mRecyclerView;
+    @BindView(R.id.empty)
+    TextView emptyCollectionLayout;
 
     @BindView(R.id.image_title)
     TextView titleTextView;
@@ -121,8 +124,14 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
     }
 
     @OnClick(R.id.popup_info_kicker)
-    public void openPopUpInfo() {
-        showInfos();
+    public void openPopUpInfo(View v) {
+        if (v.getTag().equals(0)) {
+            showInfos();
+            v.setTag(1);
+        } else {
+            hideInfos();
+            v.setTag(0);
+        }
     }
 
     @OnClick(R.id.go_to_favorites)
@@ -238,7 +247,7 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
         setSupportActionBar(mToolbar);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.back_white);
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.back_wallpaper);
     }
 
     @Override
@@ -265,7 +274,7 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
         /*
          * Transferring the Extra From The Images Activity Into A List (String -> List)
          */
-        mPresenter.setWallpapers(getIntent().getStringExtra("images"));
+        mPresenter.setWallpapers(getIntent().getStringExtra("wallpapers"));
 
         //Creating the Fragments and Adding Them
         for (Wallpaper image :
@@ -287,7 +296,6 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
 
             @Override
             public void onPageSelected(int position) {
-                initInfos(position);
             }
 
             @Override
@@ -384,13 +392,18 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
 
         //Declarations
         StaggeredGridLayoutManager mLayoutManager = new StaggeredGridLayoutManager(COL_NUM, StaggeredGridLayoutManager.VERTICAL);
-        FavoritesAdapter mAdapter = new FavoritesAdapter(favoritePresenter, mPresenter.getCollections(), this);
+        ArrayList<Collection> collections = mPresenter.getCollections();
+        FavoritesAdapter mAdapter = new FavoritesAdapter(favoritePresenter, collections, this);
 
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.addItemDecoration(new WallpaperActivity.MyItemDecoration());
         mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.setMinimumHeight(300);
 
         hideFavorite();
+
+        if (!(collections.size() > 0))
+            showEmptyCollection();
     }
 
     @Override
@@ -407,7 +420,7 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
     public void showFavorite() {
         Log.d(TAG, "showFavorite: Shows Favorites");
         add_to_favorite_popup_behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-        favoritePresenter.addWallpaperToCollection(Config.MY_FAVORITES_COLLECTION_NAME, mPresenter.getWallpapers(mViewPager.getCurrentItem()));
+        favoritePresenter.add_removeWallpaper(Config.MY_FAVORITES_COLLECTION_NAME, mPresenter.getWallpapers(mViewPager.getCurrentItem()));
     }
 
     @Override
@@ -420,6 +433,12 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
     public void showInterstitialAd() {
         if (mInterstitialAd.isLoaded())
             mInterstitialAd.show();
+    }
+
+    @Override
+    public void showEmptyCollection() {
+        mRecyclerView.setVisibility(View.GONE);
+        emptyCollectionLayout.setVisibility(View.VISIBLE);
     }
 
     public Wallpaper getImage() {

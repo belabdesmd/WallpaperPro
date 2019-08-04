@@ -43,6 +43,8 @@ public interface WallpapersContract {
 
         void hideRetryCard();
 
+        void refresh();
+
         void goToWallpaperActivity(int position, ArrayList<Wallpaper> wallpapers);
     }
 }

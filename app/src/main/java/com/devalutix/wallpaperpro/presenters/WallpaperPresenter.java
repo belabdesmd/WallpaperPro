@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Environment;
 import android.os.Handler;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -101,6 +102,7 @@ public class WallpaperPresenter implements WallpaperContract.Presenter {
 
     @Override
     public void savePicture(Wallpaper wallpaper, int position) {
+        Log.d("WallpaperPresenter", "savePicture: isEnabled" + mSharedPrefsHelper.isDownloadEnable());
         if (mSharedPrefsHelper.isDownloadEnable())
             Glide.with(mView)
                     .asBitmap()

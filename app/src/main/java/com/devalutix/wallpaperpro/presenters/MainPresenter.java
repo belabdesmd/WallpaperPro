@@ -63,12 +63,12 @@ public class MainPresenter implements MainContract.Presenter {
                                 new String[]{permission},
                                 permissionRequest
                         );
-                        if (!ActivityCompat.shouldShowRequestPermissionRationale
-                                (mView, permission)) {
-                            onPermissionGranted();
-                            sharedPreferencesHelper.setDownloadEnable(false);
-                        }else
-                            sharedPreferencesHelper.setDownloadEnable(true);
+//                        if (!ActivityCompat.shouldShowRequestPermissionRationale
+//                                (mView, permission)) {
+//                            onPermissionGranted();
+//                            sharedPreferencesHelper.setDownloadEnable(false);
+//                        }else
+//                            sharedPreferencesHelper.setDownloadEnable(true);
                     }
 
                     @Override
