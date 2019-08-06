@@ -1,5 +1,7 @@
 package com.devalutix.wallpaperpro.contracts;
 
+import android.content.Context;
+
 import com.devalutix.wallpaperpro.base.BasePresenter;
 import com.devalutix.wallpaperpro.base.BaseView;
 import com.devalutix.wallpaperpro.pojo.Collection;
@@ -21,7 +23,7 @@ public interface FavoritesContract {
 
         void removeCollection(String collectionName);
 
-        void add_removeWallpaper(String name, Wallpaper wallpaper);
+        void add_removeWallpaper(Context context, String name, Wallpaper wallpaper);
 
         ArrayList<Collection> getCollectionsList();
     }

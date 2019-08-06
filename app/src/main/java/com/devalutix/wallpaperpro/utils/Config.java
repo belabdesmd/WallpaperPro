@@ -39,19 +39,7 @@ public class Config {
      */
     public static final String PUBLISHER_ID = "pub-4679171106713552";
 
-    /**
-     * Facebook Page
-     */
-    public static final String FACEBOOK_PAGE = "https://www.facebook.com/FacebookAfrica";
-
-    /**
-     * Youtube Channel
-     */
-    public static final String YOUTUBE_CHANNEL = "https://www.youtube.com/user/theofficialfacebook";
-
-
     public static final String MY_FAVORITES_COLLECTION_NAME = "My Favorites";
-
 
     public static final String BASE_API_URL = "https://wallpaperprodemo.herokuapp.com/api/";
 

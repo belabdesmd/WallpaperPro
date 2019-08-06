@@ -95,10 +95,10 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:background="?attr/backgroundColor"
+        app:theme="@style/AppLightTheme.Drawer"
         android:fitsSystemWindows="true"
-        style="@style/CustomNavigationView"
         app:headerLayout="@layout/nav_header"
-        app:itemTextColor="?attr/primaryTextColor"
+        app:itemTextColor="@color/colorAccent"
         app:menu="@menu/navigation_menu" />
 
 </androidx.drawerlayout.widget.DrawerLayout>

@@ -61,6 +61,30 @@ public class WallpaperFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onPause() {
+        Log.d(TAG, "onPause: paused");
+        super.onPause();
+    }
+
+    @Override
+    public void onDestroy() {
+        Log.d(TAG, "onDestroy: destroyed");
+        super.onDestroy();
+    }
+
+    @Override
+    public void onResume() {
+        Log.d(TAG, "onResume: resumed");
+        super.onResume();
+    }
+
+    @Override
+    public void onStart() {
+        Log.d(TAG, "onStart: started");
+        super.onStart();
+    }
+
     @Nullable
     @Override
     public View getView() {

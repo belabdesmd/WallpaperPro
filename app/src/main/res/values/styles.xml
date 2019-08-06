@@ -29,7 +29,7 @@
     </style>
 
     <style name="AppLightTheme.Launcher">
-    <item name="android:windowBackground">@drawable/launch_screen</item>
+        <item name="android:windowBackground">@drawable/launch_screen</item>
     </style>
 
     <!-- The Style Of the Text in the Toolbar. -->
@@ -37,9 +37,14 @@
         <item name="android:textSize">22sp</item>
     </style>
 
-    <style name="CustomNavigationView">
-        <item name="android:textSize">18sp</item>
-        <item name="android:textStyle">bold</item>
+    <style name="AppLightTheme.Drawer">
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="CustomDialogTheme" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:colorBackground">@color/colorAccent</item>
+        <item name="android:textColor">@color/colorPrimary</item>
+        <item name="android:textColorPrimary">@color/colorPrimary</item>
     </style>
 
 </resources>

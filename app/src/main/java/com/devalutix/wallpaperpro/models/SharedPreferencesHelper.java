@@ -11,12 +11,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class SharedPreferencesHelper {
-    private static final String TAG = "SharedPreferenceHelper";
     private static final String CATEGORIES = "Categories";
     private static final String COLLECTIONS = "Collections";
     private static final String DOWNLOAD = "Download";
     private static final String DARK_MODE = "Dark Mode";
     private static final String PERSONALIZED_ADS = "AD";
+    private static final String FIRST = "First";
 
     /************************************* Declarations *******************************************/
     private SharedPreferences sharedPref;
@@ -105,5 +105,16 @@ public class SharedPreferencesHelper {
 
     public boolean isAdPersonalized() {
         return sharedPref.getBoolean(PERSONALIZED_ADS, false);
+    }
+
+    //First Run
+    public boolean isFirstRun() {
+        return sharedPref.getBoolean(FIRST, true);
+    }
+
+    public void setFirstRun() {
+        SharedPreferences.Editor editor;
+        editor = sharedPref.edit();
+        editor.putBoolean(FIRST, false).apply();
     }
 }

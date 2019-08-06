@@ -66,12 +66,14 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.View
                         .load(mCollections.get(position).getCollectionWallpapers().get(0).getWallpapers())
                         .fitCenter()
                         .into(holder.thumbnail);
+            else holder.thumbnail.setBackgroundResource(R.drawable.gradient_color);
         } else if (mView1 != null) {
             if (!mCollections.get(position).getCollectionWallpapers().isEmpty())
                 Glide.with(mView1)
                         .load(mCollections.get(position).getCollectionWallpapers().get(0).getWallpapers())
                         .fitCenter()
                         .into(holder.thumbnail);
+            else holder.thumbnail.setBackgroundResource(R.drawable.gradient_color);
         }
 
 
@@ -83,8 +85,7 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.View
         final int finalPosition = position;
         holder.container.setOnClickListener(v -> {
             if (mView1 != null) {
-                mPresenter.add_removeWallpaper(mCollections.get(finalPosition).getCollectionName(), mView1.getImage());
-                Toast.makeText(mView1, mView1.getResources().getString(R.string.wallpaper_added_msg) + mCollections.get(finalPosition).getCollectionName(), Toast.LENGTH_SHORT).show();
+                mPresenter.add_removeWallpaper(mView1, mCollections.get(finalPosition).getCollectionName(), mView1.getImage());
                 mView1.hideFavorite();
             } else if (mView != null)
                 mView.goToWallpapers(mCollections.get(finalPosition).getCollectionName());

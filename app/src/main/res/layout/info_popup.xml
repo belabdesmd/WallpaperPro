@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     app:behavior_hideable="true"
-    app:behavior_peekHeight="32dp"
+    app:behavior_peekHeight="64dp"
     app:cardBackgroundColor="@android:color/transparent"
     app:cardElevation="0dp"
     app:cardCornerRadius="16dp"

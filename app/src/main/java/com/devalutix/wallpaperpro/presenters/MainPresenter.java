@@ -3,6 +3,7 @@ package com.devalutix.wallpaperpro.presenters;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.util.Log;
+import android.view.Gravity;
 
 import com.devalutix.wallpaperpro.R;
 import com.devalutix.wallpaperpro.contracts.MainContract;
@@ -16,6 +17,9 @@ import com.google.android.gms.ads.AdView;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
+import androidx.core.view.GravityCompat;
+
+import java.util.Objects;
 
 public class MainPresenter implements MainContract.Presenter {
     private static String TAG = "MainPresenter";
@@ -63,12 +67,6 @@ public class MainPresenter implements MainContract.Presenter {
                                 new String[]{permission},
                                 permissionRequest
                         );
-//                        if (!ActivityCompat.shouldShowRequestPermissionRationale
-//                                (mView, permission)) {
-//                            onPermissionGranted();
-//                            sharedPreferencesHelper.setDownloadEnable(false);
-//                        }else
-//                            sharedPreferencesHelper.setDownloadEnable(true);
                     }
 
                     @Override
@@ -134,9 +132,9 @@ public class MainPresenter implements MainContract.Presenter {
 
     @Override
     public void loadAd(AdView ad) {
-        if (sharedPreferencesHelper.isAdPersonalized()){
+        if (sharedPreferencesHelper.isAdPersonalized()) {
             gdpr.showPersonalizedAdBanner(ad);
-        }else{
+        } else {
             gdpr.showNonPersonalizedAdBanner(ad);
         }
     }
@@ -160,5 +158,33 @@ public class MainPresenter implements MainContract.Presenter {
     @Override
     public boolean isDarkModeEnabled() {
         return sharedPreferencesHelper.isDarkModeEnabled();
+    }
+
+    @Override
+    public void grantDownload() {
+        Log.d(TAG, "grantDownload: Enabling Download");
+        sharedPreferencesHelper.setDownloadEnable(true);
+    }
+
+    @Override
+    public void disableDownload() {
+        Log.d(TAG, "disableDownload: Disabling Download");
+        sharedPreferencesHelper.setDownloadEnable(false);
+    }
+
+    @Override
+    public void showDrawerMenuIndex() {
+        if (sharedPreferencesHelper.isFirstRun()) {
+            sharedPreferencesHelper.setFirstRun();
+            AlertDialog.Builder alert = new AlertDialog.Builder(mView, R.style.CustomDialogTheme)
+                    .setTitle("Notice")
+                    .setMessage("To Show The Side Menu Drag From The Left Side Of the Screen")
+                    .setPositiveButton(android.R.string.ok, (dialog, which) -> mView.mDrawerLayout.openDrawer(GravityCompat.START))
+                    .setIcon(R.drawable.info);
+
+            AlertDialog dialog = alert.create();
+            Objects.requireNonNull(dialog.getWindow()).setGravity(Gravity.TOP | Gravity.START);
+            dialog.show();
+        }
     }
 }

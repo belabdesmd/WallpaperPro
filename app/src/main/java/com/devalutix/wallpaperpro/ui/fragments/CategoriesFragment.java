@@ -14,6 +14,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,6 +38,7 @@ import java.util.Objects;
 import javax.inject.Inject;
 
 public class CategoriesFragment extends Fragment implements CategoriesContract.View {
+    private static final String TAG = "CategoriesFragment";
 
     /****************************************** Declarations **************************************/
     private MVPComponent mvpComponent;
@@ -97,6 +99,7 @@ public class CategoriesFragment extends Fragment implements CategoriesContract.V
         initRetrySheet();
 
         //When Pulling To Refresh Listener
+        mRefresh.setColorSchemeResources(R.color.colorAccent);
         mRefresh.setOnRefreshListener(this::refresh);
 
         return view;
@@ -116,8 +119,10 @@ public class CategoriesFragment extends Fragment implements CategoriesContract.V
 
     @Override
     public void onResume() {
+        Log.d(TAG, "onResume: resumed");
         super.onResume();
-        mPresenter.updateRecyclerView();
+        if (mAdapter != null)
+            refresh();
     }
 
     /****************************************** Methods *******************************************/

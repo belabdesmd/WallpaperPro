@@ -14,6 +14,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,6 +39,7 @@ import java.util.Objects;
 import javax.inject.Inject;
 
 public class ExploreFragment extends Fragment implements ExploreContract.View {
+    private static final String TAG = "ExploreFragment";
     private static final int COL_NUM = 3;
 
     /****************************************** Declarations **************************************/
@@ -136,6 +138,7 @@ public class ExploreFragment extends Fragment implements ExploreContract.View {
         initRetrySheet();
 
         //When Pulling To Refresh Listener
+        mRefresh.setColorSchemeResources(R.color.colorAccent);
         mRefresh.setOnRefreshListener(this::refresh);
 
         return view;
@@ -151,6 +154,14 @@ public class ExploreFragment extends Fragment implements ExploreContract.View {
                     .build();
         }
         return mvpComponent;
+    }
+
+    @Override
+    public void onResume() {
+        Log.d(TAG, "onResume: resumed");
+        if (mAdapter != null)
+            refresh();
+        super.onResume();
     }
 
     /****************************************** Methods *******************************************/

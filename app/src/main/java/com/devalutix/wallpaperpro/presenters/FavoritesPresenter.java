@@ -1,5 +1,6 @@
 package com.devalutix.wallpaperpro.presenters;
 
+import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -59,7 +60,6 @@ public class FavoritesPresenter implements FavoritesContract.Presenter {
 
     @Override
     public void updateRecyclerView() {
-        Log.d(TAG, "initRecyclerView: Init Collections List");
         ArrayList<Collection> collections = getCollectionsList();
 
         mView.updateRecyclerView(collections);
@@ -72,7 +72,6 @@ public class FavoritesPresenter implements FavoritesContract.Presenter {
 
     @Override
     public void addCollection(Collection collection) {
-        Log.d(TAG, "addCollection: Adding Collection");
 
         ArrayList<Collection> collections = getCollectionsList();
         if (!collections.contains(collection))
@@ -87,7 +86,6 @@ public class FavoritesPresenter implements FavoritesContract.Presenter {
 
     @Override
     public void editCollection(String oldCollectionName, String collectionName) {
-        Log.d(TAG, "editCollection: Editing Collection Name");
 
         ArrayList<Collection> allCollections = mSharedPrefsHelper.getCollections();
 
@@ -106,7 +104,6 @@ public class FavoritesPresenter implements FavoritesContract.Presenter {
 
     @Override
     public void removeCollection(String collectionName) {
-        Log.d(TAG, "removeCollection: Removing Collection");
 
         ArrayList<Collection> allCollections = mSharedPrefsHelper.getCollections();
 
@@ -119,7 +116,7 @@ public class FavoritesPresenter implements FavoritesContract.Presenter {
     }
 
     @Override
-    public void add_removeWallpaper(String collectionName, Wallpaper wallpaper) {
+    public void add_removeWallpaper(Context context, String collectionName, Wallpaper wallpaper) {
 
         //Get All Collections
         ArrayList<Collection> collections = getCollectionsList();
@@ -127,15 +124,23 @@ public class FavoritesPresenter implements FavoritesContract.Presenter {
         boolean found = false;
         int i = 0;
 
+        //If Wallpaper Already Exists, Remove it from Collection
+        //Else: Add It
         while (i < collections.size() && !found) {
             if (collections.get(i).getCollectionName().equals(collectionName)) {
-                if (!collections.get(i).getCollectionWallpapers().contains(wallpaper))
+                if (!collections.get(i).getCollectionWallpapers().contains(wallpaper)) {
                     collections.get(i).getCollectionWallpapers().add(wallpaper);
-                else collections.get(i).getCollectionWallpapers().remove(wallpaper);
+                    Toast.makeText(context, context.getResources().getString(R.string.wallpaper_added_msg), Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    collections.get(i).getCollectionWallpapers().remove(wallpaper);
+                    Toast.makeText(context, context.getResources().getString(R.string.wallpaper_removed_msg), Toast.LENGTH_SHORT).show();
+                }
                 found = true;
             } else i++;
         }
 
+        //Save Collections
         mSharedPrefsHelper.saveCollections(collections);
     }
 }

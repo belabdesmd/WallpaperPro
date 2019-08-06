@@ -20,6 +20,7 @@ import butterknife.ButterKnife;
 
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -48,6 +49,7 @@ import javax.inject.Inject;
 import static android.content.Context.LAYOUT_INFLATER_SERVICE;
 
 public class FavoritesFragment extends Fragment implements FavoritesContract.View {
+    private static final String TAG = "FavoritesFragment";
     private static final int COL_NUM = 2;
 
     /****************************************** Declarations **************************************/
@@ -115,6 +117,14 @@ public class FavoritesFragment extends Fragment implements FavoritesContract.Vie
                     .build();
         }
         return mvpComponent;
+    }
+
+    @Override
+    public void onResume() {
+        Log.d(TAG, "onResume: resumed");
+        if (mAdapter != null)
+            mPresenter.updateRecyclerView();
+        super.onResume();
     }
 
     /****************************************** Methods *******************************************/

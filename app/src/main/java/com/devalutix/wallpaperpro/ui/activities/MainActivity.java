@@ -1,5 +1,6 @@
 package com.devalutix.wallpaperpro.ui.activities;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.SearchView;
@@ -73,7 +74,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     /**************************************** View Declarations ***********************************/
     //Drawer Menu
     @BindView(R.id.drawer_layout)
-    DrawerLayout mDrawerLayout;
+    public DrawerLayout mDrawerLayout;
     @BindView(R.id.nav_view)
     NavigationView mNavigationView;
 
@@ -155,6 +156,9 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         //Init Dark Mode
         darkModeListener();
 
+        //Drawer Menu Index
+        mPresenter.showDrawerMenuIndex();
+
         //Navigation Menu OnClickListener
         mNavigationView.setItemIconTintList(null);
         mNavigationView.setNavigationItemSelectedListener(item -> {
@@ -214,20 +218,31 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
 
     @Override
     protected void onPause() {
+        Log.d(TAG, "onPause: paused");
         super.onPause();
         ad.pause();
     }
 
     @Override
     protected void onDestroy() {
+        Log.d(TAG, "onDestroy: destroyed");
         super.onDestroy();
         ad.destroy();
     }
 
     @Override
     protected void onResume() {
+        Log.d(TAG, "onResume: resumed");
         super.onResume();
         ad.resume();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == REQUEST_WRITE_STORAGE)
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                mPresenter.grantDownload();
+            else mPresenter.disableDownload();
     }
 
     /**************************************** Methods *********************************************/
@@ -301,6 +316,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
 
         mAdapter = new MainPagerAdapter(getSupportFragmentManager(), fragments, MainActivity.this);
         mViewPager.setAdapter(mAdapter);
+        mViewPager.setOffscreenPageLimit(0);
 
         mViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override

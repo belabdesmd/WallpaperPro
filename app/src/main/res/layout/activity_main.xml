@@ -33,12 +33,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
+            android:contentDescription="Add Collection"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@id/page_title"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/page_title"
             app:srcCompat="@drawable/add"
-            android:contentDescription="Add Collection"
             tools:ignore="HardcodedText" />
 
         <androidx.appcompat.widget.SearchView
@@ -92,13 +92,14 @@
     <!-- Container for contents of drawer - use NavigationView to make configuration easier -->
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/nav_view"
+        app:theme="@style/AppLightTheme.Drawer"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:background="?attr/backgroundColor"
         android:fitsSystemWindows="true"
         app:headerLayout="@layout/nav_header"
-        app:itemTextColor="?attr/primaryTextColor"
+        app:itemTextColor="@color/colorAccent"
         app:menu="@menu/navigation_menu" />
 
 </androidx.drawerlayout.widget.DrawerLayout>

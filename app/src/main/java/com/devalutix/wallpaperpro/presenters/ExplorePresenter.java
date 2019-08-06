@@ -60,13 +60,16 @@ public class ExplorePresenter implements ExploreContract.Presenter {
             public void onResponse(@NonNull Call<ArrayList<Wallpaper>> call,
                                    @NonNull Response<ArrayList<Wallpaper>> response) {
                 if (response.isSuccessful()) {
+                    //Init Categories List and Show It
                     mView.initRecyclerView(response.body());
                     mView.showWallpapersList();
 
+                    //Show No Images In Case there is none
                     assert response.body() != null;
                     if (response.body().size() > 0) mView.showWallpapersList();
                     else mView.showEmptyCollection(mView.getResources().getString(R.string.empty_images));
                 } else {
+                    //Init Recycler View With Null and Show No Network + The Problem
                     mView.initRecyclerView(null);
                     mView.showNoNetwork();
                     mView.showRetryCard(mView.getResources().getString(R.string.server_prblm_retry));
@@ -75,6 +78,7 @@ public class ExplorePresenter implements ExploreContract.Presenter {
 
             @Override
             public void onFailure(@NonNull Call<ArrayList<Wallpaper>> call, @NonNull Throwable t) {
+                //Init Recycler View With Null and Show No Network + The Problem
                 mView.initRecyclerView(null);
                 mView.showNoNetwork();
                 mView.showRetryCard(mView.getResources().getString(R.string.net_prblm_retry));
@@ -109,13 +113,16 @@ public class ExplorePresenter implements ExploreContract.Presenter {
             public void onResponse(@NonNull Call<ArrayList<Wallpaper>> call,
                                    @NonNull Response<ArrayList<Wallpaper>> response) {
                 if (response.isSuccessful()) {
+                    //Update Categories List and Show It
                     mView.updateRecyclerView(response.body());
                     mView.showWallpapersList();
 
+                    //Show No Images In Case there is none
                     assert response.body() != null;
                     if (response.body().size() > 0) mView.showWallpapersList();
                     else mView.showEmptyCollection(mView.getResources().getString(R.string.empty_images));
                 } else {
+                    //Update Recycler View With Null and Show No Network + The Problem
                     mView.updateRecyclerView(null);
                     mView.showNoNetwork();
                     mView.showRetryCard(mView.getResources().getString(R.string.server_prblm_retry));
@@ -124,6 +131,7 @@ public class ExplorePresenter implements ExploreContract.Presenter {
 
             @Override
             public void onFailure(@NonNull Call<ArrayList<Wallpaper>> call, @NonNull Throwable t) {
+                //Update Recycler View With Null and Show No Network + The Problem
                 mView.updateRecyclerView(null);
                 mView.showNoNetwork();
                 mView.showRetryCard(mView.getResources().getString(R.string.net_prblm_retry));
@@ -133,6 +141,7 @@ public class ExplorePresenter implements ExploreContract.Presenter {
 
     @Override
     public String listToString(ArrayList<Wallpaper> wallpapers) {
+        //Transfer the Wallpapers List into a String to Send it to the WallpaperActivity
         return gson.toJson(wallpapers);
     }
 

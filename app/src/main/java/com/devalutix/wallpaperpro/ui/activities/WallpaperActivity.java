@@ -195,18 +195,22 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
 
     @Override
     protected void onPause() {
+        Log.d(TAG, "onPause: paused");
         super.onPause();
         ad.pause();
     }
 
     @Override
     protected void onDestroy() {
+        Log.d(TAG, "onDestroy: destroyed");
         super.onDestroy();
+        mPresenter.dettach();
         ad.destroy();
     }
 
     @Override
     protected void onResume() {
+        Log.d(TAG, "onResume: resumed");
         super.onResume();
         ad.resume();
     }
@@ -336,7 +340,7 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
     @Override
     public void initInfos(int position) {
 
-        ArrayList<Wallpaper> images = mPresenter.getWallpapers();
+        Wallpaper wallpaper = mPresenter.getWallpapers().get(position);
 
         //Declarations
         String topic;
@@ -345,7 +349,7 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
 
         //Adding Date
         topic = getResources().getString(R.string.title_infos) + " ";
-        topicInfo = new StringBuilder(images.get(position).getTitle());
+        topicInfo = new StringBuilder(wallpaper.getTitle());
 
         topicText = topic + topicInfo;
 
@@ -356,7 +360,7 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
 
         //Adding Date
         topic = getResources().getString(R.string.date_added_infos) + " ";
-        topicInfo = new StringBuilder(images.get(position).getDateAdded());
+        topicInfo = new StringBuilder(wallpaper.getDateAdded().substring(0,10));
 
         topicText = topic + topicInfo;
 
@@ -366,16 +370,16 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
         dateTextView.setText(spannable1, TextView.BufferType.SPANNABLE);
 
         //Adding Downloads
-        topicInfo = new StringBuilder(String.valueOf(images.get(position).getDownloads()));
+        topicInfo = new StringBuilder(String.valueOf(wallpaper.getDownloads()));
         downloadsTextView.setText(topicInfo.toString());
 
         //Adding Categories
         topic = getResources().getString(R.string.categories_infos) + " ";
         topicInfo = new StringBuilder();
-        for (int i = 0; i < images.get(position).getCategories().size(); i++) {
-            if (i != images.get(position).getCategories().size() - 1)
-                topicInfo.append(images.get(position).getCategories().get(i).getName()).append(", ");
-            else topicInfo.append(images.get(position).getCategories().get(i).getName());
+        for (int i = 0; i < wallpaper.getCategories().size(); i++) {
+            if (i != wallpaper.getCategories().size() - 1)
+                topicInfo.append(wallpaper.getCategories().get(i).getName()).append(", ");
+            else topicInfo.append(wallpaper.getCategories().get(i).getName());
         }
 
         topicText = topic + topicInfo;
@@ -398,7 +402,6 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.addItemDecoration(new WallpaperActivity.MyItemDecoration());
         mRecyclerView.setAdapter(mAdapter);
-        mRecyclerView.setMinimumHeight(300);
 
         hideFavorite();
 
@@ -420,7 +423,7 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
     public void showFavorite() {
         Log.d(TAG, "showFavorite: Shows Favorites");
         add_to_favorite_popup_behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-        favoritePresenter.add_removeWallpaper(Config.MY_FAVORITES_COLLECTION_NAME, mPresenter.getWallpapers(mViewPager.getCurrentItem()));
+        favoritePresenter.add_removeWallpaper(this,Config.MY_FAVORITES_COLLECTION_NAME, mPresenter.getWallpapers(mViewPager.getCurrentItem()));
     }
 
     @Override

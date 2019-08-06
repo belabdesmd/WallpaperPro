@@ -19,6 +19,12 @@ public interface MainContract {
         void enableDarkMode(boolean isChecked);
 
         boolean isDarkModeEnabled();
+
+        void grantDownload();
+
+        void disableDownload();
+
+        void showDrawerMenuIndex();
     }
 
     interface View extends BaseView {

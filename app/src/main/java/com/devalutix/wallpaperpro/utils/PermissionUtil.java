@@ -25,7 +25,7 @@ public class PermissionUtil {
         return (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M);
     }
 
-    private boolean shouldAskPermission(Context context, String permission) {
+    public boolean shouldAskPermission(Context context, String permission) {
         if (shouldAskPermission()) {
             int permissionResult = ActivityCompat.checkSelfPermission(context, permission);
             return permissionResult != PackageManager.PERMISSION_GRANTED;

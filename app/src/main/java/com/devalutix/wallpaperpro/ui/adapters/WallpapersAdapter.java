@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -21,8 +20,7 @@ import com.devalutix.wallpaperpro.R;
 import com.devalutix.wallpaperpro.pojo.Wallpaper;
 import com.devalutix.wallpaperpro.ui.activities.WallpapersActivity;
 import com.devalutix.wallpaperpro.ui.fragments.ExploreFragment;
-import com.github.ybq.android.spinkit.sprite.Sprite;
-import com.github.ybq.android.spinkit.style.ChasingDots;
+import com.github.ybq.android.spinkit.SpinKitView;
 
 import java.util.ArrayList;
 
@@ -61,10 +59,7 @@ public class WallpapersAdapter extends RecyclerView.Adapter<WallpapersAdapter.Vi
     }
 
     @Override
-    public void onBindViewHolder(@NonNull WallpapersAdapter.ViewHolder holder, int position) {
-        Sprite chasingDots = new ChasingDots();
-        chasingDots.setColor(R.color.colorAccent);
-        holder.loading.setIndeterminateDrawable(chasingDots);
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
         //Loading the Wallpaper
         if (mView == null)
@@ -136,7 +131,7 @@ public class WallpapersAdapter extends RecyclerView.Adapter<WallpapersAdapter.Vi
     static class ViewHolder extends RecyclerView.ViewHolder {
         CardView container;
         ImageView wallpaper;
-        ProgressBar loading;
+        SpinKitView loading;
 
         ViewHolder(View v) {
             super(v);

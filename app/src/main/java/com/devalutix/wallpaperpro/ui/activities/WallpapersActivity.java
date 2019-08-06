@@ -16,6 +16,7 @@ import butterknife.OnClick;
 import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -38,6 +39,7 @@ import java.util.Objects;
 import javax.inject.Inject;
 
 public class WallpapersActivity extends AppCompatActivity implements WallpapersContract.View {
+    private static final String TAG = "WallpapersActivity";
     private static final int COL_NUM = 3;
 
     /**************************************** Declarations ****************************************/
@@ -109,6 +111,7 @@ public class WallpapersActivity extends AppCompatActivity implements WallpapersC
                 getIntent().getStringExtra("name"));
 
         //Pull To Refresh Listener
+        mRefresh.setColorSchemeResources(R.color.colorAccent);
         mRefresh.setOnRefreshListener(this::refresh);
     }
 
@@ -122,6 +125,13 @@ public class WallpapersActivity extends AppCompatActivity implements WallpapersC
                     .build();
         }
         return mvpComponent;
+    }
+
+    @Override
+    protected void onDestroy() {
+        Log.d(TAG, "onDestroy: destroyed");
+        mPresenter.dettach();
+        super.onDestroy();
     }
 
     /**************************************** Methods *********************************************/

@@ -55,6 +55,7 @@
     <string name="downloaded">Wallpaper Downloaded</string>
     <string name="error_download">Error Occurred, Can\'t Download the Wallpaper</string>
     <string name="error_download_permission">Can\'t Download Wallpaper, Go To App Preferences and Give Permission to The App</string>
+    <string name="wallpaper_already_downloaded">Wallpaper Already Downloaded</string>
 
     <!--
         Set Wallpaper
@@ -76,12 +77,15 @@
     <string name="edit_collection">Edit Collection</string>
     <string name="empty_collection">This Collection is empty.</string>
     <string name="collection_name">Collection Name</string>
+    <string name="no_collections_msg">No Collections, Go To Collections and Add One</string>
+    <string name="collection_exists">Collection Already Exists</string>
 
     <!--
         Wallpaper Added To Favorites Message
     -->
     <string name="saved_to_my_favorites">Saved To My Favorites</string>
     <string name="wallpaper_added_msg">Wallpaper Added To</string>
+    <string name="wallpaper_removed_msg">Wallpaper Removed</string>
 
     <!--
        Others
@@ -96,7 +100,5 @@
     <string name="empty_category">Empty Category</string>
     <string name="empty_search">No Results</string>
     <string name="empty_images">No Images</string>
-    <string name="no_collections_msg">No Collections, Go To Collections and Add One</string>
-    <string name="collection_exists">Collection Already Exists</string>
 </resources>
 

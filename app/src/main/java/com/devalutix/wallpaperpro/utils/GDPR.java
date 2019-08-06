@@ -85,7 +85,7 @@ public class GDPR {
             privacyUrl = new URL("your privacy link");
         } catch (MalformedURLException e) {
             e.printStackTrace();
-            // Handle error.
+            // Handle error_image.
         }
         form = new ConsentForm.Builder(mContext, privacyUrl)
                 .withListener(new ConsentFormListener() {
@@ -129,7 +129,7 @@ public class GDPR {
                     @Override
                     public void onConsentFormError(String errorDescription) {
                         Log.d(TAG, "Requesting Consent: onConsentFormError. Error - " + errorDescription);
-                        // Consent form error.
+                        // Consent form error_image.
                     }
                 })
                 .withPersonalizedAdsOption()

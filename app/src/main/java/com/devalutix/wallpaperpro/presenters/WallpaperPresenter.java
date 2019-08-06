@@ -114,7 +114,7 @@ public class WallpaperPresenter implements WallpaperContract.Presenter {
                             apiService.updateDownloads(Config.TOKEN, wallpaper.getPk()).enqueue(new Callback<Wallpaper>() {
                                 @Override
                                 public void onResponse(@NonNull Call<Wallpaper> call, @NonNull Response<Wallpaper> response) {
-                                    if (response.isSuccessful()){
+                                    if (response.isSuccessful()) {
                                         wallpapers.set(position, response.body());
                                         mView.initInfos(position);
                                     }
@@ -126,7 +126,7 @@ public class WallpaperPresenter implements WallpaperContract.Presenter {
                                 }
                             });
                             Toast.makeText(mView, mView.getResources().getString(R.string.downloading), Toast.LENGTH_SHORT).show();
-                            saveWallpaperToInternalStorage(resource);
+                            saveWallpaperToInternalStorage(resource, wallpaper);
                         }
 
                         @Override
@@ -148,9 +148,9 @@ public class WallpaperPresenter implements WallpaperContract.Presenter {
         Intent i = new Intent(Intent.ACTION_SEND);
         i.setType("text/plain");
         i.putExtra(Intent.EXTRA_SUBJECT, mView.getResources().getString(R.string.app_name));
-        String sAux = mView.getResources().getString(R.string.share_msg_1) + wallpaper.getTitle()
-                + mView.getResources().getString(R.string.share_msg_2)
-                + mView.getResources().getString(R.string.app_name);
+        String sAux = mView.getResources().getString(R.string.share_msg_1) + " " + wallpaper.getTitle()
+                + " " + mView.getResources().getString(R.string.share_msg_2)
+                + "\n" + "https://play.google.com/store/apps/details?id=" + mView.getPackageName();
         i.putExtra(Intent.EXTRA_TEXT, sAux);
         mView.startActivity(Intent.createChooser(i, "choose one"));
     }
@@ -217,46 +217,53 @@ public class WallpaperPresenter implements WallpaperContract.Presenter {
         return collections;
     }
 
-    private void saveWallpaperToInternalStorage(Bitmap bitmap) {
+    private void saveWallpaperToInternalStorage(Bitmap bitmap, Wallpaper wallpaper) {
 
         // Initialize ContextWrapper
         ContextWrapper wrapper = new ContextWrapper(mView);
 
         // Initializing a new file
         // The bellow line return a directory in internal storage
-        String root = Environment.getExternalStorageDirectory().toString();
-        File myDir = new File(root + "/DCIM/" + mView.getResources().getString(R.string.app_name));
+        String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getPath();
+        if (!root.endsWith("/")) {
+            root += "/";
+        }
+        File myDir = new File(root + mView.getResources().getString(R.string.app_name));
         myDir.mkdirs();
+
         Random generator = new Random();
         int n = 10000;
         n = generator.nextInt(n);
-        String f_name = mView.getResources().getString(R.string.app_name) + "_Wallpaper-" + n + ".jpg";
+        String f_name = wallpaper.getTitle() + "_" + wallpaper.getPk() + ".jpg";
 
         // Create a file to save the wallpaper
         File file = new File(myDir, f_name);
 
-        try {
-            // Initialize a new OutputStream
-            OutputStream stream;
+        if (!file.exists())
+            try {
+                // Initialize a new OutputStream
+                OutputStream stream;
 
-            // If the output file exists, it can be replaced or appended to it
-            stream = new FileOutputStream(file);
+                // If the output file exists, it can be replaced or appended to it
+                stream = new FileOutputStream(file);
 
-            // Compress the bitmap
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+                // Compress the bitmap
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
 
-            // Flushes the stream
-            stream.flush();
+                // Flushes the stream
+                stream.flush();
 
-            // Closes the stream
-            stream.close();
+                // Closes the stream
+                stream.close();
 
-            Toast.makeText(wrapper, wrapper.getResources().getString(R.string.downloaded), Toast.LENGTH_SHORT).show();
+                Toast.makeText(wrapper, wrapper.getResources().getString(R.string.downloaded), Toast.LENGTH_SHORT).show();
 
-        } catch (IOException e) // Catch the exception
-        {
-            e.printStackTrace();
-        }
+            } catch (IOException e) // Catch the exception
+            {
+                e.printStackTrace();
+            }
+        else
+            Toast.makeText(wrapper, wrapper.getResources().getString(R.string.wallpaper_already_downloaded), Toast.LENGTH_SHORT).show();
 
         mView.showInterstitialAd();
     }
