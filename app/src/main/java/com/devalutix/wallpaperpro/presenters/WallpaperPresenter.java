@@ -1,10 +1,14 @@
 package com.devalutix.wallpaperpro.presenters;
 
+import android.Manifest;
 import android.app.WallpaperManager;
+import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
 import android.util.Log;
@@ -12,6 +16,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomTarget;
@@ -21,6 +26,7 @@ import com.devalutix.wallpaperpro.contracts.WallpaperContract;
 import com.devalutix.wallpaperpro.models.SharedPreferencesHelper;
 import com.devalutix.wallpaperpro.pojo.Collection;
 import com.devalutix.wallpaperpro.pojo.Wallpaper;
+import com.devalutix.wallpaperpro.ui.activities.MainActivity;
 import com.devalutix.wallpaperpro.ui.activities.WallpaperActivity;
 import com.devalutix.wallpaperpro.utils.ApiEndpointInterface;
 import com.devalutix.wallpaperpro.utils.Config;
@@ -42,6 +48,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class WallpaperPresenter implements WallpaperContract.Presenter {
+    private static final int REQUEST_WRITE_STORAGE = 1;
 
     /***************************************** Declarations ***************************************/
     private WallpaperActivity mView;
@@ -50,6 +57,7 @@ public class WallpaperPresenter implements WallpaperContract.Presenter {
     private ApiEndpointInterface apiService;
     private GDPR gdpr;
     private ArrayList<Wallpaper> wallpapers;
+    private String permission = Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
     /***************************************** Constructor ****************************************/
     public WallpaperPresenter(Gson gson, SharedPreferencesHelper sharedPreferencesHelper, GDPR gdpr, ApiEndpointInterface apiService) {
@@ -102,45 +110,55 @@ public class WallpaperPresenter implements WallpaperContract.Presenter {
 
     @Override
     public void savePicture(Wallpaper wallpaper, int position) {
-        Log.d("WallpaperPresenter", "savePicture: isEnabled" + mSharedPrefsHelper.isDownloadEnable());
-        if (mSharedPrefsHelper.isDownloadEnable())
-            Glide.with(mView)
-                    .asBitmap()
-                    .load(wallpaper.getWallpapers())
-                    .into(new CustomTarget<Bitmap>() {
-                        @Override
-                        public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-                            mView.hideInfos();
-                            apiService.updateDownloads(Config.TOKEN, wallpaper.getPk()).enqueue(new Callback<Wallpaper>() {
-                                @Override
-                                public void onResponse(@NonNull Call<Wallpaper> call, @NonNull Response<Wallpaper> response) {
-                                    if (response.isSuccessful()) {
-                                        wallpapers.set(position, response.body());
-                                        mView.initInfos(position);
+        if (mSharedPrefsHelper.isDownloadEnable()) {
+            File file = getFile(wallpaper);
+            if (!file.exists())
+                Glide.with(mView)
+                        .asBitmap()
+                        .load(wallpaper.getWallpapers())
+                        .into(new CustomTarget<Bitmap>() {
+                            @Override
+                            public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                                mView.hideInfos();
+                                apiService.updateDownloads(Config.TOKEN, wallpaper.getPk()).enqueue(new Callback<Wallpaper>() {
+                                    @Override
+                                    public void onResponse(@NonNull Call<Wallpaper> call, @NonNull Response<Wallpaper> response) {
+                                        if (response.isSuccessful()) {
+                                            wallpapers.set(position, response.body());
+                                            mView.initInfos(position);
+                                        }
                                     }
-                                }
 
-                                @Override
-                                public void onFailure(@NonNull Call<Wallpaper> call, @NonNull Throwable t) {
+                                    @Override
+                                    public void onFailure(@NonNull Call<Wallpaper> call, @NonNull Throwable t) {
 
-                                }
-                            });
-                            Toast.makeText(mView, mView.getResources().getString(R.string.downloading), Toast.LENGTH_SHORT).show();
-                            saveWallpaperToInternalStorage(resource, wallpaper);
-                        }
+                                    }
+                                });
+                                Toast.makeText(mView, mView.getResources().getString(R.string.downloading), Toast.LENGTH_SHORT).show();
+                                saveWallpaperToInternalStorage(resource, file);
+                            }
 
-                        @Override
-                        public void onLoadCleared(@Nullable Drawable placeholder) {
-                        }
+                            @Override
+                            public void onLoadCleared(@Nullable Drawable placeholder) {
+                            }
 
-                        @Override
-                        public void onLoadFailed(@Nullable Drawable errorDrawable) {
-                            super.onLoadFailed(errorDrawable);
-                            Toast.makeText(mView, mView.getResources().getString(R.string.error_download), Toast.LENGTH_SHORT).show();
-                        }
-                    });
-        else
-            Toast.makeText(mView, mView.getResources().getString(R.string.error_download_permission), Toast.LENGTH_SHORT).show();
+                            @Override
+                            public void onLoadFailed(@Nullable Drawable errorDrawable) {
+                                super.onLoadFailed(errorDrawable);
+                                Toast.makeText(mView, mView.getResources().getString(R.string.error_download), Toast.LENGTH_SHORT).show();
+                            }
+                        });
+            else
+                Toast.makeText(mView, mView.getResources().getString(R.string.wallpaper_already_downloaded), Toast.LENGTH_SHORT).show();
+        } else {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(mView, permission))
+                ActivityCompat.requestPermissions(
+                        mView,
+                        new String[]{permission},
+                        REQUEST_WRITE_STORAGE
+                );
+            else Toast.makeText(mView, mView.getResources().getString(R.string.error_download_permission), Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
@@ -217,11 +235,38 @@ public class WallpaperPresenter implements WallpaperContract.Presenter {
         return collections;
     }
 
-    private void saveWallpaperToInternalStorage(Bitmap bitmap, Wallpaper wallpaper) {
+    private void saveWallpaperToInternalStorage(Bitmap bitmap, File file) {
 
         // Initialize ContextWrapper
         ContextWrapper wrapper = new ContextWrapper(mView);
 
+        try {
+            // Initialize a new OutputStream
+            OutputStream stream;
+
+            // If the output file exists, it can be replaced or appended to it
+            stream = new FileOutputStream(file);
+
+            // Compress the bitmap
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+
+            // Flushes the stream
+            stream.flush();
+
+            // Closes the stream
+            stream.close();
+
+            Toast.makeText(wrapper, wrapper.getResources().getString(R.string.downloaded), Toast.LENGTH_SHORT).show();
+
+        } catch (IOException e) // Catch the exception
+        {
+            e.printStackTrace();
+        }
+
+        mView.showInterstitialAd();
+    }
+
+    private File getFile(Wallpaper wallpaper) {
         // Initializing a new file
         // The bellow line return a directory in internal storage
         String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getPath();
@@ -230,41 +275,19 @@ public class WallpaperPresenter implements WallpaperContract.Presenter {
         }
         File myDir = new File(root + mView.getResources().getString(R.string.app_name));
         myDir.mkdirs();
-
-        Random generator = new Random();
-        int n = 10000;
-        n = generator.nextInt(n);
         String f_name = wallpaper.getTitle() + "_" + wallpaper.getPk() + ".jpg";
 
         // Create a file to save the wallpaper
-        File file = new File(myDir, f_name);
+        return new File(myDir, f_name);
+    }
 
-        if (!file.exists())
-            try {
-                // Initialize a new OutputStream
-                OutputStream stream;
+    @Override
+    public void grantDownload() {
+        mSharedPrefsHelper.setDownloadEnable(true);
+    }
 
-                // If the output file exists, it can be replaced or appended to it
-                stream = new FileOutputStream(file);
-
-                // Compress the bitmap
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-
-                // Flushes the stream
-                stream.flush();
-
-                // Closes the stream
-                stream.close();
-
-                Toast.makeText(wrapper, wrapper.getResources().getString(R.string.downloaded), Toast.LENGTH_SHORT).show();
-
-            } catch (IOException e) // Catch the exception
-            {
-                e.printStackTrace();
-            }
-        else
-            Toast.makeText(wrapper, wrapper.getResources().getString(R.string.wallpaper_already_downloaded), Toast.LENGTH_SHORT).show();
-
-        mView.showInterstitialAd();
+    @Override
+    public void disableDownload() {
+        mSharedPrefsHelper.setDownloadEnable(false);
     }
 }

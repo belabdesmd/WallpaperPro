@@ -26,32 +26,32 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
+                android:contentDescription="Cancel Adding"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/cancel"
-                android:contentDescription="Cancel Adding"
                 tools:ignore="HardcodedText" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
                 android:layout_marginStart="8dp"
                 android:text="@string/create_collection"
                 android:textColor="?attr/primaryTextColor"
                 android:textSize="18sp"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="parent"
+                android:fontFamily="sans-serif-black"
+                app:layout_constraintBottom_toBottomOf="@id/cancel_adding"
                 app:layout_constraintStart_toEndOf="@id/cancel_adding"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="@id/cancel_adding" />
 
             <Button
                 android:id="@+id/done_adding"
                 android:layout_width="wrap_content"
                 android:layout_height="32dp"
-                android:layout_marginEnd="8dp"
+                android:layout_marginEnd="16dp"
                 android:background="@drawable/filter_on"
+                android:fontFamily="sans-serif-medium"
                 android:text="@string/done"
                 android:textColor="@color/colorPrimary"
                 android:textSize="12sp"
@@ -61,33 +61,22 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <TextView
-            android:id="@+id/add_collection_hint"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:text="@string/name"
-            android:textColor="?attr/primaryTextColor"
-            android:textSize="24sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/add_collection_toolbar" />
-
         <EditText
             android:id="@+id/add_collection_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginEnd="32dp"
             android:layout_marginTop="16dp"
+            android:layout_marginEnd="32dp"
             android:layout_marginBottom="32dp"
             android:hint="@string/collection_name"
+            android:inputType="text"
+            android:fontFamily="sans-serif-thin"
             app:backgroundTint="?attr/secondaryTextColor"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/add_collection_hint"
-            android:inputType="text"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/add_collection_toolbar"
             tools:ignore="Autofill" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

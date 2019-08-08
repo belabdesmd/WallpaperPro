@@ -59,7 +59,7 @@ public class WallpapersActivity extends AppCompatActivity implements WallpapersC
     @BindView(R.id.no_network_wallpapers)
     ImageView noNetworkLayout;
     @BindView(R.id.empty)
-    TextView emptyCollectionLayout;
+    ImageView emptyCollectionLayout;
 
     //Retry
     @BindView(R.id.retry_card)
@@ -69,7 +69,7 @@ public class WallpapersActivity extends AppCompatActivity implements WallpapersC
 
     /**************************************** Click Listeners *************************************/
     @OnClick(R.id.retry)
-    public void retry(){
+    public void retry() {
         refresh();
     }
 
@@ -103,7 +103,7 @@ public class WallpapersActivity extends AppCompatActivity implements WallpapersC
         initRetrySheet();
 
         //Set Page Name
-        setPageName(getIntent().getStringExtra("mode"), getIntent().getStringExtra("name"));
+        setPageName(getIntent().getStringExtra("name"));
 
         //init RecyclerView
         mRefresh.setRefreshing(true);
@@ -155,10 +155,8 @@ public class WallpapersActivity extends AppCompatActivity implements WallpapersC
     }
 
     @Override
-    public void setPageName(String mode, String name) {
-        if (mode.equals("search"))
-            Objects.requireNonNull(getSupportActionBar()).setTitle(getResources().getString(R.string.search_toolbar) + " " + name);
-        else Objects.requireNonNull(getSupportActionBar()).setTitle(name);
+    public void setPageName(String name) {
+        Objects.requireNonNull(getSupportActionBar()).setTitle(name);
     }
 
     @Override
@@ -174,7 +172,7 @@ public class WallpapersActivity extends AppCompatActivity implements WallpapersC
     }
 
     @Override
-    public void initRetrySheet(){
+    public void initRetrySheet() {
         retry_behavior = BottomSheetBehavior.from(retry_card);
         hideRetryCard();
     }
@@ -219,19 +217,17 @@ public class WallpapersActivity extends AppCompatActivity implements WallpapersC
 
         mRecyclerView.setVisibility(View.GONE);
         noNetworkLayout.setVisibility(View.GONE);
-
-        emptyCollectionLayout.setText(message);
         emptyCollectionLayout.setVisibility(View.VISIBLE);
     }
 
     @Override
-    public void showRetryCard(String message){
+    public void showRetryCard(String message) {
         retry_msg.setText(message);
         retry_behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
     }
 
     @Override
-    public void hideRetryCard(){
+    public void hideRetryCard() {
         retry_behavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
     }
 

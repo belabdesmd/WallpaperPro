@@ -67,7 +67,7 @@ public class ExplorePresenter implements ExploreContract.Presenter {
                     //Show No Images In Case there is none
                     assert response.body() != null;
                     if (response.body().size() > 0) mView.showWallpapersList();
-                    else mView.showEmptyCollection(mView.getResources().getString(R.string.empty_images));
+                    else mView.showEmptyCollection();
                 } else {
                     //Init Recycler View With Null and Show No Network + The Problem
                     mView.initRecyclerView(null);
@@ -120,7 +120,7 @@ public class ExplorePresenter implements ExploreContract.Presenter {
                     //Show No Images In Case there is none
                     assert response.body() != null;
                     if (response.body().size() > 0) mView.showWallpapersList();
-                    else mView.showEmptyCollection(mView.getResources().getString(R.string.empty_images));
+                    else mView.showEmptyCollection();
                 } else {
                     //Update Recycler View With Null and Show No Network + The Problem
                     mView.updateRecyclerView(null);

@@ -34,7 +34,7 @@ public interface ExploreContract {
 
         void showWallpapersList();
 
-        void showEmptyCollection(String message);
+        void showEmptyCollection();
 
         void showRetryCard(String message);
 

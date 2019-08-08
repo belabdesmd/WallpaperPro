@@ -71,7 +71,6 @@ public class FavoritesFragment extends Fragment implements FavoritesContract.Vie
 
     private EditText get_collection_name_edit;
     private Button edit_collection;
-    private ImageView remove_collection;
 
     /****************************************** Constructor ***************************************/
     public FavoritesFragment() {
@@ -231,7 +230,6 @@ public class FavoritesFragment extends Fragment implements FavoritesContract.Vie
         //Init Views
         get_collection_name_edit = customView.findViewById(R.id.edit_collection_name);
         edit_collection = customView.findViewById(R.id.done_editing);
-        remove_collection = customView.findViewById(R.id.remove_collection);
 
         //Edit Color
         TypedValue typedValue = new TypedValue();
@@ -251,25 +249,6 @@ public class FavoritesFragment extends Fragment implements FavoritesContract.Vie
 
         //Disable Done Button
         disableDoneButton();
-
-        //Getting Text
-        get_collection_name_edit.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (s.length() > 0) enableDoneButton();
-                else disableDoneButton();
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
     }
 
     @Override
@@ -306,16 +285,36 @@ public class FavoritesFragment extends Fragment implements FavoritesContract.Vie
     public void showEditCollectionPopUp(String collectionName) {
         mDialogEdit.show();
         get_collection_name_edit.setText(collectionName);
-        remove_collection.setOnClickListener(view -> {
-            mPresenter.removeCollection(collectionName);
-            hideEditCollectionPopUp();
-            mPresenter.updateRecyclerView();
+        removeButton();
+
+        //Getting Text Listener
+        get_collection_name_edit.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.equals(collectionName)) removeButton();
+                else editButton();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
         });
+
         edit_collection.setOnClickListener(view -> {
-            mPresenter.editCollection(collectionName, get_collection_name_edit.getText().toString());
+            if (view.getTag().equals(0)){
+                mPresenter.removeCollection(collectionName);
+            }else{
+                mPresenter.editCollection(collectionName, get_collection_name_edit.getText().toString());
+                get_collection_name_edit.getText().clear();
+                ((MainActivity) Objects.requireNonNull(getActivity())).hideKeyboard();
+            }
             hideEditCollectionPopUp();
-            get_collection_name_edit.getText().clear();
-            ((MainActivity) Objects.requireNonNull(getActivity())).hideKeyboard();
             mPresenter.updateRecyclerView();
         });
     }
@@ -335,6 +334,18 @@ public class FavoritesFragment extends Fragment implements FavoritesContract.Vie
     public void disableDoneButton() {
         add_collection.setBackground(getResources().getDrawable(R.drawable.disabled_button));
         add_collection.setEnabled(false);
+    }
+
+    @Override
+    public void editButton() {
+        edit_collection.setText(getResources().getString(R.string.edit));
+        edit_collection.setTag(1);
+    }
+
+    @Override
+    public void removeButton() {
+        edit_collection.setText(getResources().getString(R.string.remove));
+        edit_collection.setTag(0);
     }
 
     public class MyItemDecoration extends RecyclerView.ItemDecoration {

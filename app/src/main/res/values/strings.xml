@@ -76,7 +76,7 @@
     <string name="create_collection">Create Collection</string>
     <string name="edit_collection">Edit Collection</string>
     <string name="empty_collection">This Collection is empty.</string>
-    <string name="collection_name">Collection Name</string>
+    <string name="collection_name">Put Collection Name Here…</string>
     <string name="no_collections_msg">No Collections, Go To Collections and Add One</string>
     <string name="collection_exists">Collection Already Exists</string>
 
@@ -85,7 +85,7 @@
     -->
     <string name="saved_to_my_favorites">Saved To My Favorites</string>
     <string name="wallpaper_added_msg">Wallpaper Added To</string>
-    <string name="wallpaper_removed_msg">Wallpaper Removed</string>
+    <string name="wallpaper_removed_msg">Wallpaper Removed From</string>
 
     <!--
        Others
@@ -100,5 +100,7 @@
     <string name="empty_category">Empty Category</string>
     <string name="empty_search">No Results</string>
     <string name="empty_images">No Images</string>
+    <string name="edit">Edit</string>
+    <string name="remove">Remove</string>
 </resources>
 

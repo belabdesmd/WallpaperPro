@@ -130,11 +130,13 @@ public class FavoritesPresenter implements FavoritesContract.Presenter {
             if (collections.get(i).getCollectionName().equals(collectionName)) {
                 if (!collections.get(i).getCollectionWallpapers().contains(wallpaper)) {
                     collections.get(i).getCollectionWallpapers().add(wallpaper);
-                    Toast.makeText(context, context.getResources().getString(R.string.wallpaper_added_msg), Toast.LENGTH_SHORT).show();
-                }
-                else {
+                    if (!collectionName.equals(Config.MY_FAVORITES_COLLECTION_NAME))
+                        Toast.makeText(context, context.getResources().getString(R.string.wallpaper_added_msg) +
+                                " " + collectionName, Toast.LENGTH_SHORT).show();
+                } else if (!collectionName.equals(Config.MY_FAVORITES_COLLECTION_NAME)) {
                     collections.get(i).getCollectionWallpapers().remove(wallpaper);
-                    Toast.makeText(context, context.getResources().getString(R.string.wallpaper_removed_msg), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, context.getResources().getString(R.string.wallpaper_removed_msg) +
+                            " " + collectionName, Toast.LENGTH_SHORT).show();
                 }
                 found = true;
             } else i++;

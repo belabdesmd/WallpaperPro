@@ -25,7 +25,7 @@ public interface WallpapersContract {
 
         void setToolbar();
 
-        void setPageName(String mode, String name);
+        void setPageName(String name);
 
         void initRecyclerView(ArrayList<Wallpaper> wallpapers);
 

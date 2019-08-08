@@ -1,7 +1,10 @@
 package com.devalutix.wallpaperpro.presenters;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.util.Log;
 import android.view.Gravity;
 
@@ -57,70 +60,15 @@ public class MainPresenter implements MainContract.Presenter {
     /***************************************** Methods ********************************************/
     @Override
     public void requestPermission(String permission, int permissionRequest) {
-        mPermissionUtil.checkPermission(mView, permission,
-                new PermissionUtil.PermissionAskListener() {
-                    @Override
-                    public void onNeedPermission() {
-                        Log.d(TAG, "onNeedPermission: Demand Permission");
-                        ActivityCompat.requestPermissions(
-                                mView,
-                                new String[]{permission},
-                                permissionRequest
-                        );
-                    }
-
-                    @Override
-                    public void onPermissionPreviouslyDenied() {
-                        Log.d(TAG, "onPermissionPreviouslyDenied: Permission denied");
-                        DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
-                            final int BUTTON_NEGATIVE = -2;
-                            final int BUTTON_POSITIVE = -1;
-
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                switch (which) {
-                                    case BUTTON_NEGATIVE:
-                                        //which = -2
-                                        dialog.dismiss();
-                                        break;
-                                    case BUTTON_POSITIVE:
-                                        //which = -1
-                                        ActivityCompat.requestPermissions(
-                                                mView,
-                                                new String[]{permission},
-                                                permissionRequest
-                                        );
-                                        dialog.dismiss();
-                                        if (!ActivityCompat.shouldShowRequestPermissionRationale(
-                                                mView, permission))
-                                            onPermissionGranted();
-                                }
-                            }
-                        };
-                        new AlertDialog.Builder(mView)
-                                .setMessage(mView.getResources().getString(R.string.permission_msg))
-                                .setTitle(mView.getResources().getString(R.string.permission_title))
-                                .setPositiveButton(mView.getResources().getString(R.string.permission_positive), listener)
-                                .setNegativeButton(mView.getResources().getString(R.string.permission_negative), listener)
-                                .create()
-                                .show();
-                        //show a dialog explaining permission and then request permission
-                    }
-
-                    @Override
-                    public void onPermissionDisabled() {
-                        Log.d(TAG, "onPermissionDisabled: Permission Denied");
-                        //Not Granted
-                        sharedPreferencesHelper.setDownloadEnable(false);
-                    }
-
-                    @Override
-                    public void onPermissionGranted() {
-                        Log.d(TAG, "onPermissionGranted: Permission Granted");
-                        //Granted
-                        sharedPreferencesHelper.setDownloadEnable(true);
-                    }
-                });
+        if (shouldAskPermission(mView, permission))
+            if (sharedPreferencesHelper.isFirstTimeAskingPermission(permission)){
+                sharedPreferencesHelper.firstTimeAskingPermission(permission);
+                ActivityCompat.requestPermissions(
+                        mView,
+                        new String[]{permission},
+                        permissionRequest
+                );
+            }
     }
 
     @Override
@@ -186,5 +134,17 @@ public class MainPresenter implements MainContract.Presenter {
             Objects.requireNonNull(dialog.getWindow()).setGravity(Gravity.TOP | Gravity.START);
             dialog.show();
         }
+    }
+
+    private boolean shouldAskPermission() {
+        return (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M);
+    }
+
+    public boolean shouldAskPermission(Context context, String permission) {
+        if (shouldAskPermission()) {
+            int permissionResult = ActivityCompat.checkSelfPermission(context, permission);
+            return permissionResult != PackageManager.PERMISSION_GRANTED;
+        }
+        return false;
     }
 }

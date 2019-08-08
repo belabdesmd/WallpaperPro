@@ -82,7 +82,7 @@ public class SharedPreferencesHelper {
     }
 
     public boolean isDownloadEnable() {
-        return sharedPref.getBoolean(DOWNLOAD, false);
+        return sharedPref.getBoolean(DOWNLOAD, true);
     }
 
     //Dark Mode

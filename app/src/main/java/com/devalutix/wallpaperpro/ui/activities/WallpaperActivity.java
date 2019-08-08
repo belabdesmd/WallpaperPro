@@ -17,6 +17,7 @@ import butterknife.OnClick;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Rect;
@@ -38,12 +39,16 @@ import com.devalutix.wallpaperpro.di.components.DaggerMVPComponent;
 import com.devalutix.wallpaperpro.di.components.MVPComponent;
 import com.devalutix.wallpaperpro.di.modules.ApplicationModule;
 import com.devalutix.wallpaperpro.di.modules.MVPModule;
+import com.devalutix.wallpaperpro.pojo.Category;
 import com.devalutix.wallpaperpro.pojo.Collection;
 import com.devalutix.wallpaperpro.pojo.Wallpaper;
+import com.devalutix.wallpaperpro.presenters.CategoriesPresenter;
 import com.devalutix.wallpaperpro.presenters.FavoritesPresenter;
 import com.devalutix.wallpaperpro.presenters.WallpaperPresenter;
+import com.devalutix.wallpaperpro.ui.adapters.CategoriesInfoAdapter;
 import com.devalutix.wallpaperpro.ui.adapters.FavoritesAdapter;
 import com.devalutix.wallpaperpro.ui.adapters.WallpaperPagerAdapter;
+import com.devalutix.wallpaperpro.ui.fragments.FavoritesFragment;
 import com.devalutix.wallpaperpro.ui.fragments.WallpaperFragment;
 import com.devalutix.wallpaperpro.utils.Config;
 import com.google.android.gms.ads.AdView;
@@ -60,17 +65,22 @@ import static android.view.View.GONE;
 public class WallpaperActivity extends AppCompatActivity implements WallpaperContract.View {
     private static String TAG = "WallpaperActivity";
     private static final int COL_NUM = 2;
+    private static final int REQUEST_WRITE_STORAGE = 1;
+    private static final int COL_CAT_NUM = 2;
 
     /**************************************** Declarations ****************************************/
     private MVPComponent mvpComponent;
     private InterstitialAd mInterstitialAd;
     private BottomSheetBehavior info_popup_behavior;
     private BottomSheetBehavior add_to_favorite_popup_behavior;
+    private CategoriesInfoAdapter mAdapter;
 
     @Inject
     WallpaperPresenter mPresenter;
     @Inject
     FavoritesPresenter favoritePresenter;
+    @Inject
+    CategoriesPresenter categoriesPresenter;
 
     /**************************************** View Declarations ***********************************/
     @BindView(R.id.wallpaper_toolbar)
@@ -99,8 +109,8 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
     ImageView download;
     @BindView(R.id.downloads)
     TextView downloadsTextView;
-    @BindView(R.id.categories)
-    TextView categoriesTextView;
+    @BindView(R.id.categories_recycler_view)
+    RecyclerView categoriesRecyclerView;
     @BindView(R.id.adView_wallpaper)
     AdView ad;
 
@@ -243,6 +253,17 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == REQUEST_WRITE_STORAGE)
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                mPresenter.grantDownload();
+                int position = mViewPager.getCurrentItem();
+                mPresenter.savePicture(mPresenter.getWallpapers().get(position), position);
+            }
+            else mPresenter.disableDownload();
+    }
+
     /**************************************** Methods *********************************************/
     @Override
     public void setToolbar() {
@@ -313,6 +334,14 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
     public void initPopUpInfos() {
 
         info_popup_behavior = BottomSheetBehavior.from(info_popup);
+
+        StaggeredGridLayoutManager mLayoutManager = new StaggeredGridLayoutManager(COL_CAT_NUM,
+                StaggeredGridLayoutManager.VERTICAL);
+        mAdapter = new CategoriesInfoAdapter(categoriesPresenter, new ArrayList<>());
+        categoriesRecyclerView.setLayoutManager(mLayoutManager);
+        mRecyclerView.addItemDecoration(new WallpaperActivity.CategoriesDecorator());
+        categoriesRecyclerView.setAdapter(mAdapter);
+
         Context context = this;
         info_popup_behavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
@@ -374,20 +403,15 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
         downloadsTextView.setText(topicInfo.toString());
 
         //Adding Categories
-        topic = getResources().getString(R.string.categories_infos) + " ";
-        topicInfo = new StringBuilder();
-        for (int i = 0; i < wallpaper.getCategories().size(); i++) {
-            if (i != wallpaper.getCategories().size() - 1)
-                topicInfo.append(wallpaper.getCategories().get(i).getName()).append(", ");
-            else topicInfo.append(wallpaper.getCategories().get(i).getName());
+        ArrayList<String> categories = new ArrayList<>();
+        for (Category category:
+             wallpaper.getCategories()) {
+            categories.add(category.getName());
         }
 
-        topicText = topic + topicInfo;
+        mAdapter.clearAll();
 
-        Spannable spannable3 = new SpannableString(topicText);
-        spannable3.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.colorAccent)), topic.length(), topic.length() + topicInfo.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-        categoriesTextView.setText(spannable3, TextView.BufferType.SPANNABLE);
+        mAdapter.addAll(categories);
     }
 
     @Override
@@ -460,4 +484,14 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
         }
     }
 
+    public class CategoriesDecorator extends RecyclerView.ItemDecoration {
+        @Override
+        public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent,
+                                   @NonNull RecyclerView.State state) {
+            // only for the last one
+            outRect.bottom = 16;
+            outRect.right = 16;
+            outRect.left = 16;
+        }
+    }
 }

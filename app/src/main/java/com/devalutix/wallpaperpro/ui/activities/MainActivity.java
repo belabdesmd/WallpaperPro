@@ -291,6 +291,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
+                search.onActionViewCollapsed();
                 mPresenter.searchWallpapers(query);
                 return false;
             }

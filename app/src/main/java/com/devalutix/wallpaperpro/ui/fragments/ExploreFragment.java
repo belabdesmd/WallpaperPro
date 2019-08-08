@@ -58,7 +58,7 @@ public class ExploreFragment extends Fragment implements ExploreContract.View {
     @BindView(R.id.no_network_images)
     ImageView noNetworkLayout;
     @BindView(R.id.empty_explore)
-    TextView emptyCollectionLayout;
+    ImageView emptyCollectionLayout;
 
     @BindView(R.id.recent_filter)
     Button recent;
@@ -216,13 +216,11 @@ public class ExploreFragment extends Fragment implements ExploreContract.View {
     }
 
     @Override
-    public void showEmptyCollection(String message) {
+    public void showEmptyCollection() {
         mRefresh.setRefreshing(false);
 
         mRecyclerView.setVisibility(View.GONE);
         noNetworkLayout.setVisibility(View.GONE);
-
-        emptyCollectionLayout.setText(message);
         emptyCollectionLayout.setVisibility(View.VISIBLE);
     }
 

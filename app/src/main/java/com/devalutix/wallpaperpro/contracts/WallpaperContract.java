@@ -32,6 +32,10 @@ public interface WallpaperContract {
         Wallpaper getWallpapers(int currentItem);
 
         ArrayList<Collection> getCollections();
+
+        void grantDownload();
+
+        void disableDownload();
     }
 
     interface View extends BaseView {

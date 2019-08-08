@@ -50,6 +50,10 @@ public interface FavoritesContract {
 
         void disableDoneButton();
 
+        void editButton();
+
+        void removeButton();
+
         void goToWallpapers(String collectionName);
     }
 
