@@ -15,7 +15,6 @@ import com.devalutix.wallpaperpro.utils.Config;
 import java.util.ArrayList;
 
 public class FavoritesPresenter implements FavoritesContract.Presenter {
-    private static String TAG = "FavoritesPresenter";
 
     /***************************************** Declarations ***************************************/
     private FavoritesFragment mView;
@@ -45,13 +44,12 @@ public class FavoritesPresenter implements FavoritesContract.Presenter {
     /***************************************** Methods ********************************************/
     @Override
     public void initRecyclerView() {
-        Log.d(TAG, "initRecyclerView: Init Collections List");
         ArrayList<Collection> collections = getCollectionsList();
 
         //IF There is No Collection (First Time), Create The My Favorites Collection
         if (collections == null) {
             collections = new ArrayList<>();
-            collections.add(new Collection(Config.MY_FAVORITES_COLLECTION_NAME, new ArrayList<>()));
+            collections.add(new Collection(mView.getResources().getString(R.string.MyFavorites), new ArrayList<>()));
             mSharedPrefsHelper.saveCollections(collections);
         }
 
@@ -108,7 +106,7 @@ public class FavoritesPresenter implements FavoritesContract.Presenter {
         ArrayList<Collection> allCollections = mSharedPrefsHelper.getCollections();
 
         //Remove Collection From List
-        if (!collectionName.equals(Config.MY_FAVORITES_COLLECTION_NAME))
+        if (!collectionName.equals(mView.getResources().getString(R.string.MyFavorites)))
             allCollections.remove(new Collection(collectionName, null));
 
         //Save List
@@ -130,10 +128,10 @@ public class FavoritesPresenter implements FavoritesContract.Presenter {
             if (collections.get(i).getCollectionName().equals(collectionName)) {
                 if (!collections.get(i).getCollectionWallpapers().contains(wallpaper)) {
                     collections.get(i).getCollectionWallpapers().add(wallpaper);
-                    if (!collectionName.equals(Config.MY_FAVORITES_COLLECTION_NAME))
+                    if (!collectionName.equals(context.getResources().getString(R.string.MyFavorites)))
                         Toast.makeText(context, context.getResources().getString(R.string.wallpaper_added_msg) +
                                 " " + collectionName, Toast.LENGTH_SHORT).show();
-                } else if (!collectionName.equals(Config.MY_FAVORITES_COLLECTION_NAME)) {
+                } else if (!collectionName.equals(context.getResources().getString(R.string.MyFavorites))) {
                     collections.get(i).getCollectionWallpapers().remove(wallpaper);
                     Toast.makeText(context, context.getResources().getString(R.string.wallpaper_removed_msg) +
                             " " + collectionName, Toast.LENGTH_SHORT).show();

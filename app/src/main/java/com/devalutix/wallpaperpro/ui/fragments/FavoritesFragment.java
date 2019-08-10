@@ -49,7 +49,6 @@ import javax.inject.Inject;
 import static android.content.Context.LAYOUT_INFLATER_SERVICE;
 
 public class FavoritesFragment extends Fragment implements FavoritesContract.View {
-    private static final String TAG = "FavoritesFragment";
     private static final int COL_NUM = 2;
 
     /****************************************** Declarations **************************************/
@@ -96,12 +95,8 @@ public class FavoritesFragment extends Fragment implements FavoritesContract.Vie
         //Attach View To Presenter
         mPresenter.attach(this);
 
-        //Init Recycler View
-        mPresenter.initRecyclerView();
-
-        //Init Add Collections PoUp
-        initAddCollectionPopUp();
-        initEditCollectionPopUp();
+        //init UI
+        initUI();
 
         return view;
     }
@@ -120,13 +115,21 @@ public class FavoritesFragment extends Fragment implements FavoritesContract.Vie
 
     @Override
     public void onResume() {
-        Log.d(TAG, "onResume: resumed");
         if (mAdapter != null)
             mPresenter.updateRecyclerView();
         super.onResume();
     }
 
     /****************************************** Methods *******************************************/
+    private void initUI() {
+        //Init Recycler View
+        mPresenter.initRecyclerView();
+
+        //Init Add Collections PoUp
+        initAddCollectionPopUp();
+        initEditCollectionPopUp();
+    }
+
     @Override
     public void initRecyclerView(ArrayList<Collection> collections) {
 
@@ -296,7 +299,7 @@ public class FavoritesFragment extends Fragment implements FavoritesContract.Vie
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (s.equals(collectionName)) removeButton();
+                if (s.toString().equals(collectionName)) removeButton();
                 else editButton();
             }
 

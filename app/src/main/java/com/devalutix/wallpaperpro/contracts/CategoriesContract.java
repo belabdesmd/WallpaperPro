@@ -1,5 +1,7 @@
 package com.devalutix.wallpaperpro.contracts;
 
+import android.content.Context;
+
 import com.devalutix.wallpaperpro.base.BasePresenter;
 import com.devalutix.wallpaperpro.base.BaseView;
 import com.devalutix.wallpaperpro.pojo.Category;
@@ -14,7 +16,7 @@ public interface CategoriesContract {
 
         void updateRecyclerView();
 
-        void goToWallpapers(String categoryName);
+        void goToWallpapers(Context context, String categoryName);
     }
 
     interface View extends BaseView {

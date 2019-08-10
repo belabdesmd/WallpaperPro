@@ -14,7 +14,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,13 +38,11 @@ import java.util.Objects;
 import javax.inject.Inject;
 
 public class ExploreFragment extends Fragment implements ExploreContract.View {
-    private static final String TAG = "ExploreFragment";
     private static final int COL_NUM = 3;
 
     /****************************************** Declarations **************************************/
     private MVPComponent mvpComponent;
     private WallpapersAdapter mAdapter;
-    private String mode = null;
     @Inject
     ExplorePresenter mPresenter;
     private BottomSheetBehavior retry_behavior;
@@ -53,9 +50,9 @@ public class ExploreFragment extends Fragment implements ExploreContract.View {
     /****************************************** View Declarations *********************************/
     @BindView(R.id.explore_recyclerview)
     RecyclerView mRecyclerView;
-    @BindView(R.id.swipe_to_refresh_explore)
+    @BindView(R.id.swipe_refresh_explore)
     SwipeRefreshLayout mRefresh;
-    @BindView(R.id.no_network_images)
+    @BindView(R.id.no_network_explore)
     ImageView noNetworkLayout;
     @BindView(R.id.empty_explore)
     ImageView emptyCollectionLayout;
@@ -79,24 +76,21 @@ public class ExploreFragment extends Fragment implements ExploreContract.View {
     void popularFilter() {
         mRefresh.setRefreshing(true);
         enableFilter(0);
-        mode = "popular";
-        mPresenter.updateRecyclerView(mode);
+        mPresenter.updateRecyclerView("popular");
     }
 
     @OnClick(R.id.recent_filter)
     void recentFilter() {
         mRefresh.setRefreshing(true);
         enableFilter(1);
-        mode = "recent";
-        mPresenter.updateRecyclerView(mode);
+        mPresenter.updateRecyclerView("recent");
     }
 
     @OnClick(R.id.featured_filter)
     void featuredFilter() {
         mRefresh.setRefreshing(true);
         enableFilter(2);
-        mode = "featured";
-        mPresenter.updateRecyclerView(mode);
+        mPresenter.updateRecyclerView("featured");
     }
 
     @OnClick(R.id.retry)
@@ -128,18 +122,8 @@ public class ExploreFragment extends Fragment implements ExploreContract.View {
         //Attach View To Presenter
         mPresenter.attach(this);
 
-        //init RecyclerView
-        enableFilter(0);
-        mode = "recent";
-        mRefresh.setRefreshing(true);
-        mPresenter.initRecyclerView();
-
-        //Init Retry
-        initRetrySheet();
-
-        //When Pulling To Refresh Listener
-        mRefresh.setColorSchemeResources(R.color.colorAccent);
-        mRefresh.setOnRefreshListener(this::refresh);
+        //Init UI
+        initUI();
 
         return view;
     }
@@ -158,13 +142,26 @@ public class ExploreFragment extends Fragment implements ExploreContract.View {
 
     @Override
     public void onResume() {
-        Log.d(TAG, "onResume: resumed");
         if (mAdapter != null)
             refresh();
         super.onResume();
     }
 
     /****************************************** Methods *******************************************/
+    private void initUI() {
+        //init RecyclerView
+        enableFilter(0);
+        mRefresh.setRefreshing(true);
+        mPresenter.initRecyclerView();
+
+        //Init Retry
+        initRetrySheet();
+
+        //When Pulling To Refresh Listener
+        mRefresh.setColorSchemeResources(R.color.colorAccent);
+        mRefresh.setOnRefreshListener(this::refresh);
+    }
+
     @Override
     public void initRecyclerView(ArrayList<Wallpaper> wallpapers) {
 
@@ -180,11 +177,13 @@ public class ExploreFragment extends Fragment implements ExploreContract.View {
     @Override
     public void updateRecyclerView(ArrayList<Wallpaper> wallpapers) {
 
-        //Deleting the List of the Categories
-        mAdapter.clearAll();
+        if (mAdapter != null) {
+            //Deleting the List of the Categories
+            mAdapter.clearAll();
 
-        // Adding The New List of Categories
-        mAdapter.addAll(wallpapers);
+            // Adding The New List of Categories
+            mAdapter.addAll(wallpapers);
+        }
 
         /*
          * Stop Refreshing the Animations

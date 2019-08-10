@@ -85,11 +85,17 @@ public class ApplicationModule {
     /*
         Utils
      */
+    @Provides
+    @Singleton
+    Config providesConfig(){
+        SharedPreferences preferences = mApplication.getSharedPreferences("CONFIG", Context.MODE_PRIVATE);
+        return new Config(preferences);
+    }
 
     @Provides
     @Singleton
-    GDPR providesGDPR(SharedPreferencesHelper sharedPreferencesHelper){
-        return new GDPR(sharedPreferencesHelper, form, mApplication);
+    GDPR providesGDPR(SharedPreferencesHelper sharedPreferencesHelper, Config config){
+        return new GDPR(sharedPreferencesHelper, form, mApplication, config);
     }
 
     @Provides

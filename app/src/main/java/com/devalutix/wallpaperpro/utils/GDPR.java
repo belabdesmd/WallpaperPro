@@ -25,11 +25,13 @@ public class GDPR {
     private ConsentForm form;
     private Context mContext;
     private SharedPreferencesHelper sharedPreferencesHelper;
+    private Config config;
 
-    public GDPR(SharedPreferencesHelper sharedPreferencesHelper, ConsentForm form, Context mContext) {
-        this.form = form;
+    public GDPR(SharedPreferencesHelper sharedPreferencesHelper, ConsentForm form, Context mContext, Config config) {
         this.mContext = mContext;
+        this.form = form;
         this.sharedPreferencesHelper = sharedPreferencesHelper;
+        this.config = config;
     }
 
     /**
@@ -39,7 +41,7 @@ public class GDPR {
         Log.d(TAG, "checkForConsent: Checking For Consent");
 
         ConsentInformation consentInformation = ConsentInformation.getInstance(mContext);
-        String[] publisherIds = {Config.PUBLISHER_ID};
+        String[] publisherIds = {config.getPublisherId()};
 
         consentInformation.requestConsentInfoUpdate(publisherIds, new ConsentInfoUpdateListener() {
             @Override
@@ -78,7 +80,7 @@ public class GDPR {
         });
     }
 
-    public void requestConsent() {
+    private void requestConsent() {
         Log.d(TAG, "requestConsent: Requesting Consent");
         URL privacyUrl = null;
         try {

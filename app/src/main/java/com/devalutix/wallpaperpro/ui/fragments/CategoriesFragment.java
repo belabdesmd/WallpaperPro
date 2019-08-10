@@ -38,7 +38,6 @@ import java.util.Objects;
 import javax.inject.Inject;
 
 public class CategoriesFragment extends Fragment implements CategoriesContract.View {
-    private static final String TAG = "CategoriesFragment";
 
     /****************************************** Declarations **************************************/
     private MVPComponent mvpComponent;
@@ -48,11 +47,11 @@ public class CategoriesFragment extends Fragment implements CategoriesContract.V
     private BottomSheetBehavior retry_behavior;
 
     /****************************************** View Declarations *********************************/
-    @BindView(R.id.category_recyclerview)
+    @BindView(R.id.categories_recyclerview)
     RecyclerView mRecyclerView;
-    @BindView(R.id.swipe_to_refresh_categories)
+    @BindView(R.id.swipe_refresh_categories)
     SwipeRefreshLayout mRefresh;
-    @BindView(R.id.no_network_category)
+    @BindView(R.id.no_network_categories)
     ImageView noNetworkLayout;
 
     //Retry
@@ -91,16 +90,8 @@ public class CategoriesFragment extends Fragment implements CategoriesContract.V
         //Attach View To Presenter
         mPresenter.attach(this);
 
-        //Init Recycler View
-        mRefresh.setRefreshing(true);
-        mPresenter.initRecyclerView();
-
-        //Init Retry
-        initRetrySheet();
-
-        //When Pulling To Refresh Listener
-        mRefresh.setColorSchemeResources(R.color.colorAccent);
-        mRefresh.setOnRefreshListener(this::refresh);
+        //Init UI
+        initUI();
 
         return view;
     }
@@ -119,13 +110,25 @@ public class CategoriesFragment extends Fragment implements CategoriesContract.V
 
     @Override
     public void onResume() {
-        Log.d(TAG, "onResume: resumed");
         super.onResume();
         if (mAdapter != null)
             refresh();
     }
 
     /****************************************** Methods *******************************************/
+    private void initUI() {
+        //Init Retry
+        initRetrySheet();
+
+        //Init Recycler View
+        mRefresh.setRefreshing(true);
+        mPresenter.initRecyclerView();
+
+        //When Pulling To Refresh Listener
+        mRefresh.setColorSchemeResources(R.color.colorAccent);
+        mRefresh.setOnRefreshListener(this::refresh);
+    }
+
     @Override
     public void initRecyclerView(ArrayList<Category> categories) {
 
@@ -133,6 +136,7 @@ public class CategoriesFragment extends Fragment implements CategoriesContract.V
         StaggeredGridLayoutManager mLayoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL);
         mAdapter = new CategoriesAdapter(mPresenter, categories, this);
 
+        //Setup Recycler View
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.addItemDecoration(new CategoriesFragment.MyItemDecoration());
         mRecyclerView.setAdapter(mAdapter);
@@ -148,6 +152,7 @@ public class CategoriesFragment extends Fragment implements CategoriesContract.V
             // Adding The New List of Categories
             mAdapter.addAll(categories);
         }
+
         /*
          * Stop Refreshing the Animations
          */
@@ -201,7 +206,6 @@ public class CategoriesFragment extends Fragment implements CategoriesContract.V
         @Override
         public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent,
                                    @NonNull RecyclerView.State state) {
-            // only for the last one
             outRect.bottom = 32;
             outRect.right = 24;
             outRect.left = 24;

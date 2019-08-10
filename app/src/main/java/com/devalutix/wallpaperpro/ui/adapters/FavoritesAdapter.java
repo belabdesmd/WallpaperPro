@@ -1,7 +1,6 @@
 package com.devalutix.wallpaperpro.ui.adapters;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,7 +24,6 @@ import com.devalutix.wallpaperpro.utils.Config;
 import java.util.ArrayList;
 
 public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.ViewHolder> {
-    private static final String TAG = "FavoritesAdapter";
 
     /*************************************** Declarations *****************************************/
     private FavoritesPresenter mPresenter;
@@ -50,7 +48,6 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.View
     @NonNull
     @Override
     public FavoritesAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        Log.d(TAG, "onCreateViewHolder: CreatingViews.");
 
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.collection_recyclerview_item, parent, false);
@@ -60,7 +57,6 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.View
 
     @Override
     public void onBindViewHolder(@NonNull FavoritesAdapter.ViewHolder holder, int position) {
-        Log.d(TAG, "onBindViewHolder: Setting Views.");
 
         Context context;
 
@@ -68,6 +64,8 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.View
         else context = mView1;
 
         ArrayList<Wallpaper> wallpapers = mCollections.get(position).getCollectionWallpapers();
+
+        assert context != null;
         if (!wallpapers.isEmpty()) {
             if (wallpapers.size() < 4) {
                 Glide.with(context)
@@ -115,7 +113,7 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.View
 
         holder.container.setOnLongClickListener(view -> {
             if (mView != null) {
-                if (!mCollections.get(position).getCollectionName().equals(Config.MY_FAVORITES_COLLECTION_NAME))
+                if (!mCollections.get(position).getCollectionName().equals(mView.getResources().getString(R.string.MyFavorites)))
                     mView.showEditCollectionPopUp(mCollections.get(position).getCollectionName());
             }
             return true;

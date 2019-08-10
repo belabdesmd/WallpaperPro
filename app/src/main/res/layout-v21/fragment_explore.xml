@@ -22,7 +22,7 @@
                 android:layout_marginBottom="24dp"
                 android:elevation="16dp"
                 android:orientation="horizontal"
-                app:layout_constraintBottom_toTopOf="@id/swipe_to_refresh_explore"
+                app:layout_constraintBottom_toTopOf="@id/swipe_refresh_explore"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
@@ -57,7 +57,7 @@
 
 
             <ImageView
-                android:id="@+id/no_network_images"
+                android:id="@+id/no_network_explore"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:background="@drawable/internet_off"
@@ -69,8 +69,8 @@
 
             <ImageView
                 android:id="@+id/empty_explore"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
                 android:src="@drawable/empty"
                 android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -79,7 +79,7 @@
                 app:layout_constraintTop_toBottomOf="@id/filter_container" />
 
             <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-                android:id="@+id/swipe_to_refresh_explore"
+                android:id="@+id/swipe_refresh_explore"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 app:layout_constraintBottom_toBottomOf="parent"

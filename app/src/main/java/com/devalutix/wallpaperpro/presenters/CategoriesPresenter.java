@@ -1,11 +1,13 @@
 package com.devalutix.wallpaperpro.presenters;
 
+import android.content.Context;
 import android.content.Intent;
 
 import androidx.annotation.NonNull;
 
 import com.devalutix.wallpaperpro.R;
 import com.devalutix.wallpaperpro.contracts.CategoriesContract;
+import com.devalutix.wallpaperpro.di.annotations.ApplicationContext;
 import com.devalutix.wallpaperpro.pojo.Category;
 import com.devalutix.wallpaperpro.ui.activities.WallpapersActivity;
 import com.devalutix.wallpaperpro.ui.fragments.CategoriesFragment;
@@ -79,7 +81,7 @@ public class CategoriesPresenter implements CategoriesContract.Presenter {
     }
 
     @Override
-    public void updateRecyclerView() {
+    public void updateRecyclerView(){
 
         Call<ArrayList<Category>> call1 = apiService.getCategories(Config.TOKEN);
 
@@ -110,13 +112,13 @@ public class CategoriesPresenter implements CategoriesContract.Presenter {
     }
 
     @Override
-    public void goToWallpapers(String categoryName) {
-        Intent goToWallpaper = new Intent(mView.getActivity(), WallpapersActivity.class);
+    public void goToWallpapers(Context context, String categoryName) {
+        Intent goToWallpaper = new Intent(context, WallpapersActivity.class);
 
         //Putting the Extras
         goToWallpaper.putExtra("name", categoryName);
         goToWallpaper.putExtra("mode", "category");
         goToWallpaper.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        mView.startActivity(goToWallpaper);
+        context.startActivity(goToWallpaper);
     }
 }

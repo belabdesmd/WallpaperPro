@@ -2,11 +2,14 @@ package com.devalutix.wallpaperpro.contracts;
 
 import com.devalutix.wallpaperpro.base.BasePresenter;
 import com.devalutix.wallpaperpro.base.BaseView;
+import com.devalutix.wallpaperpro.utils.Config;
 import com.google.android.gms.ads.AdView;
 
 public interface MainContract {
 
     interface Presenter extends BasePresenter<MainContract.View> {
+
+        void refreshConfig();
 
         void requestPermission(String writeExternalStorage, int requestWriteStorage);
 
@@ -23,6 +26,8 @@ public interface MainContract {
         void grantDownload();
 
         void disableDownload();
+
+        Config getConfig();
 
         void showDrawerMenuIndex();
     }

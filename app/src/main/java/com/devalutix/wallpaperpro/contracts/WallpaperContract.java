@@ -4,6 +4,7 @@ import com.devalutix.wallpaperpro.base.BasePresenter;
 import com.devalutix.wallpaperpro.base.BaseView;
 import com.devalutix.wallpaperpro.pojo.Collection;
 import com.devalutix.wallpaperpro.pojo.Wallpaper;
+import com.devalutix.wallpaperpro.utils.Config;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
 
@@ -36,6 +37,8 @@ public interface WallpaperContract {
         void grantDownload();
 
         void disableDownload();
+
+        Config getConfig();
     }
 
     interface View extends BaseView {

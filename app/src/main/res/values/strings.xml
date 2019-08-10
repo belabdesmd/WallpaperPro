@@ -3,10 +3,7 @@
         Init
     -->
     <string name="app_name">Wallpaper Pro</string>
-    <string name="ADMOB_AD_BANNER_ID">test</string>
-    <string name="ADMOB_INTERSTITIAL_AD_ID">test</string>
-    <string name="developer_name">Devalutix</string>
-    <string name="developer_mail">devalutix@gmail.com</string>
+    <string name="MyFavorites">My Favorites</string>
 
     <!--
         Menu Actions
@@ -35,6 +32,12 @@
     <string name="categories_infos">Categories: </string>
 
     <!--
+        Drawer Note
+    -->
+    <string name="notice">Notice</string>
+    <string name="drawer_info">To Show The Side Menu Drag From The Left Side Of the Screen</string>
+
+    <!--
         Server Responses
     -->
     <string name="server_prblm_retry">Server Problem</string>
@@ -51,7 +54,7 @@
     <!--
         Downloading
     -->
-    <string name="downloading">Downloading...</string>
+    <string name="downloading">Downloading…</string>
     <string name="downloaded">Wallpaper Downloaded</string>
     <string name="error_download">Error Occurred, Can\'t Download the Wallpaper</string>
     <string name="error_download_permission">Can\'t Download Wallpaper, Go To App Preferences and Give Permission to The App</string>
@@ -88,19 +91,23 @@
     <string name="wallpaper_removed_msg">Wallpaper Removed From</string>
 
     <!--
-       Others
-   -->
-    <string name="done">Done</string>
-    <string name="name">Name:</string>
-    <string name="retry">Retry</string>
-
-    <!--
        Empty
     -->
     <string name="empty_category">Empty Category</string>
     <string name="empty_search">No Results</string>
     <string name="empty_images">No Images</string>
+
+    <!--
+       Others
+   -->
+    <string name="done">Done</string>
+    <string name="name">Name:</string>
+    <string name="retry">Retry</string>
     <string name="edit">Edit</string>
     <string name="remove">Remove</string>
+    <string name="categories">Categories:</string>
+    <string name="back_to_exit">Please click BACK again to exit</string>
+    <string name="email_client">There is no email client installed.</string>
+
 </resources>
 

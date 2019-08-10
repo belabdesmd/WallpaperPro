@@ -1,11 +1,9 @@
 package com.devalutix.wallpaperpro.presenters;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
-import android.util.Log;
 import android.view.Gravity;
 
 import com.devalutix.wallpaperpro.R;
@@ -15,7 +13,6 @@ import com.devalutix.wallpaperpro.ui.activities.WallpapersActivity;
 import com.devalutix.wallpaperpro.ui.activities.MainActivity;
 import com.devalutix.wallpaperpro.utils.Config;
 import com.devalutix.wallpaperpro.utils.GDPR;
-import com.devalutix.wallpaperpro.utils.PermissionUtil;
 import com.google.android.gms.ads.AdView;
 
 import androidx.appcompat.app.AlertDialog;
@@ -25,19 +22,17 @@ import androidx.core.view.GravityCompat;
 import java.util.Objects;
 
 public class MainPresenter implements MainContract.Presenter {
-    private static String TAG = "MainPresenter";
 
     /***************************************** Declarations ***************************************/
     private MainActivity mView;
-    private PermissionUtil mPermissionUtil;
     private SharedPreferencesHelper sharedPreferencesHelper;
     private GDPR gdpr;
+    private Config config;
 
     /***************************************** Constructor ****************************************/
-    public MainPresenter(PermissionUtil mPermissionUtil, SharedPreferencesHelper sharedPreferencesHelper,
-                         GDPR gdpr) {
-        this.mPermissionUtil = mPermissionUtil;
+    public MainPresenter(SharedPreferencesHelper sharedPreferencesHelper,Config config, GDPR gdpr) {
         this.sharedPreferencesHelper = sharedPreferencesHelper;
+        this.config = config;
         this.gdpr = gdpr;
     }
 
@@ -59,6 +54,11 @@ public class MainPresenter implements MainContract.Presenter {
 
     /***************************************** Methods ********************************************/
     @Override
+    public void refreshConfig(){
+        //TODO: Config Call
+    }
+
+    @Override
     public void requestPermission(String permission, int permissionRequest) {
         if (shouldAskPermission(mView, permission))
             if (sharedPreferencesHelper.isFirstTimeAskingPermission(permission)){
@@ -73,7 +73,7 @@ public class MainPresenter implements MainContract.Presenter {
 
     @Override
     public void checkGDPRConsent() {
-        if (Config.ENABLE_GDPR) {
+        if (config.isGDPREnabled()) {
             gdpr.checkForConsent();
         }
     }
@@ -110,14 +110,17 @@ public class MainPresenter implements MainContract.Presenter {
 
     @Override
     public void grantDownload() {
-        Log.d(TAG, "grantDownload: Enabling Download");
         sharedPreferencesHelper.setDownloadEnable(true);
     }
 
     @Override
     public void disableDownload() {
-        Log.d(TAG, "disableDownload: Disabling Download");
         sharedPreferencesHelper.setDownloadEnable(false);
+    }
+
+    @Override
+    public Config getConfig(){
+        return config;
     }
 
     @Override
@@ -125,8 +128,8 @@ public class MainPresenter implements MainContract.Presenter {
         if (sharedPreferencesHelper.isFirstRun()) {
             sharedPreferencesHelper.setFirstRun();
             AlertDialog.Builder alert = new AlertDialog.Builder(mView, R.style.CustomDialogTheme)
-                    .setTitle("Notice")
-                    .setMessage("To Show The Side Menu Drag From The Left Side Of the Screen")
+                    .setTitle(mView.getResources().getString(R.string.notice))
+                    .setMessage(mView.getResources().getString(R.string.drawer_info))
                     .setPositiveButton(android.R.string.ok, (dialog, which) -> mView.mDrawerLayout.openDrawer(GravityCompat.START))
                     .setIcon(R.drawable.info);
 
@@ -140,7 +143,7 @@ public class MainPresenter implements MainContract.Presenter {
         return (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M);
     }
 
-    public boolean shouldAskPermission(Context context, String permission) {
+    private boolean shouldAskPermission(Context context, String permission) {
         if (shouldAskPermission()) {
             int permissionResult = ActivityCompat.checkSelfPermission(context, permission);
             return permissionResult != PackageManager.PERMISSION_GRANTED;

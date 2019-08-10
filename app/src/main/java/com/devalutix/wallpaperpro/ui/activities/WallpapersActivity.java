@@ -16,7 +16,6 @@ import butterknife.OnClick;
 import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -39,7 +38,6 @@ import java.util.Objects;
 import javax.inject.Inject;
 
 public class WallpapersActivity extends AppCompatActivity implements WallpapersContract.View {
-    private static final String TAG = "WallpapersActivity";
     private static final int COL_NUM = 3;
 
     /**************************************** Declarations ****************************************/
@@ -96,6 +94,30 @@ public class WallpapersActivity extends AppCompatActivity implements WallpapersC
         //Attach View To Presenter
         mPresenter.attach(this);
 
+        //init UI
+        initUI();
+    }
+
+    @Override
+    public MVPComponent getComponent() {
+        if (mvpComponent == null) {
+            mvpComponent = DaggerMVPComponent
+                    .builder()
+                    .applicationModule(new ApplicationModule(getApplication()))
+                    .mVPModule(new MVPModule(this))
+                    .build();
+        }
+        return mvpComponent;
+    }
+
+    @Override
+    protected void onDestroy() {
+        mPresenter.dettach();
+        super.onDestroy();
+    }
+
+    /**************************************** Methods *********************************************/
+    private void initUI() {
         //Set Toolbar
         setToolbar();
 
@@ -115,26 +137,6 @@ public class WallpapersActivity extends AppCompatActivity implements WallpapersC
         mRefresh.setOnRefreshListener(this::refresh);
     }
 
-    @Override
-    public MVPComponent getComponent() {
-        if (mvpComponent == null) {
-            mvpComponent = DaggerMVPComponent
-                    .builder()
-                    .applicationModule(new ApplicationModule(getApplication()))
-                    .mVPModule(new MVPModule(this))
-                    .build();
-        }
-        return mvpComponent;
-    }
-
-    @Override
-    protected void onDestroy() {
-        Log.d(TAG, "onDestroy: destroyed");
-        mPresenter.dettach();
-        super.onDestroy();
-    }
-
-    /**************************************** Methods *********************************************/
     @Override
     public void setToolbar() {
         setSupportActionBar(mToolbar);
@@ -180,11 +182,13 @@ public class WallpapersActivity extends AppCompatActivity implements WallpapersC
     @Override
     public void updateRecyclerView(ArrayList<Wallpaper> wallpapers) {
 
-        //Deleting the List of the Categories
-        mAdapter.clearAll();
+        if (mAdapter != null) {
+            //Deleting the List of the Categories
+            mAdapter.clearAll();
 
-        // Adding The New List of Categories
-        mAdapter.addAll(wallpapers);
+            // Adding The New List of Categories
+            mAdapter.addAll(wallpapers);
+        }
 
         /*
          * Stop Refreshing the Animations

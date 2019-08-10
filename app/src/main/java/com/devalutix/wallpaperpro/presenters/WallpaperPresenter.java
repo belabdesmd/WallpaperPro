@@ -2,16 +2,12 @@ package com.devalutix.wallpaperpro.presenters;
 
 import android.Manifest;
 import android.app.WallpaperManager;
-import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
-import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -26,7 +22,6 @@ import com.devalutix.wallpaperpro.contracts.WallpaperContract;
 import com.devalutix.wallpaperpro.models.SharedPreferencesHelper;
 import com.devalutix.wallpaperpro.pojo.Collection;
 import com.devalutix.wallpaperpro.pojo.Wallpaper;
-import com.devalutix.wallpaperpro.ui.activities.MainActivity;
 import com.devalutix.wallpaperpro.ui.activities.WallpaperActivity;
 import com.devalutix.wallpaperpro.utils.ApiEndpointInterface;
 import com.devalutix.wallpaperpro.utils.Config;
@@ -41,7 +36,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Random;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -53,17 +47,20 @@ public class WallpaperPresenter implements WallpaperContract.Presenter {
     /***************************************** Declarations ***************************************/
     private WallpaperActivity mView;
     private Gson gson;
+    private GDPR gdpr;
+    private Config config;
     private SharedPreferencesHelper mSharedPrefsHelper;
     private ApiEndpointInterface apiService;
-    private GDPR gdpr;
     private ArrayList<Wallpaper> wallpapers;
-    private String permission = Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
     /***************************************** Constructor ****************************************/
-    public WallpaperPresenter(Gson gson, SharedPreferencesHelper sharedPreferencesHelper, GDPR gdpr, ApiEndpointInterface apiService) {
+    public WallpaperPresenter(Gson gson, SharedPreferencesHelper sharedPreferencesHelper,
+                              GDPR gdpr, ApiEndpointInterface apiService,
+                              Config config) {
         this.gson = gson;
-        mSharedPrefsHelper = sharedPreferencesHelper;
         this.gdpr = gdpr;
+        this.config = config;
+        mSharedPrefsHelper = sharedPreferencesHelper;
         this.apiService = apiService;
     }
 
@@ -86,7 +83,7 @@ public class WallpaperPresenter implements WallpaperContract.Presenter {
     /***************************************** Methods ********************************************/
     @Override
     public void loadInterstitialAd(InterstitialAd mInterstitialAd) {
-        if (Config.ENABLE_AD_INTERSTITIAL) {
+        if (config.isInterstitialEnabled()) {
             if (mSharedPrefsHelper.isAdPersonalized())
                 gdpr.loadPersonalizedInterstitialAd(mInterstitialAd);
             else
@@ -151,6 +148,7 @@ public class WallpaperPresenter implements WallpaperContract.Presenter {
             else
                 Toast.makeText(mView, mView.getResources().getString(R.string.wallpaper_already_downloaded), Toast.LENGTH_SHORT).show();
         } else {
+            String permission = Manifest.permission.WRITE_EXTERNAL_STORAGE;
             if (ActivityCompat.shouldShowRequestPermissionRationale(mView, permission))
                 ActivityCompat.requestPermissions(
                         mView,
@@ -228,7 +226,7 @@ public class WallpaperPresenter implements WallpaperContract.Presenter {
         ArrayList<Collection> collections = mSharedPrefsHelper.getCollections();
         if (collections == null) {
             collections = new ArrayList<>();
-            collections.add(new Collection(Config.MY_FAVORITES_COLLECTION_NAME, new ArrayList<>()));
+            collections.add(new Collection(mView.getResources().getString(R.string.MyFavorites), new ArrayList<>()));
             mSharedPrefsHelper.saveCollections(collections);
         }
         collections.remove(0);
@@ -279,6 +277,11 @@ public class WallpaperPresenter implements WallpaperContract.Presenter {
 
         // Create a file to save the wallpaper
         return new File(myDir, f_name);
+    }
+
+    @Override
+    public Config getConfig(){
+        return config;
     }
 
     @Override

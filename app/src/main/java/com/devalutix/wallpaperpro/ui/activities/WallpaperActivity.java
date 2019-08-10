@@ -25,7 +25,6 @@ import android.os.Bundle;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -48,7 +47,6 @@ import com.devalutix.wallpaperpro.presenters.WallpaperPresenter;
 import com.devalutix.wallpaperpro.ui.adapters.CategoriesInfoAdapter;
 import com.devalutix.wallpaperpro.ui.adapters.FavoritesAdapter;
 import com.devalutix.wallpaperpro.ui.adapters.WallpaperPagerAdapter;
-import com.devalutix.wallpaperpro.ui.fragments.FavoritesFragment;
 import com.devalutix.wallpaperpro.ui.fragments.WallpaperFragment;
 import com.devalutix.wallpaperpro.utils.Config;
 import com.google.android.gms.ads.AdView;
@@ -63,10 +61,9 @@ import javax.inject.Inject;
 import static android.view.View.GONE;
 
 public class WallpaperActivity extends AppCompatActivity implements WallpaperContract.View {
-    private static String TAG = "WallpaperActivity";
     private static final int COL_NUM = 2;
     private static final int REQUEST_WRITE_STORAGE = 1;
-    private static final int COL_CAT_NUM = 2;
+    private static final int COL_CAT_NUM = 3;
 
     /**************************************** Declarations ****************************************/
     private MVPComponent mvpComponent;
@@ -179,10 +176,11 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
         //Init View Pager
         initViewPager();
         mViewPager.setCurrentItem(getIntent().getIntExtra("current", 0));
-        initInfos(mViewPager.getCurrentItem());
 
         //Init Info PopUp
         initPopUpInfos();
+        initInfos(mViewPager.getCurrentItem());
+
         //Init Add To Favorites PopUp
         initPopUpFavorite();
 
@@ -205,14 +203,12 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
 
     @Override
     protected void onPause() {
-        Log.d(TAG, "onPause: paused");
         super.onPause();
         ad.pause();
     }
 
     @Override
     protected void onDestroy() {
-        Log.d(TAG, "onDestroy: destroyed");
         super.onDestroy();
         mPresenter.dettach();
         ad.destroy();
@@ -220,7 +216,6 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
 
     @Override
     protected void onResume() {
-        Log.d(TAG, "onResume: resumed");
         super.onResume();
         ad.resume();
     }
@@ -234,7 +229,6 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Log.d(TAG, "onOptionsItemSelected: User Clicks on Options Item.");
         int id = item.getItemId();
         switch (id) {
             case android.R.id.home: {
@@ -242,7 +236,6 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
                 return true;
             }
             case R.id.action_favorite: {
-                Log.d(TAG, "onOptionsItemSelected: Clicked On Favorites");
                 mPresenter.openAddToFavoritesPopUp();
                 return true;
             }
@@ -267,7 +260,6 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
     /**************************************** Methods *********************************************/
     @Override
     public void setToolbar() {
-        Log.d(TAG, "setToolbar: Setting the Toolbar.");
 
         setSupportActionBar(mToolbar);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
@@ -277,7 +269,8 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
 
     @Override
     public void initAdBanner() {
-        if (Config.ENABLE_AD_BANNER) {
+        if (mPresenter.getConfig().isBannerEnabled()) {
+            ad.setAdUnitId(mPresenter.getConfig().getAdBannerId());
             mPresenter.loadAd(ad);
         } else {
             ad.setVisibility(GONE);
@@ -287,13 +280,12 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
     @Override
     public void initInterstitialAd() {
         mInterstitialAd = new InterstitialAd(this);
-        mInterstitialAd.setAdUnitId(getResources().getString(R.string.ADMOB_INTERSTITIAL_AD_ID));
+        mInterstitialAd.setAdUnitId(mPresenter.getConfig().getAdInterstitialId());
         mPresenter.loadInterstitialAd(mInterstitialAd);
     }
 
     @Override
     public void initViewPager() {
-        Log.d(TAG, "initViewPager: Initialising View Pager");
         WallpaperPagerAdapter adapter = new WallpaperPagerAdapter(getSupportFragmentManager());
 
         /*
@@ -337,7 +329,7 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
 
         StaggeredGridLayoutManager mLayoutManager = new StaggeredGridLayoutManager(COL_CAT_NUM,
                 StaggeredGridLayoutManager.VERTICAL);
-        mAdapter = new CategoriesInfoAdapter(categoriesPresenter, new ArrayList<>());
+        mAdapter = new CategoriesInfoAdapter(this, categoriesPresenter, new ArrayList<>());
         categoriesRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.addItemDecoration(new WallpaperActivity.CategoriesDecorator());
         categoriesRecyclerView.setAdapter(mAdapter);
@@ -445,14 +437,12 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
 
     @Override
     public void showFavorite() {
-        Log.d(TAG, "showFavorite: Shows Favorites");
         add_to_favorite_popup_behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-        favoritePresenter.add_removeWallpaper(this,Config.MY_FAVORITES_COLLECTION_NAME, mPresenter.getWallpapers(mViewPager.getCurrentItem()));
+        favoritePresenter.add_removeWallpaper(this, getResources().getString(R.string.MyFavorites), mPresenter.getWallpapers(mViewPager.getCurrentItem()));
     }
 
     @Override
     public void hideFavorite() {
-        Log.d(TAG, "showFavorite: Hides Favorites");
         add_to_favorite_popup_behavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
     }
 
@@ -490,8 +480,8 @@ public class WallpaperActivity extends AppCompatActivity implements WallpaperCon
                                    @NonNull RecyclerView.State state) {
             // only for the last one
             outRect.bottom = 16;
-            outRect.right = 16;
-            outRect.left = 16;
+            outRect.right = 32;
+            outRect.left = 32;
         }
     }
 }

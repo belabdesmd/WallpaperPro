@@ -23,7 +23,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -58,7 +57,6 @@ import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
 public class MainActivity extends AppCompatActivity implements MainContract.View {
-    private static String TAG = "MainActivity";
     private static final int REQUEST_WRITE_STORAGE = 1;
 
     /**************************************** Declarations ****************************************/
@@ -106,7 +104,6 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     /**************************************** Essential Methods ***********************************/
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.d(TAG, "onCreate: Creating Views");
 
         //Initialize Dagger For Application
         mvpComponent = getComponent();
@@ -137,6 +134,63 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         //Check For Consent
         mPresenter.checkGDPRConsent();
 
+        //Init UI
+        initUI();
+    }
+
+    @Override
+    public MVPComponent getComponent() {
+        if (mvpComponent == null) {
+            mvpComponent = DaggerMVPComponent
+                    .builder()
+                    .applicationModule(new ApplicationModule(getApplication()))
+                    .mVPModule(new MVPModule(this))
+                    .build();
+        }
+        return mvpComponent;
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (doubleBackToExitPressedOnce) {
+            super.onBackPressed();
+            return;
+        }
+
+        this.doubleBackToExitPressedOnce = true;
+        Toast.makeText(this, getResources().getString(R.string.back_to_exit), Toast.LENGTH_SHORT).show();
+
+        new Handler().postDelayed(() -> doubleBackToExitPressedOnce = false, 2000);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        ad.pause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ad.destroy();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ad.resume();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == REQUEST_WRITE_STORAGE)
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                mPresenter.grantDownload();
+            else mPresenter.disableDownload();
+    }
+
+    /**************************************** Methods *********************************************/
+    private void initUI() {
         //Init Ad Banner
         initAdBanner();
 
@@ -188,64 +242,8 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         //Go To Favorites (After Saving a Picture)
         if (getIntent().getBooleanExtra("ToFavorites", false))
             mViewPager.setCurrentItem(2);
-
     }
 
-    @Override
-    public MVPComponent getComponent() {
-        if (mvpComponent == null) {
-            mvpComponent = DaggerMVPComponent
-                    .builder()
-                    .applicationModule(new ApplicationModule(getApplication()))
-                    .mVPModule(new MVPModule(this))
-                    .build();
-        }
-        return mvpComponent;
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (doubleBackToExitPressedOnce) {
-            super.onBackPressed();
-            return;
-        }
-
-        this.doubleBackToExitPressedOnce = true;
-        Toast.makeText(this, "Please click BACK again to exit", Toast.LENGTH_SHORT).show();
-
-        new Handler().postDelayed(() -> doubleBackToExitPressedOnce = false, 2000);
-    }
-
-    @Override
-    protected void onPause() {
-        Log.d(TAG, "onPause: paused");
-        super.onPause();
-        ad.pause();
-    }
-
-    @Override
-    protected void onDestroy() {
-        Log.d(TAG, "onDestroy: destroyed");
-        super.onDestroy();
-        ad.destroy();
-    }
-
-    @Override
-    protected void onResume() {
-        Log.d(TAG, "onResume: resumed");
-        super.onResume();
-        ad.resume();
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode == REQUEST_WRITE_STORAGE)
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
-                mPresenter.grantDownload();
-            else mPresenter.disableDownload();
-    }
-
-    /**************************************** Methods *********************************************/
     @Override
     public void darkModeListener() {
         //Dark Mode
@@ -267,7 +265,8 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
 
     @Override
     public void initAdBanner() {
-        if (Config.ENABLE_AD_BANNER) {
+        if (mPresenter.getConfig().isBannerEnabled()) {
+            ad.setAdUnitId(mPresenter.getConfig().getAdBannerId());
             mPresenter.loadAd(ad);
         } else {
             ad.setVisibility(GONE);
@@ -276,7 +275,6 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
 
     @Override
     public void initSearchBar() {
-        Log.d(TAG, "initSearchBar: Init Search Bar");
         EditText searchEditText = search.findViewById(R.id.search_src_text);
         searchEditText.setTextColor(getResources().getColor(R.color.colorAccent));
         searchEditText.setHintTextColor(getResources().getColor(R.color.colorAccent));
@@ -292,6 +290,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
             @Override
             public boolean onQueryTextSubmit(String query) {
                 search.onActionViewCollapsed();
+                title.setVisibility(VISIBLE);
                 mPresenter.searchWallpapers(query);
                 return false;
             }
@@ -452,7 +451,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
 
     /**************************************** Menu Actions ****************************************/
     private void ourApps() {
-        String developerName = getResources().getString(R.string.developer_name);
+        String developerName = mPresenter.getConfig().getDeveloperName();
         try {
             startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://search?q=" + developerName)));
         } catch (ActivityNotFoundException anfe) {
@@ -489,7 +488,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     }
 
     private void sendFeedback() {
-        String[] TO = {getResources().getString(R.string.developer_mail)};
+        String[] TO = {mPresenter.getConfig().getDeveloperEmail()};
         Intent emailIntent = new Intent(Intent.ACTION_SEND);
         emailIntent.setData(Uri.parse("mailto:"));
         emailIntent.setType("text/plain");
@@ -514,7 +513,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
             startActivity(Intent.createChooser(emailIntent, "Send mail..."));
         } catch (android.content.ActivityNotFoundException ex) {
             Toast.makeText(MainActivity.this,
-                    "There is no email client installed.", Toast.LENGTH_SHORT).show();
+                    getResources().getString(R.string.email_client), Toast.LENGTH_SHORT).show();
         }
     }
 }

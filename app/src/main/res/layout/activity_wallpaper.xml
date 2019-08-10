@@ -29,7 +29,6 @@
             android:layout_height="wrap_content"
             ads:adSize="SMART_BANNER"
             android:layout_marginBottom="32dp"
-            ads:adUnitId="@string/ADMOB_AD_BANNER_ID"
             ads:layout_constraintBottom_toBottomOf="parent"
             ads:layout_constraintEnd_toEndOf="parent"
             ads:layout_constraintStart_toStartOf="parent" />

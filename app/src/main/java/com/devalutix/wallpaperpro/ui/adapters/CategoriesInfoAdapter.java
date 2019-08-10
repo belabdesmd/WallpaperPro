@@ -12,30 +12,29 @@ import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.devalutix.wallpaperpro.R;
-import com.devalutix.wallpaperpro.pojo.Category;
 import com.devalutix.wallpaperpro.presenters.CategoriesPresenter;
-import com.devalutix.wallpaperpro.ui.fragments.CategoriesFragment;
+import com.devalutix.wallpaperpro.ui.activities.WallpaperActivity;
 
 import java.util.ArrayList;
 
 public class CategoriesInfoAdapter extends RecyclerView.Adapter<CategoriesInfoAdapter.ViewHolder> {
-    private static final String TAG = "CategoriesAdapter";
 
     /*************************************** Declarations *****************************************/
     private CategoriesPresenter mPresenter;
+    private WallpaperActivity mView;
     private ArrayList<String> categories;
 
     /*************************************** Constructor ******************************************/
-    public CategoriesInfoAdapter(CategoriesPresenter mPresenter, ArrayList<String> categories) {
+    public CategoriesInfoAdapter(WallpaperActivity mView, CategoriesPresenter mPresenter, ArrayList<String> categories) {
         this.mPresenter = mPresenter;
         this.categories = categories;
+        this.mView = mView;
     }
 
     /*************************************** Methods **********************************************/
     @NonNull
     @Override
     public CategoriesInfoAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        Log.d(TAG, "onCreateViewHolder: CreatingViews.");
 
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.category_info_item, parent, false);
@@ -45,11 +44,10 @@ public class CategoriesInfoAdapter extends RecyclerView.Adapter<CategoriesInfoAd
 
     @Override
     public void onBindViewHolder(@NonNull CategoriesInfoAdapter.ViewHolder holder, int position) {
-        Log.d(TAG, "onBindViewHolder: Setting Views.");
 
         holder.name.setText(categories.get(position));
 
-        holder.container.setOnClickListener(v -> mPresenter.goToWallpapers(categories.get(position)));
+        holder.container.setOnClickListener(v -> mPresenter.goToWallpapers(mView, categories.get(position)));
     }
 
     @Override

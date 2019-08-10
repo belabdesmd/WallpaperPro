@@ -1,6 +1,5 @@
 package com.devalutix.wallpaperpro.ui.adapters;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +19,6 @@ import com.devalutix.wallpaperpro.ui.fragments.CategoriesFragment;
 import java.util.ArrayList;
 
 public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.ViewHolder> {
-    private static final String TAG = "CategoriesAdapter";
 
     /*************************************** Declarations *****************************************/
     private CategoriesPresenter mPresenter;
@@ -38,7 +36,6 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Vi
     @NonNull
     @Override
     public CategoriesAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        Log.d(TAG, "onCreateViewHolder: CreatingViews.");
 
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.category_recyclerview_item, parent, false);
@@ -48,7 +45,6 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Vi
 
     @Override
     public void onBindViewHolder(@NonNull CategoriesAdapter.ViewHolder holder, int position) {
-        Log.d(TAG, "onBindViewHolder: Setting Views.");
 
         //Loading the Wallpaper
         Glide.with(mView)
@@ -62,7 +58,7 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Vi
 
         //Click Listener
         final int finalPosition = position;
-        holder.container.setOnClickListener(v -> mPresenter.goToWallpapers(mCategories.get(finalPosition).getName()));
+        holder.container.setOnClickListener(v -> mPresenter.goToWallpapers(mView.getActivity(), mCategories.get(finalPosition).getName()));
     }
 
     @Override
